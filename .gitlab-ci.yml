@@ -5,6 +5,7 @@ pages:
   script:
     - mkdir -p public
     - cp the-markdown/the-markdown-prototype.html public/index.html
+    - cp the-markdown/TheMarkdown_Architecture_Diagram.html public/architecture.html
   artifacts:
     paths:
       - public

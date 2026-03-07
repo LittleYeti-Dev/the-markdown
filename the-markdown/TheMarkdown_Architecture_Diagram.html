@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE MARKDOWN | Architecture Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0F1117;
+    --bg2: #1A1D23;
+    --bg3: #22262E;
+    --bg4: #2A2F38;
+    --blue: #3B82F6;
+    --blue-dim: rgba(59,130,246,0.15);
+    --green: #10B981;
+    --green-dim: rgba(16,185,129,0.12);
+    --yellow: #F59E0B;
+    --yellow-dim: rgba(245,158,11,0.12);
+    --red: #EF4444;
+    --red-dim: rgba(239,68,68,0.12);
+    --purple: #8B5CF6;
+    --purple-dim: rgba(139,92,246,0.12);
+    --cyan: #06B6D4;
+    --cyan-dim: rgba(6,182,212,0.12);
+    --orange: #F97316;
+    --orange-dim: rgba(249,115,22,0.12);
+    --teal: #14B8A6;
+    --pink: #EC4899;
+    --text: #E8ECF1;
+    --text2: #9CA3AF;
+    --text3: #6B7280;
+    --border: #2D3340;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Source Sans Pro', sans-serif; padding: 30px; min-height: 100vh; }
+
+  .page-title { font-family: 'Rajdhani', sans-serif; font-size: 42px; font-weight: 700; text-align: center; letter-spacing: 6px; margin-bottom: 4px; }
+  .page-title span { color: var(--blue); }
+  .page-subtitle { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text3); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+  .page-date { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 2px; margin-bottom: 30px; }
+
+  /* LEGEND */
+  .legend { display: flex; justify-content: center; gap: 24px; margin-bottom: 30px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .dot-have { background: var(--green); }
+  .dot-partial { background: var(--yellow); }
+  .dot-need { background: var(--red); }
+  .dot-infra { background: var(--purple); }
+
+  /* LAYERS */
+  .layer { margin-bottom: 24px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .layer-header {
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+  .layer-header .layer-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,0.08);
+    color: var(--text3);
+  }
+  .layer-header .layer-desc {
+    margin-left: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 1px; color: var(--text3); font-weight: 400;
+  }
+  .layer-body { padding: 16px 20px; background: var(--bg2); }
+
+  /* Layer colors */
+  .layer-presentation .layer-header { background: linear-gradient(90deg, rgba(59,130,246,0.2), rgba(59,130,246,0.05)); color: var(--blue); }
+  .layer-wordpress .layer-header { background: linear-gradient(90deg, rgba(139,92,246,0.2), rgba(139,92,246,0.05)); color: var(--purple); }
+  .layer-ingest .layer-header { background: linear-gradient(90deg, rgba(6,182,212,0.2), rgba(6,182,212,0.05)); color: var(--cyan); }
+  .layer-social .layer-header { background: linear-gradient(90deg, rgba(249,115,22,0.2), rgba(249,115,22,0.05)); color: var(--orange); }
+  .layer-ai .layer-header { background: linear-gradient(90deg, rgba(236,72,153,0.2), rgba(236,72,153,0.05)); color: var(--pink); }
+  .layer-infra .layer-header { background: linear-gradient(90deg, rgba(16,185,129,0.2), rgba(16,185,129,0.05)); color: var(--green); }
+
+  /* NODES GRID */
+  .nodes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .node {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .node:hover { border-color: rgba(255,255,255,0.15); }
+  .node-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px; font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .node-desc {
+    font-size: 12px; color: var(--text2); line-height: 1.4;
+  }
+  .node-tech {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: var(--text3); letter-spacing: 1px;
+  }
+
+  /* STATUS BADGES */
+  .status {
+    display: inline-block; padding: 2px 8px; border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; text-transform: uppercase; font-weight: 500;
+  }
+  .status-have { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+  .status-partial { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
+  .status-need { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+  .status-blocked { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.5); animation: pulse 2s infinite; }
+  .status-infra { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(139,92,246,0.3); }
+
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+
+  /* FLOW ARROWS */
+  .flow-arrow {
+    text-align: center; padding: 8px 0;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--text3); letter-spacing: 2px;
+  }
+  .flow-arrow .arrow { color: var(--blue); font-size: 18px; display: block; line-height: 1; }
+
+  /* WIDE NODES */
+  .node-wide { grid-column: span 2; }
+  .node-full { grid-column: 1 / -1; }
+
+  /* PAGES SECTION */
+  .pages-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .page-card {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+    padding: 10px 12px; text-align: center;
+  }
+  .page-card-title {
+    font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 600;
+    letter-spacing: 1px; margin-bottom: 2px;
+  }
+  .page-card-desc { font-size: 11px; color: var(--text3); }
+  .page-card-url {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    color: var(--blue); margin-top: 4px; word-break: break-all;
+  }
+
+  /* BLOCK MAP */
+  .block-map {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .block-card {
+    background: var(--bg4); border-radius: 4px; padding: 8px 10px;
+    border-left: 3px solid;
+  }
+  .block-card-hero { grid-column: 1 / -1; text-align: center; border-left: none; border-top: 3px solid var(--blue); }
+  .block-label { font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+  .block-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text3); }
+  .block-platforms { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--text3); margin-top: 3px; }
+
+  /* CONNECTOR LINES (CSS-based) */
+  .connector-row {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 6px 0;
+  }
+  .connector-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+  .connector-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    color: var(--text3); letter-spacing: 1px; white-space: nowrap;
+    padding: 2px 10px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--bg);
+  }
+
+  /* SUMMARY TABLE */
+  .summary-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .summary-table th {
+    background: var(--bg4); padding: 8px 12px; text-align: left;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 1px; text-transform: uppercase; color: var(--text3);
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-table td {
+    padding: 8px 12px; border-bottom: 1px solid rgba(45,51,64,0.5);
+    font-size: 13px;
+  }
+  .summary-table tr:hover { background: var(--bg3); }
+
+  /* Section dividers */
+  .section-divider {
+    text-align: center; padding: 20px 0 10px;
+    font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 600;
+    letter-spacing: 3px; color: var(--text3); text-transform: uppercase;
+  }
+
+  @media (max-width: 800px) {
+    .nodes { grid-template-columns: 1fr; }
+    .node-wide, .node-full { grid-column: span 1; }
+    .pages-grid { grid-template-columns: 1fr 1fr; }
+    .block-map { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">THE <span>MARK</span>DOWN</div>
+<div class="page-subtitle">System Architecture &bull; Non Sequitur Ecosystem</div>
+<div class="page-date">Justin "Yeti" Kuiper &bull; March 7, 2026 &bull; justin-kuiper.com</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot dot-have"></div> HAVE (in place)</div>
+  <div class="legend-item"><div class="legend-dot dot-partial"></div> PARTIAL (exists, needs config)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> NEED (must build)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> INFRASTRUCTURE</div>
+</div>
+
+<!-- ========================================
+     LAYER 1: PRESENTATION (What Users See)
+     ======================================== -->
+<div class="layer layer-presentation">
+  <div class="layer-header">
+    <span class="layer-num">L1</span> Presentation Layer
+    <span class="layer-desc">What users see &bull; Pages &amp; Front-End</span>
+  </div>
+  <div class="layer-body">
+
+    <div style="margin-bottom:14px; font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:600; letter-spacing:1px; color:var(--blue);">WORDPRESS PAGES</div>
+    <div class="pages-grid" style="margin-bottom:16px;">
+      <div class="page-card">
+        <div class="page-card-title" style="color:var(--blue);">The Markdown</div>
+        <div class="page-card-desc">7-block aggregator<br>Main daily feed</div>
+        <div class="page-card-url">/the-markdown</div>
+        <div style="margin-top:4px;"><span class="status status-need">BUILD</span></div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-title" style="color:var(--green);">Homepage</div>
+        <div class="page-card-desc">Landing page<br>Brand hub</div>
+        <div class="page-card-url">justin-kuiper.com</div>
+        <div style="margin-top:4px;"><span class="status status-have">HAVE</span></div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-title" style="color:var(--green);">Blog</div>
+        <div class="page-card-desc">Long-form posts<br>Commentary essays</div>
+        <div class="page-card-url">/blog</div>
+        <div style="margin-top:4px;"><span class="status status-have">HAVE</span></div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-title" style="color:var(--yellow);">About / Baseball Card</div>
+        <div class="page-card-desc">Personal brand<br>Career snapshot</div>
+        <div class="page-card-url">/about</div>
+        <div style="margin-top:4px;"><span class="status status-partial">UPDATE</span></div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-title" style="color:var(--red);">Archive</div>
+        <div class="page-card-desc">Historical editions<br>Date/domain filter</div>
+        <div class="page-card-url">/the-markdown/archive</div>
+        <div style="margin-top:4px;"><span class="status status-need">PHASE 2</span></div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-title" style="color:var(--red);">Social Wall</div>
+        <div class="page-card-desc">Aggregated social<br>Cross-platform feed</div>
+        <div class="page-card-url">/social</div>
+        <div style="margin-top:4px;"><span class="status status-need">PHASE 3</span></div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-title" style="color:var(--green);">Contact</div>
+        <div class="page-card-desc">Contact form<br>Engagement CTA</div>
+        <div class="page-card-url">/contact</div>
+        <div style="margin-top:4px;"><span class="status status-have">HAVE</span></div>
+      </div>
+      <div class="page-card">
+        <div class="page-card-title" style="color:var(--red);">RSS Feed</div>
+        <div class="page-card-desc">Public feed output<br>For subscribers</div>
+        <div class="page-card-url">/feed/the-markdown</div>
+        <div style="margin-top:4px;"><span class="status status-need">BUILD</span></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:10px; font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:600; letter-spacing:1px; color:var(--blue);">THE MARKDOWN &mdash; BLOCK MAP</div>
+    <div class="block-map">
+      <div class="block-card block-card-hero" style="border-color:var(--blue);">
+        <span class="block-num">00</span> <span class="block-label" style="color:var(--blue);">HERO</span>
+        <div class="block-platforms">PUSH: X &bull; LINKEDIN &bull; MEDIUM</div>
+      </div>
+      <div class="block-card" style="border-color:var(--cyan);">
+        <span class="block-num">01</span> <span class="block-label" style="color:var(--cyan);">AI / GEN AI</span>
+        <div class="block-platforms">PUSH: X &bull; LINKEDIN &bull; MEDIUM &bull; YOUTUBE</div>
+      </div>
+      <div class="block-card" style="border-color:var(--yellow);">
+        <span class="block-num">03</span> <span class="block-label" style="color:var(--yellow);">INNOVATION</span>
+        <div class="block-platforms">PUSH: X &bull; LINKEDIN &bull; INSTAGRAM &bull; MEDIUM</div>
+      </div>
+      <div class="block-card" style="border-color:var(--orange);">
+        <span class="block-num">05</span> <span class="block-label" style="color:var(--orange);">SPACE / AERO</span>
+        <div class="block-platforms">PUSH: X &bull; LINKEDIN &bull; YOUTUBE &bull; MEDIUM</div>
+      </div>
+      <div class="block-card" style="border-color:var(--green);">
+        <span class="block-num">02</span> <span class="block-label" style="color:var(--green);">CYBER</span>
+        <div class="block-platforms">PUSH: X &bull; LINKEDIN &bull; MEDIUM</div>
+      </div>
+      <div class="block-card" style="border-color:var(--purple);">
+        <span class="block-num">04</span> <span class="block-label" style="color:var(--purple);">FNW</span>
+        <div class="block-platforms">PUSH: INSTAGRAM &bull; X &bull; MEDIUM &bull; YOUTUBE</div>
+      </div>
+      <div class="block-card" style="border-color:var(--teal);">
+        <span class="block-num">06</span> <span class="block-label" style="color:var(--teal);">DIGITAL LIFE</span>
+        <div class="block-platforms">PUSH: X &bull; INSTAGRAM &bull; YOUTUBE</div>
+      </div>
+    </div>
+
+    <div class="nodes" style="margin-top: 14px;">
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Custom Page Template</div>
+        <div class="node-desc">WordPress PHP template rendering 7 blocks from ns_feed_item queries. Dark mode. Responsive 3-col grid.</div>
+        <div class="node-tech">PHP &bull; CSS GRID &bull; WP_QUERY</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Commentary Cards</div>
+        <div class="node-desc">3 embed styles (tweet card, pull quote, inline) rendered per block. Click opens live social post.</div>
+        <div class="node-tech">PHP &bull; JS &bull; SOCIAL_POST_URLS META</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Auto-Refresh</div>
+        <div class="node-desc">AJAX polling every 15 min. No full page reload. REST API endpoint returns block data.</div>
+        <div class="node-tech">WP REST API &bull; JAVASCRIPT &bull; FETCH</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-have">HAVE</span> Design System</div>
+        <div class="node-desc">Dark bg #1A1D23, accent blue, Rajdhani / Source Sans Pro / JetBrains Mono. Domain color coding.</div>
+        <div class="node-tech">CSS VARIABLES &bull; PROTOTYPE LIVE ON GITLAB PAGES</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow"><span class="arrow">&darr;</span> QUERIES ns_feed_item BY BLOCK ASSIGNMENT &amp; STATUS</div>
+
+<!-- ========================================
+     LAYER 2: WORDPRESS CORE
+     ======================================== -->
+<div class="layer layer-wordpress">
+  <div class="layer-header">
+    <span class="layer-num">L2</span> WordPress Core
+    <span class="layer-desc">Data model &bull; Admin &bull; Editorial dashboard</span>
+  </div>
+  <div class="layer-body">
+    <div class="nodes">
+      <div class="node">
+        <div class="node-title"><span class="status status-have">HAVE</span> WordPress Install</div>
+        <div class="node-desc">Live at justin-kuiper.com. Hosting active. Theme installed. SSL cert.</div>
+        <div class="node-tech">WORDPRESS 6.x &bull; PHP 8.x &bull; MYSQL</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> ns_feed_item CPT</div>
+        <div class="node-desc">Custom Post Type with 15 meta fields: source_url, domain_tag, relevance_score, block_assignment, social_post_urls, etc.</div>
+        <div class="node-tech">register_post_type() &bull; register_meta()</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Custom Taxonomies (4)</div>
+        <div class="node-desc">content_domain (6 terms), thematic_arc (3 terms), item_status (7 terms), platform_published (6 terms)</div>
+        <div class="node-tech">register_taxonomy() &bull; HIERARCHICAL</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Editorial Dashboard</div>
+        <div class="node-desc">Admin view: DEV feed list, filterable by domain/score/status. Color-coded. Promote button. Block assignment dropdown.</div>
+        <div class="node-tech">WP ADMIN &bull; CUSTOM COLUMNS &bull; BULK ACTIONS</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Quick-Publish Panel</div>
+        <div class="node-desc">Inline editor: write commentary, toggle platforms, preview all 5 versions side-by-side, publish with one click.</div>
+        <div class="node-tech">REACT/JS &bull; WP REST API &bull; ADMIN AJAX</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> REST API Endpoints</div>
+        <div class="node-desc">Custom endpoints for block data, feed items, publish actions, scoring triggers.</div>
+        <div class="node-tech">register_rest_route() &bull; APP PASSWORDS</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow"><span class="arrow">&darr; &uarr;</span> READS &amp; WRITES ns_feed_item</div>
+
+<!-- ========================================
+     LAYER 3: RSS INGEST PIPELINE
+     ======================================== -->
+<div class="layer layer-ingest">
+  <div class="layer-header">
+    <span class="layer-num">L3</span> RSS Ingest Pipeline
+    <span class="layer-desc">Feed sources &bull; Auto-tagging &bull; DEV lane</span>
+  </div>
+  <div class="layer-body">
+    <div class="nodes">
+      <div class="node node-wide">
+        <div class="node-title"><span class="status status-partial">CONFIG</span> WP RSS Aggregator Pro</div>
+        <div class="node-desc">Plugin handles feed import → ns_feed_item mapping. Need to purchase Pro license, configure 40 feeds, set import templates, map to CPT.</div>
+        <div class="node-tech">PLUGIN: WP-RSS-AGGREGATOR &bull; PRO LICENSE ~$79/yr</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Auto-Domain Tagging</div>
+        <div class="node-desc">Keyword rules assign content_domain taxonomy based on source feed + headline keywords.</div>
+        <div class="node-tech">PHP FILTER HOOKS &bull; KEYWORD RULES</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Dedup Logic</div>
+        <div class="node-desc">URL matching + title similarity (90% threshold). Prevents duplicate items in feed.</div>
+        <div class="node-tech">PHP &bull; SIMILAR_TEXT() &bull; URL NORMALIZE</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px; font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:1px; color:var(--cyan); margin-bottom:8px;">40 STARTER FEEDS ACROSS 6 DOMAINS</div>
+    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px;">
+      <div style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2); border-radius:4px; padding:6px 8px; text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--cyan); letter-spacing:1px;">AI / GEN AI</div>
+        <div style="font-size:18px; font-weight:700; color:var(--cyan);">8</div>
+        <div style="font-size:9px; color:var(--text3);">feeds</div>
+      </div>
+      <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:4px; padding:6px 8px; text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--green); letter-spacing:1px;">CYBER</div>
+        <div style="font-size:18px; font-weight:700; color:var(--green);">10</div>
+        <div style="font-size:9px; color:var(--text3);">feeds</div>
+      </div>
+      <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.2); border-radius:4px; padding:6px 8px; text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--yellow); letter-spacing:1px;">INNOVATION</div>
+        <div style="font-size:18px; font-weight:700; color:var(--yellow);">6</div>
+        <div style="font-size:9px; color:var(--text3);">feeds</div>
+      </div>
+      <div style="background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.2); border-radius:4px; padding:6px 8px; text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--purple); letter-spacing:1px;">FNW</div>
+        <div style="font-size:18px; font-weight:700; color:var(--purple);">5</div>
+        <div style="font-size:9px; color:var(--text3);">feeds</div>
+      </div>
+      <div style="background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.2); border-radius:4px; padding:6px 8px; text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--orange); letter-spacing:1px;">SPACE</div>
+        <div style="font-size:18px; font-weight:700; color:var(--orange);">6</div>
+        <div style="font-size:9px; color:var(--text3);">feeds</div>
+      </div>
+      <div style="background:rgba(20,184,166,0.1); border:1px solid rgba(20,184,166,0.2); border-radius:4px; padding:6px 8px; text-align:center;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--teal); letter-spacing:1px;">DIGITAL</div>
+        <div style="font-size:18px; font-weight:700; color:var(--teal);">5</div>
+        <div style="font-size:9px; color:var(--text3);">feeds</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow"><span class="arrow">&darr;</span> SCORED ITEMS FLOW TO EDITORIAL &bull; <span class="arrow">&uarr;</span> COMMENTARY PUSHED TO SOCIAL</div>
+
+<!-- ========================================
+     LAYER 4: SOCIAL MEDIA PUBLISHING
+     ======================================== -->
+<div class="layer layer-social">
+  <div class="layer-header">
+    <span class="layer-num">L4</span> Social Media Publishing
+    <span class="layer-desc">5 platforms &bull; API integrations &bull; Quick-publish dispatch</span>
+  </div>
+  <div class="layer-body">
+    <div class="nodes">
+      <div class="node">
+        <div class="node-title" style="color:var(--blue);">
+          <span class="status status-need">BUILD</span> X (Twitter)
+        </div>
+        <div class="node-desc">API v2, OAuth 2.0 PKCE. Tweets + threads. Free: 1,500/mo. Basic ($100): 3,000/mo.</div>
+        <div class="node-tech">OAUTH 2.0 &bull; 280 CHAR &bull; MEDIA UPLOAD</div>
+      </div>
+      <div class="node">
+        <div class="node-title" style="color:var(--blue);">
+          <span class="status status-need">BUILD</span> LinkedIn
+        </div>
+        <div class="node-desc">Community Management API. OAuth 2.0 3-legged. Personal profile posting. 100 calls/day.</div>
+        <div class="node-tech">OAUTH 2.0 &bull; 3,000 CHAR &bull; IMAGE URN</div>
+      </div>
+      <div class="node">
+        <div class="node-title" style="color:var(--red);">
+          <span class="status status-blocked">BLOCKED</span> Instagram
+        </div>
+        <div class="node-desc">Graph API via Facebook. Requires App Review (2-4 weeks). Container-based publish. 25 posts/day max.</div>
+        <div class="node-tech">FACEBOOK OAUTH &bull; PUBLIC IMAGE URL REQ &bull; 2-STEP PUBLISH</div>
+      </div>
+      <div class="node">
+        <div class="node-title" style="color:var(--red);">
+          <span class="status status-need">BUILD</span> YouTube
+        </div>
+        <div class="node-desc">Data API v3. Community posts (~50 quota units). 10K daily quota. Video upload Phase 2.</div>
+        <div class="node-tech">OAUTH 2.0 &bull; 5,000 CHAR &bull; QUOTA MGMT</div>
+      </div>
+      <div class="node">
+        <div class="node-title" style="color:var(--green);">
+          <span class="status status-partial">EASY</span> Medium
+        </div>
+        <div class="node-desc">API v1. Self-issued integration token. Creates drafts only (manual publish). Simplest integration.</div>
+        <div class="node-tech">BEARER TOKEN &bull; HTML/MD &bull; CANONICAL URL</div>
+      </div>
+    </div>
+
+    <div class="connector-row" style="margin-top:12px;">
+      <div class="connector-line"></div>
+      <div class="connector-label">ALL POSTS LINK BACK TO OWNED PROPERTY</div>
+      <div class="connector-line"></div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow"><span class="arrow">&darr; &uarr;</span> AI GENERATES 5 PLATFORM VERSIONS FROM 1 EDITORIAL NOTE</div>
+
+<!-- ========================================
+     LAYER 5: AI / CLAUDE ENGINE
+     ======================================== -->
+<div class="layer layer-ai">
+  <div class="layer-header">
+    <span class="layer-num">L5</span> AI / Claude Engine (Gunther)
+    <span class="layer-desc">Scoring &bull; Reformatting &bull; Digest &bull; Visual generation</span>
+  </div>
+  <div class="layer-body">
+    <div class="nodes">
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Feed Scoring</div>
+        <div class="node-desc">Every 4h cron. Score new items 1-10 on relevance (domain signal + arc alignment + recency + source authority).</div>
+        <div class="node-tech">CLAUDE API &bull; WP CRON &bull; META WRITE</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Morning Digest</div>
+        <div class="node-desc">Daily 0600 CST. Top 20 items grouped by domain. Scores, arc alignment, source links. Sent via Gmail MCP.</div>
+        <div class="node-tech">CLAUDE &bull; GMAIL MCP &bull; SCHEDULED TASK</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Content Reformatter</div>
+        <div class="node-desc">Single editorial note &rarr; 5 platform-optimized versions. Tone, length, format per platform. One API call.</div>
+        <div class="node-tech">CLAUDE API &bull; PROMPT TEMPLATES &bull; 5-OUTPUT</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> 7-Block Summary</div>
+        <div class="node-desc">Daily 0800 CST. One-line per block for Gunther morning standup briefing.</div>
+        <div class="node-tech">CLAUDE &bull; STANDUP INTEGRATION</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-partial">CONFIG</span> Canva MCP</div>
+        <div class="node-desc">Visual card generation from templates. Domain-branded cards for IG + X + blog featured images.</div>
+        <div class="node-tech">CANVA MCP &bull; 6 DOMAIN TEMPLATES</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Arc Scoring</div>
+        <div class="node-desc">Item content vs. active thematic arc description. Secondary ranking signal for curation.</div>
+        <div class="node-tech">CLAUDE &bull; THEMATIC ARC TAXONOMY</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow"><span class="arrow">&darr;</span> RUNS ON TOP OF INFRASTRUCTURE</div>
+
+<!-- ========================================
+     LAYER 6: INFRASTRUCTURE
+     ======================================== -->
+<div class="layer layer-infra">
+  <div class="layer-header">
+    <span class="layer-num">L6</span> Infrastructure
+    <span class="layer-desc">Hosting &bull; Auth &bull; Version control &bull; Secrets &bull; Monitoring</span>
+  </div>
+  <div class="layer-body">
+    <div class="nodes">
+      <div class="node">
+        <div class="node-title"><span class="status status-have">HAVE</span> WordPress Hosting</div>
+        <div class="node-desc">justin-kuiper.com live. PHP 8.x, MySQL, SSL. Current host supports WP cron + REST API.</div>
+        <div class="node-tech">HOSTING PROVIDER &bull; SSL &bull; PHP 8</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-have">HAVE</span> GitLab Repo</div>
+        <div class="node-desc">JK.com-ver02 (new). jk-com (existing). Pages deployed. CI/CD configured.</div>
+        <div class="node-tech">gitlab.com/h3ndriks.j &bull; PAGES &bull; CI/CD</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Token Vault</div>
+        <div class="node-desc">Encrypted storage for 5 platform tokens + GitLab PAT. wp-config.php defines or secrets manager plugin.</div>
+        <div class="node-tech">WP OPTIONS (ENCRYPTED) &bull; ENV VARS</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Token Refresh Cron</div>
+        <div class="node-desc">Daily check: auto-refresh expiring tokens. Email alert if manual re-auth needed. Covers all 5 platforms.</div>
+        <div class="node-tech">WP CRON &bull; OAUTH REFRESH &bull; EMAIL ALERT</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Rate Limit Handler</div>
+        <div class="node-desc">Retry with exponential backoff. Rate headers monitored. Queue prevents burst publishing.</div>
+        <div class="node-tech">PHP QUEUE &bull; BACKOFF &bull; HEADER PARSE</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Audit Log</div>
+        <div class="node-desc">Custom DB table: timestamp, platform, post URL, item ID, user. All publish actions logged.</div>
+        <div class="node-tech">CUSTOM TABLE &bull; $wpdb &bull; ADMIN VIEW</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">BUILD</span> Feed Health Monitor</div>
+        <div class="node-desc">Detect broken feeds. Dashboard widget. Email alert to Yeti when feeds fail.</div>
+        <div class="node-tech">WP CRON &bull; HTTP CHECK &bull; DASHBOARD WIDGET</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-partial">LATER</span> Subdomain</div>
+        <div class="node-desc">markdown.justin-kuiper.com pointing to The Markdown page. DNS + WP routing + SSL.</div>
+        <div class="node-tech">DNS CNAME &bull; WP ROUTING &bull; SSL CERT</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     SUMMARY TABLE
+     ======================================== -->
+<div class="section-divider">Readiness Summary</div>
+
+<div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-top:10px;">
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th style="width:30%;">Component</th>
+        <th style="width:15%;">Status</th>
+        <th style="width:35%;">What&rsquo;s Needed</th>
+        <th style="width:20%;">Sprint</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>WordPress Core</td><td><span class="status status-have">HAVE</span></td><td>Live and running</td><td>&mdash;</td></tr>
+      <tr><td>Domain + SSL</td><td><span class="status status-have">HAVE</span></td><td>Active at justin-kuiper.com</td><td>&mdash;</td></tr>
+      <tr><td>GitLab Repos</td><td><span class="status status-have">HAVE</span></td><td>jk-com + JK.com-ver02 both active</td><td>&mdash;</td></tr>
+      <tr><td>Homepage / Blog / Contact</td><td><span class="status status-have">HAVE</span></td><td>Existing pages, no changes needed</td><td>&mdash;</td></tr>
+      <tr><td>Design System / Prototype</td><td><span class="status status-have">HAVE</span></td><td>Live on GitLab Pages</td><td>&mdash;</td></tr>
+      <tr><td>Canva MCP</td><td><span class="status status-partial">PARTIAL</span></td><td>Connected, need 6 domain templates</td><td>Sprint 3</td></tr>
+      <tr><td>WP RSS Aggregator Pro</td><td><span class="status status-partial">PARTIAL</span></td><td>Purchase license (~$79/yr), configure feeds</td><td>Sprint 1</td></tr>
+      <tr><td>ns_feed_item CPT + Taxonomies</td><td><span class="status status-need">BUILD</span></td><td>Custom plugin: CPT, 4 taxonomies, 15 meta fields</td><td>Sprint 1</td></tr>
+      <tr><td>Editorial Dashboard</td><td><span class="status status-need">BUILD</span></td><td>Admin UI for DEV feed + promote + block assign</td><td>Sprint 1</td></tr>
+      <tr><td>The Markdown Page Template</td><td><span class="status status-need">BUILD</span></td><td>PHP template rendering 7-block layout from data</td><td>Sprint 1</td></tr>
+      <tr><td>Claude Feed Scoring</td><td><span class="status status-need">BUILD</span></td><td>4h cron, API integration, meta writes</td><td>Sprint 1</td></tr>
+      <tr><td>Claude Morning Digest</td><td><span class="status status-need">BUILD</span></td><td>Daily email via Gmail MCP</td><td>Sprint 1</td></tr>
+      <tr><td>X API Integration</td><td><span class="status status-need">BUILD</span></td><td>OAuth 2.0, tweet/thread, callback</td><td>Sprint 2</td></tr>
+      <tr><td>LinkedIn API Integration</td><td><span class="status status-need">BUILD</span></td><td>OAuth 2.0, personal profile posting</td><td>Sprint 2</td></tr>
+      <tr><td>Instagram API</td><td><span class="status status-blocked">BLOCKED</span></td><td>Facebook App Review (2-4 weeks). Submit NOW.</td><td>Sprint 2</td></tr>
+      <tr><td>YouTube API</td><td><span class="status status-need">BUILD</span></td><td>OAuth 2.0, community posts</td><td>Sprint 2</td></tr>
+      <tr><td>Medium API</td><td><span class="status status-partial">EASY</span></td><td>Integration token, draft creation</td><td>Sprint 2</td></tr>
+      <tr><td>AI Reformatting Engine</td><td><span class="status status-need">BUILD</span></td><td>Prompt templates, 5-output generation</td><td>Sprint 2</td></tr>
+      <tr><td>Quick-Publish Admin Panel</td><td><span class="status status-need">BUILD</span></td><td>Inline editor + toggles + preview + dispatch</td><td>Sprint 2</td></tr>
+      <tr><td>Token Vault + Refresh</td><td><span class="status status-need">BUILD</span></td><td>Encrypted storage, auto-refresh cron</td><td>Sprint 3</td></tr>
+      <tr><td>Rate Limit Handler</td><td><span class="status status-need">BUILD</span></td><td>Queue + backoff + header monitoring</td><td>Sprint 3</td></tr>
+      <tr><td>Archive Page</td><td><span class="status status-need">BUILD</span></td><td>Historical editions, filterable</td><td>Sprint 3</td></tr>
+      <tr><td>Analytics Dashboard</td><td><span class="status status-need">BUILD</span></td><td>Cross-platform engagement tracking</td><td>Sprint 3</td></tr>
+      <tr><td>Subdomain</td><td><span class="status status-partial">LATER</span></td><td>DNS + routing + SSL for markdown.*</td><td>Sprint 3</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="text-align:center; margin-top:30px; padding:16px; border-top:1px solid var(--border);">
+  <div style="font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:600; letter-spacing:3px; color:var(--text3); text-transform:uppercase;">The Markdown &bull; Non Sequitur &bull; Architecture v1.0</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text3); letter-spacing:1px; margin-top:4px;">ARCHITECT &rarr; HARDEN &rarr; SCALE &bull; THE MISSION DEFINES THE ARCHITECTURE</div>
+</div>
+
+</body>
+</html>
