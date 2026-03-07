@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE MARKDOWN | Non Sequitur News Aggregator</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #1A1D23;
+    --bg-secondary: #22262E;
+    --bg-tertiary: #2A2F38;
+    --bg-card: #1E2229;
+    --accent-blue: #3B82F6;
+    --accent-blue-dim: #2563EB;
+    --accent-blue-glow: rgba(59, 130, 246, 0.15);
+    --accent-ai: #06B6D4;
+    --accent-cyber: #00FF88;
+    --accent-innovation: #FACC15;
+    --accent-fnw: #C084FC;
+    --accent-space: #FF6B35;
+    --accent-digital: #14B8A6;
+    --text-primary: #E8ECF1;
+    --text-secondary: #9CA3AF;
+    --text-dim: #6B7280;
+    --border-subtle: #2D3340;
+    --border-accent: #3B82F6;
+    --font-display: 'Rajdhani', sans-serif;
+    --font-body: 'Source Sans Pro', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s, opacity 0.2s; }
+  a:hover { color: #60A5FA; text-decoration: underline; }
+
+  /* MASTHEAD */
+  .masthead {
+    background: linear-gradient(180deg, #0D0F13 0%, var(--bg-primary) 100%);
+    border-bottom: 2px solid var(--accent-blue);
+    padding: 20px 0 16px;
+    text-align: center;
+    position: relative;
+  }
+  .masthead::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+    box-shadow: 0 0 20px var(--accent-blue-glow);
+  }
+  .masthead-title {
+    font-family: var(--font-display);
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .masthead-title span { color: var(--accent-blue); }
+  .masthead-subtitle {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .masthead-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+  }
+  .masthead-updated {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .masthead-nav {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 0 20px;
+  }
+  .masthead-nav a {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .masthead-nav a:hover {
+    color: var(--accent-blue);
+    border-bottom-color: var(--accent-blue);
+    text-decoration: none;
+  }
+
+  /* HERO (Block 00) */
+  .hero {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 20px 0;
+    text-align: center;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 24px;
+  }
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hero-headline a { color: inherit; }
+  .hero-headline a:hover { color: var(--accent-blue); text-decoration: none; }
+  .hero-image {
+    max-width: 680px;
+    width: 100%;
+    margin: 16px auto;
+    border-radius: 4px;
+    border: 1px solid var(--border-subtle);
+    display: block;
+  }
+  .hero-blurb {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 12px auto 0;
+    line-height: 1.6;
+  }
+  .hero-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+  .hero-domain-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .tag-ai { background: rgba(6,182,212,0.12); color: var(--accent-ai); border: 1px solid rgba(6,182,212,0.25); }
+  .tag-cyber { background: rgba(0,255,136,0.12); color: var(--accent-cyber); border: 1px solid rgba(0,255,136,0.25); }
+  .tag-innovation { background: rgba(250,204,21,0.12); color: var(--accent-innovation); border: 1px solid rgba(250,204,21,0.25); }
+  .tag-fnw { background: rgba(192,132,252,0.12); color: var(--accent-fnw); border: 1px solid rgba(192,132,252,0.25); }
+  .tag-space { background: rgba(255,107,53,0.12); color: var(--accent-space); border: 1px solid rgba(255,107,53,0.25); }
+  .tag-digital { background: rgba(20,184,166,0.12); color: var(--accent-digital); border: 1px solid rgba(20,184,166,0.25); }
+
+  /* COMMENTARY STYLES */
+
+  /* Tweet Card */
+  .commentary-tweet {
+    margin: 10px 14px 14px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .commentary-tweet:hover {
+    border-color: var(--accent-blue);
+    background: rgba(59,130,246,0.05);
+  }
+  .commentary-tweet-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .commentary-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .commentary-author {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .commentary-author-name {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .commentary-author-handle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .commentary-platform-icon {
+    margin-left: auto;
+    font-size: 14px;
+    opacity: 0.5;
+  }
+  .commentary-tweet-body {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .commentary-tweet-footer {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .commentary-tweet-footer .platform-link {
+    color: var(--accent-blue);
+    font-size: 9px;
+    margin-left: auto;
+  }
+
+  /* Pull Quote */
+  .commentary-pullquote {
+    margin: 10px 14px 14px;
+    padding: 12px 16px;
+    border-left: 3px solid var(--accent-blue);
+    background: rgba(59,130,246,0.04);
+    border-radius: 0 6px 6px 0;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .commentary-pullquote:hover {
+    background: rgba(59,130,246,0.08);
+  }
+  .commentary-pullquote-text {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .commentary-pullquote-text::before { content: '\201C'; color: var(--accent-blue); font-size: 20px; font-weight: 700; margin-right: 2px; }
+  .commentary-pullquote-text::after { content: '\201D'; color: var(--accent-blue); font-size: 20px; font-weight: 700; margin-left: 2px; }
+  .commentary-pullquote-attr {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .commentary-pullquote-attr .platform-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: rgba(59,130,246,0.12);
+    color: var(--accent-blue);
+    font-size: 9px;
+  }
+
+  /* Inline with Icon */
+  .commentary-inline {
+    margin: 0;
+    padding: 10px 14px;
+    background: rgba(59,130,246,0.04);
+    border-top: 1px solid rgba(59,130,246,0.15);
+    border-bottom: 1px solid rgba(59,130,246,0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .commentary-inline:hover {
+    background: rgba(59,130,246,0.08);
+  }
+  .commentary-inline-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: white;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .commentary-inline-text {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--accent-blue);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .commentary-inline-platform {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  /* GRID */
+  .grid-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 20px;
+  }
+  .column { min-width: 0; }
+
+  /* SECTION BLOCKS */
+  .section-block {
+    margin-bottom: 20px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    background: var(--bg-card);
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-tertiary);
+  }
+  .section-slot-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+    background: var(--bg-primary);
+    padding: 2px 7px;
+    border-radius: 3px;
+    line-height: 1;
+  }
+  .section-label {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .label-ai { color: var(--accent-ai); }
+  .label-cyber { color: var(--accent-cyber); }
+  .label-innovation { color: var(--accent-innovation); }
+  .label-fnw { color: var(--accent-fnw); }
+  .label-space { color: var(--accent-space); }
+  .label-digital { color: var(--accent-digital); }
+  .section-role {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+  .section-platforms {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    background: rgba(59,130,246,0.03);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-platforms .platform-tag {
+    padding: 1px 6px;
+    border-radius: 2px;
+    background: rgba(59,130,246,0.08);
+    color: var(--text-dim);
+    font-size: 8px;
+  }
+
+  /* LINK ITEMS */
+  .link-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(45, 51, 64, 0.5);
+    transition: background 0.15s;
+  }
+  .link-item:last-child { border-bottom: none; }
+  .link-item:hover { background: var(--bg-tertiary); }
+  .link-headline {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .link-headline a { color: var(--text-primary); }
+  .link-headline a:hover { color: var(--accent-blue); text-decoration: none; }
+  .link-headline.featured {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .link-blurb {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+  .link-source {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .link-divider {
+    text-align: center;
+    padding: 6px 0;
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 4px;
+  }
+
+  /* CENTER COLUMN */
+  .center-featured .link-headline {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .center-featured .link-blurb { text-align: center; font-size: 14px; }
+  .center-featured .link-source { text-align: center; display: block; }
+  .section-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  /* TICKER */
+  .ticker {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 8px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .ticker-item { display: flex; align-items: center; gap: 6px; }
+  .ticker-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .ticker-dot.live { background: #EF4444; animation: pulse 2s infinite; }
+  .ticker-dot.neutral { background: var(--text-dim); }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* THEMATIC ARC */
+  .thematic-arc-bar {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 6px 20px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    background: rgba(59,130,246,0.06);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  /* HERO COMMENTARY */
+  .hero-commentary {
+    max-width: 680px;
+    margin: 16px auto 0;
+  }
+
+  /* FOOTER */
+  .site-footer {
+    max-width: 1280px;
+    margin: 40px auto 0;
+    padding: 20px;
+    border-top: 1px solid var(--border-subtle);
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .footer-links {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .footer-links a { color: var(--text-dim); margin: 0 12px; }
+  .footer-links a:hover { color: var(--accent-blue); }
+  .footer-copy { font-size: 11px; color: var(--text-dim); margin-top: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .grid-container { grid-template-columns: 1fr; gap: 16px; }
+    .masthead-title { font-size: 36px; letter-spacing: 4px; }
+    .hero-headline { font-size: 28px; }
+    .masthead-nav { gap: 12px; }
+  }
+  @media (min-width: 901px) and (max-width: 1100px) {
+    .grid-container { grid-template-columns: 1fr 1.2fr 1fr; gap: 14px; }
+    .masthead-title { font-size: 42px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-title">THE <span>MARK</span>DOWN</div>
+  <div class="masthead-subtitle">Non Sequitur &bull; Curated Intelligence</div>
+  <div class="masthead-date" id="currentDate"></div>
+  <div class="masthead-updated" id="lastUpdated"></div>
+  <nav class="masthead-nav">
+    <a href="#">AI</a>
+    <a href="#">Cyber</a>
+    <a href="#">Innovation</a>
+    <a href="#">FNW</a>
+    <a href="#">Space</a>
+    <a href="#">Digital Life</a>
+    <a href="#">Blog</a>
+    <a href="#">X</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Instagram</a>
+  </nav>
+</header>
+
+<!-- THEMATIC ARC -->
+<div class="thematic-arc-bar">Year One &mdash; Reinvention</div>
+
+<!-- ============================================
+     BLOCK 00: Hero Headline (full-width splash)
+     ============================================ -->
+<section class="hero">
+  <span class="hero-domain-tag tag-ai">AI &bull; BLOCK 00</span>
+  <h1 class="hero-headline">
+    <a href="#">OpenAI Unveils GPT-5 With Real-Time Reasoning, Sends Shockwaves Through Enterprise AI Market</a>
+  </h1>
+  <img class="hero-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='680' height='380' fill='%2322262E'%3E%3Crect width='680' height='380'/%3E%3Ctext x='340' y='180' text-anchor='middle' fill='%234B5563' font-family='monospace' font-size='14'%3EHERO IMAGE%3C/text%3E%3Ctext x='340' y='200' text-anchor='middle' fill='%234B5563' font-family='monospace' font-size='11'%3E680 x 380 &bull; Lead story visual%3C/text%3E%3C/svg%3E" alt="Hero image placeholder">
+  <p class="hero-blurb">Real-time chain-of-thought reasoning in production changes the enterprise calculus overnight. Every company with an AI roadmap just got their timeline compressed. The moat question is back on the table.</p>
+  <div class="hero-meta">TechCrunch &bull; Block 00: Lead Headline &bull; 2 hours ago</div>
+
+  <!-- Block 00 Commentary: Tweet Card -->
+  <div class="hero-commentary">
+    <a href="https://x.com" style="text-decoration:none; color:inherit;">
+      <div class="commentary-tweet">
+        <div class="commentary-tweet-header">
+          <div class="commentary-avatar">JK</div>
+          <div class="commentary-author">
+            <span class="commentary-author-name">Justin Kuiper</span>
+            <span class="commentary-author-handle">@yeti_sec</span>
+          </div>
+          <span class="commentary-platform-icon">&#120143;</span>
+        </div>
+        <div class="commentary-tweet-body">Real-time reasoning isn't just a model upgrade &mdash; it's an architecture shift. Every AI-assisted security workflow I've built in the last year just became a candidate for a complete rewrite. Thread on implications for cyber defense coming.</div>
+        <div class="commentary-tweet-footer">
+          <span>Mar 7, 2026 &bull; 0842</span>
+          <span class="platform-link">View on X &rarr;</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-item"><span class="ticker-dot live"></span> 47 items ingested today</div>
+  <div class="ticker-item"><span class="ticker-dot neutral"></span> 7 blocks filled</div>
+  <div class="ticker-item"><span class="ticker-dot neutral"></span> Next refresh 0900</div>
+</div>
+
+<!-- THREE-COLUMN GRID -->
+<main class="grid-container">
+
+  <!-- ==========================================
+       LEFT COLUMN: Blocks 01 (AI) & 02 (Cyber)
+       ========================================== -->
+  <div class="column column-left">
+
+    <!-- BLOCK 01: AI / Gen AI -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-slot-num">01</span>
+        <span class="section-label label-ai">AI / Gen AI</span>
+        <span class="section-role">Lead Story</span>
+      </div>
+      <div class="section-platforms">
+        Push: <span class="platform-tag">X</span> <span class="platform-tag">LinkedIn</span> <span class="platform-tag">Medium</span> <span class="platform-tag">YouTube</span>
+      </div>
+      <div class="link-item">
+        <div class="link-headline featured">
+          <a href="#">Anthropic Claude Hits 1M-Token Context Window in Production, Redefines Document Intelligence</a>
+        </div>
+        <div class="link-blurb">Entire codebases, legal corpora, and research libraries in a single prompt. The context window arms race just entered a new phase.</div>
+        <div class="link-source">The Verge &bull; 3h ago</div>
+      </div>
+
+      <!-- Block 01 Commentary: Pull Quote -->
+      <a href="https://linkedin.com" style="text-decoration:none; color:inherit;">
+        <div class="commentary-pullquote">
+          <div class="commentary-pullquote-text">The context window is the new moat. When you can ingest an entire compliance framework in one pass, the workflow isn't assisted anymore &mdash; it's autonomous.</div>
+          <div class="commentary-pullquote-attr">
+            <span>Yeti</span>
+            <span class="platform-badge">&#9679; LinkedIn &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="link-divider">&bull; &bull; &bull;</div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Google DeepMind's AlphaFold 3 Predicts Drug Interactions With 94% Accuracy</a></div>
+        <div class="link-blurb">AI-driven drug discovery just leapfrogged years of traditional pharma R&D timelines.</div>
+        <div class="link-source">Nature &bull; 6h ago</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">EU AI Act Enforcement Begins: First Fines Expected by Q3</a></div>
+        <div class="link-source">Reuters &bull; 8h ago</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Stability AI Open-Sources Video Generation Model</a></div>
+        <div class="link-source">Ars Technica &bull; 12h ago</div>
+      </div>
+    </div>
+
+    <!-- BLOCK 02: Cyber -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-slot-num">02</span>
+        <span class="section-label label-cyber">Cyber</span>
+        <span class="section-role">Threat Intel</span>
+      </div>
+      <div class="section-platforms">
+        Push: <span class="platform-tag">X</span> <span class="platform-tag">LinkedIn</span> <span class="platform-tag">Medium</span>
+      </div>
+      <div class="link-item">
+        <div class="link-headline featured">
+          <a href="#">CISA Warns of Active Exploitation in Palo Alto Networks Firewalls</a>
+        </div>
+        <div class="link-blurb">Zero-day in PAN-OS being exploited in the wild. CISA added to KEV catalog. If you're running GlobalProtect, patch now or segment hard.</div>
+        <div class="link-source">BleepingComputer &bull; 4h ago</div>
+      </div>
+
+      <!-- Block 02 Commentary: Inline + Icon -->
+      <a href="https://x.com" style="text-decoration:none; color:inherit;">
+        <div class="commentary-inline">
+          <div class="commentary-inline-icon">&#120143;</div>
+          <div class="commentary-inline-text">Third PAN-OS zero-day this year. At what point do we stop calling these zero-days and start calling them a pattern? If your perimeter vendor is a recurring KEV entry, that's not a product &mdash; that's a liability.</div>
+          <div class="commentary-inline-platform">X &rarr;</div>
+        </div>
+      </a>
+
+      <div class="link-divider">&bull; &bull; &bull;</div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">AI-Generated Phishing Now Bypasses 94% of Email Filters</a></div>
+        <div class="link-blurb">The arms race between AI offense and defense just tilted. Signature-based detection is functionally dead.</div>
+        <div class="link-source">Dark Reading &bull; 6h ago</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Zero Trust Adoption Hits 61% Among Federal Agencies</a></div>
+        <div class="link-source">CyberScoop &bull; 1d ago</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">CMMC 2.0 Rollout: What Defense Contractors Need by September</a></div>
+        <div class="link-source">Federal News Network &bull; 1d ago</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       CENTER COLUMN: Blocks 03 (Innovation) & 04 (FNW)
+       ========================================== -->
+  <div class="column column-center">
+
+    <!-- BLOCK 03: Innovation -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-slot-num">03</span>
+        <span class="section-label label-innovation">Innovation</span>
+        <span class="section-role">Center Stage</span>
+      </div>
+      <div class="section-platforms">
+        Push: <span class="platform-tag">X</span> <span class="platform-tag">LinkedIn</span> <span class="platform-tag">Instagram</span> <span class="platform-tag">Medium</span>
+      </div>
+      <img class="section-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='200' fill='%2322262E'%3E%3Crect width='500' height='200'/%3E%3Ctext x='250' y='95' text-anchor='middle' fill='%234B5563' font-family='monospace' font-size='12'%3ESECTION IMAGE%3C/text%3E%3Ctext x='250' y='115' text-anchor='middle' fill='%234B5563' font-family='monospace' font-size='10'%3EInnovation center stage visual%3C/text%3E%3C/svg%3E" alt="Innovation section image">
+      <div class="link-item center-featured">
+        <div class="link-headline">
+          <a href="#">When AI Meets Orbital Mechanics: Machine Learning Rewrites Satellite Collision Avoidance</a>
+        </div>
+        <div class="link-blurb">Cross-domain convergence in action. AI + space + trust architecture. The domains aren't separate &mdash; they never were. This is the Non Sequitur thesis in one story.</div>
+        <div class="link-source">Ars Technica &bull; 5h ago</div>
+      </div>
+
+      <!-- Block 03: Tweet Card commentary -->
+      <a href="https://x.com" style="text-decoration:none; color:inherit;">
+        <div class="commentary-tweet" style="margin-top:0;">
+          <div class="commentary-tweet-header">
+            <div class="commentary-avatar">JK</div>
+            <div class="commentary-author">
+              <span class="commentary-author-name">Justin Kuiper</span>
+              <span class="commentary-author-handle">@yeti_sec</span>
+            </div>
+            <span class="commentary-platform-icon">&#120143;</span>
+          </div>
+          <div class="commentary-tweet-body">This is what Innovation block is for. The intersection stories that don't fit neatly into one lane. AI doing orbital mechanics. Cyber protecting space assets. The convergence IS the signal.</div>
+          <div class="commentary-tweet-footer">
+            <span>Mar 7, 2026 &bull; 0815</span>
+            <span class="platform-link">View on X &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="link-divider">&bull; &bull; &bull;</div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Pentagon's Replicator Program Hits 1,000-Drone Milestone</a></div>
+        <div class="link-blurb">The autonomous swarm future isn't future anymore.</div>
+        <div class="link-source">Breaking Defense &bull; 6h ago</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Brain-Computer Interface Startup Hits 200-Word-Per-Minute Typing Record</a></div>
+        <div class="link-source">MIT Tech Review &bull; 8h ago</div>
+      </div>
+    </div>
+
+    <!-- BLOCK 04: FNW (Faith & Wisdom) -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-slot-num">04</span>
+        <span class="section-label label-fnw">FNW</span>
+        <span class="section-role">Reflection</span>
+      </div>
+      <div class="section-platforms">
+        Push: <span class="platform-tag">Instagram</span> <span class="platform-tag">X</span> <span class="platform-tag">Medium</span> <span class="platform-tag">YouTube</span>
+      </div>
+      <div class="link-item center-featured">
+        <div class="link-headline">
+          <a href="#">The Stoic Case for Starting Over at 45: Why Reinvention Is the Most Ancient of Virtues</a>
+        </div>
+        <div class="link-blurb">Marcus Aurelius understood that identity is a practice, not a destination. Stoic philosophy meets the modern career pivot.</div>
+        <div class="link-source">The Marginalian &bull; 1d ago</div>
+      </div>
+
+      <!-- Block 04: Pull Quote commentary -->
+      <a href="https://instagram.com" style="text-decoration:none; color:inherit;">
+        <div class="commentary-pullquote">
+          <div class="commentary-pullquote-text">You don't have to burn it down to start over. Sometimes reinvention is just giving yourself permission to be a beginner again.</div>
+          <div class="commentary-pullquote-attr">
+            <span>Yeti</span>
+            <span class="platform-badge">&#9679; Instagram &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="link-divider">&bull; &bull; &bull;</div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Piper: "God's Sovereignty Makes You Fearless"</a></div>
+        <div class="link-blurb">Sovereignty theology as a framework for bold action, not quiet resignation.</div>
+        <div class="link-source">Desiring God &bull; 2d ago</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Bible Project: "Exile" as the Bible's Most Powerful Growth Metaphor</a></div>
+        <div class="link-source">Bible Project Blog &bull; 3d ago</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       RIGHT COLUMN: Blocks 05 (Space/Aero) & 06 (Digital Life)
+       ========================================== -->
+  <div class="column column-right">
+
+    <!-- BLOCK 05: Space / Aero -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-slot-num">05</span>
+        <span class="section-label label-space">Space / Aero</span>
+        <span class="section-role">Orbit Intel</span>
+      </div>
+      <div class="section-platforms">
+        Push: <span class="platform-tag">X</span> <span class="platform-tag">LinkedIn</span> <span class="platform-tag">YouTube</span> <span class="platform-tag">Medium</span>
+      </div>
+      <div class="link-item">
+        <div class="link-headline featured">
+          <a href="#">SpaceX Starship Completes First Orbital Refueling Test, Opening Door to Lunar Missions</a>
+        </div>
+        <div class="link-blurb">The first successful ship-to-ship propellant transfer in orbit changes everything about the Artemis timeline.</div>
+        <div class="link-source">SpaceflightNow &bull; 3h ago</div>
+      </div>
+
+      <!-- Block 05: Inline commentary -->
+      <a href="https://linkedin.com" style="text-decoration:none; color:inherit;">
+        <div class="commentary-inline">
+          <div class="commentary-inline-icon">in</div>
+          <div class="commentary-inline-text">Orbital refueling was the single biggest technical risk on the Artemis critical path. Now it's proven capability. The Moon isn't aspirational anymore &mdash; it's logistical.</div>
+          <div class="commentary-inline-platform">LinkedIn &rarr;</div>
+        </div>
+      </a>
+
+      <div class="link-divider">&bull; &bull; &bull;</div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Artemis III Crew Announcement Expected Next Month</a></div>
+        <div class="link-blurb">The return to the Moon is getting names. This is when it becomes real.</div>
+        <div class="link-source">SpaceNews &bull; 5h ago</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">Space Force Stands Up First Cyber Squadron for Orbital Assets</a></div>
+        <div class="link-source">Defense One &bull; 8h ago</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">FAA Finalizes BVLOS Rules for Commercial Drones</a></div>
+        <div class="link-source">sUAS News &bull; 1d ago</div>
+      </div>
+    </div>
+
+    <!-- BLOCK 06: Digital Life -->
+    <div class="section-block">
+      <div class="section-header">
+        <span class="section-slot-num">06</span>
+        <span class="section-label label-digital">Digital Life</span>
+        <span class="section-role">Personal Arc</span>
+      </div>
+      <div class="section-platforms">
+        Push: <span class="platform-tag">X</span> <span class="platform-tag">Instagram</span> <span class="platform-tag">YouTube</span>
+      </div>
+      <div class="link-item">
+        <div class="link-headline featured">
+          <a href="#">From Military Service to Tech Leadership: The Reinvention Playbook Nobody Gives You</a>
+        </div>
+        <div class="link-blurb">This week's thematic anchor. Rebuilding your operating identity from first principles. Writing this one for the blog.</div>
+        <div class="link-source">justin-kuiper.com &bull; Draft</div>
+      </div>
+
+      <!-- Block 06: Tweet Card for personal content -->
+      <a href="https://instagram.com" style="text-decoration:none; color:inherit;">
+        <div class="commentary-tweet">
+          <div class="commentary-tweet-header">
+            <div class="commentary-avatar">JK</div>
+            <div class="commentary-author">
+              <span class="commentary-author-name">Justin Kuiper</span>
+              <span class="commentary-author-handle">@yeti</span>
+            </div>
+            <span class="commentary-platform-icon">&#9679;</span>
+          </div>
+          <div class="commentary-tweet-body">New puppy, new career chapter, kids moving on. Reinvention isn't just a brand theme &mdash; it's Tuesday. More on the blog this week.</div>
+          <div class="commentary-tweet-footer">
+            <span>Mar 7, 2026 &bull; 0730</span>
+            <span class="platform-link">View on Instagram &rarr;</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="link-divider">&bull; &bull; &bull;</div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">New Vlog: "Why I Started a News Aggregator in 2026"</a></div>
+        <div class="link-blurb">Behind-the-scenes on building The Markdown.</div>
+        <div class="link-source">YouTube &bull; Coming Soon</div>
+      </div>
+      <div class="link-item">
+        <div class="link-headline"><a href="#">The Best Noise-Canceling Headphones for Deep Work in 2026</a></div>
+        <div class="link-source">Wired &bull; 1d ago</div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-logo">The Markdown</div>
+  <div class="footer-links">
+    <a href="#">Archive</a>
+    <a href="#">RSS</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-copy">&copy; 2026 Non Sequitur &bull; Justin Kuiper &bull; Curated daily at justin-kuiper.com</div>
+</footer>
+
+<script>
+  // Date in military format
+  const now = new Date();
+  const days = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+  const months = ['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
+  const day = days[now.getDay()];
+  const month = months[now.getMonth()];
+  const date = now.getDate();
+  const year = now.getFullYear();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('currentDate').textContent = `${day}, ${month} ${date}, ${year} | ${hours}${minutes}`;
+
+  // Last Updated line
+  document.getElementById('lastUpdated').textContent = `LAST UPDATED ${hours}${minutes} LOCAL`;
+</script>
+
+</body>
+</html>
