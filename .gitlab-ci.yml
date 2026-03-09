@@ -6,6 +6,7 @@ pages:
     - mkdir -p public
     - cp the-markdown/the-markdown-prototype.html public/index.html
     - cp the-markdown/TheMarkdown_Architecture_Diagram.html public/architecture.html
+    - cp "Scrum Master/Scrum_Burndown_Dashboard.html" public/burndown.html
   artifacts:
     paths:
       - public

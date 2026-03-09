@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taskmaster — Scrum Burndown Dashboard</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #e6edf3;
+  --muted: #8b949e; --accent: #58a6ff; --green: #3fb950; --yellow: #d29922;
+  --red: #f85149; --orange: #d18616; --purple: #bc8cff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.header h1 { font-size: 24px; font-weight: 600; }
+.header h1 span { color: var(--accent); }
+.clock { text-align: right; }
+.clock .time { font-size: 20px; font-weight: 600; color: var(--accent); }
+.clock .date { font-size: 13px; color: var(--muted); }
+.update-line { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.card h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 12px; }
+.metric { font-size: 32px; font-weight: 700; }
+.metric-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.bar-container { background: #21262d; border-radius: 4px; height: 24px; overflow: hidden; margin: 8px 0; display: flex; }
+.bar-done { background: var(--green); height: 100%; transition: width 0.3s; }
+.bar-active { background: var(--accent); height: 100%; transition: width 0.3s; }
+.bar-blocked { background: var(--red); height: 100%; transition: width 0.3s; }
+.bar-pending { background: #21262d; height: 100%; }
+.sprint-section { margin-bottom: 20px; }
+.sprint-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.sprint-label { font-weight: 600; font-size: 15px; }
+.sprint-stats { font-size: 13px; color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+tr:hover { background: rgba(88, 166, 255, 0.04); }
+.status { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+.status-done { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+.status-active { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+.status-next { background: rgba(210, 153, 34, 0.15); color: var(--yellow); }
+.status-pending { background: rgba(139, 148, 158, 0.15); color: var(--muted); }
+.status-blocked { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+.tag { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-sec { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+.tag-func { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+.gate-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+.gate { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); }
+.gate-pass { background: rgba(63, 185, 80, 0.15); color: var(--green); border-color: var(--green); }
+.gate-fail { background: rgba(248, 81, 73, 0.15); color: var(--red); border-color: var(--red); }
+.gate-pending { background: rgba(139, 148, 158, 0.1); color: var(--muted); }
+.gate-next { background: rgba(210, 153, 34, 0.15); color: var(--yellow); border-color: var(--yellow); }
+.blocker-item { padding: 10px 14px; background: rgba(248, 81, 73, 0.06); border-left: 3px solid var(--red); border-radius: 4px; margin-bottom: 8px; font-size: 13px; }
+.blocker-resolved { border-left-color: var(--green); background: rgba(63,185,80,0.06); }
+.blocker-id { font-weight: 700; color: var(--red); }
+.blocker-id-resolved { font-weight: 700; color: var(--green); }
+.blocker-age { color: var(--muted); font-size: 11px; }
+.owner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.owner-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px; text-align: center; }
+.owner-name { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.owner-hours { font-size: 18px; font-weight: 700; }
+.cross-link { margin-top: 20px; padding: 12px 16px; background: rgba(88, 166, 255, 0.06); border: 1px solid rgba(88, 166, 255, 0.2); border-radius: 8px; font-size: 13px; }
+.cross-link a { color: var(--accent); text-decoration: none; }
+.section-title { font-size: 18px; font-weight: 600; margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.win-banner { background: rgba(63, 185, 80, 0.08); border: 1px solid rgba(63, 185, 80, 0.3); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.win-banner h3 { color: var(--green); font-size: 14px; margin-bottom: 8px; }
+.win-banner ul { list-style: none; padding: 0; }
+.win-banner li { padding: 4px 0; font-size: 13px; }
+.win-banner li::before { content: "\2705 "; }
+.snippet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.snippet-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 12px; }
+.snippet-id { color: var(--accent); font-weight: 700; }
+.snippet-scope { color: var(--muted); font-size: 11px; }
+.health-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+.health-green { background: var(--green); }
+.health-yellow { background: var(--yellow); }
+.health-red { background: var(--red); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>TASKMASTER</span> — Scrum Burndown Dashboard</h1>
+  <div class="clock">
+    <div class="time" id="clock"></div>
+    <div class="date" id="date"></div>
+  </div>
+</div>
+<div class="update-line">Last Updated: 2026-03-09 | Sprint: S1 COMPLETE | Gates: G0-G3 PASSED | Next: S2 — Social &amp; Publishing</div>
+
+<!-- SPRINT 1 WIN BANNER -->
+<div class="win-banner">
+  <h3>SPRINT 1 COMPLETE — Gates G1, G2, G3 ALL PASSED</h3>
+  <ul>
+    <li>23/23 tasks closed — all FUNC and SEC tasks deployed to production</li>
+    <li>G1 Data Model: CPT registered, 15 meta fields, 4 taxonomies, input validation</li>
+    <li>G2 RSS/AI Pipeline: 40 feeds active, Claude scoring, dedup, prompt injection blocked</li>
+    <li>G3 Foundation: Editorial dashboard, 7-block layout, token vault, nonce verification, app passwords, rate limiting, audit logging, diagnostic logger</li>
+    <li>7 new Code Snippets deployed (IDs 30-37), 30 total active, zero code errors</li>
+    <li>Diagnostic health endpoint returning "healthy" — 0 errors, 0 warnings (24h)</li>
+  </ul>
+</div>
+
+<div class="win-banner" style="opacity: 0.6;">
+  <h3>SPRINT 0 COMPLETE — Gate 0 PASSED</h3>
+  <ul>
+    <li>7/7 hardening tasks closed — HTTPS, security headers, XML-RPC blocked, WP version hidden</li>
+  </ul>
+</div>
+
+<!-- TOP METRICS -->
+<div class="grid">
+  <div class="card">
+    <h3>Total Progress</h3>
+    <div class="metric" style="color: var(--green);">41%</div>
+    <div class="metric-sub">30 of 73 tasks complete</div>
+    <div class="bar-container">
+      <div class="bar-done" style="width: 41%"></div>
+      <div class="bar-pending" style="width: 59%"></div>
+    </div>
+    <div class="metric-sub">Done: 30 | Active: 0 | Pending: 43 | Blocked: 0</div>
+  </div>
+  <div class="card">
+    <h3>Hours Burndown</h3>
+    <div class="metric">153h</div>
+    <div class="metric-sub">remaining of 228h total (75h burned)</div>
+    <div class="bar-container">
+      <div class="bar-done" style="width: 33%"></div>
+    </div>
+    <div class="metric-sub">S0: 5h done | S1: 70h done | S2: 0/86h | S3: 0/67h</div>
+  </div>
+  <div class="card">
+    <h3>Active Blockers</h3>
+    <div class="metric" style="color: var(--orange);">1</div>
+    <div class="metric-sub">BLK-001 (Facebook App Review — Instagram API)</div>
+  </div>
+  <div class="card">
+    <h3>Cyber Gates</h3>
+    <div class="metric" style="color: var(--green);">4/7</div>
+    <div class="metric-sub">G0-G3 PASSED — Next: G4 (Social API OAuth)</div>
+  </div>
+</div>
+
+<!-- WORDPRESS HEALTH -->
+<div class="grid">
+  <div class="card">
+    <h3><span class="health-dot health-green"></span>WordPress Site Health</h3>
+    <div class="metric" style="color: var(--green); font-size: 24px;">HTTP 200</div>
+    <div class="metric-sub">justin-kuiper.com | 30 active snippets | 0 code errors</div>
+  </div>
+  <div class="card">
+    <h3><span class="health-dot health-green"></span>Diagnostic Logger</h3>
+    <div class="metric" style="color: var(--green); font-size: 24px;">Healthy</div>
+    <div class="metric-sub">0 errors / 0 warnings (24h) | 30-day retention | Auto-purge active</div>
+  </div>
+</div>
+
+<!-- SPRINT BURNDOWN BARS -->
+<div class="section-title">Sprint Burndown</div>
+<div class="card" style="margin-bottom: 24px;">
+  <div class="sprint-section">
+    <div class="sprint-header">
+      <span class="sprint-label">S0 — Immediate Hardening &#x2705;</span>
+      <span class="sprint-stats">7/7 tasks | 5h burned | G0 PASS</span>
+    </div>
+    <div class="bar-container"><div class="bar-done" style="width: 100%"></div></div>
+  </div>
+  <div class="sprint-section">
+    <div class="sprint-header">
+      <span class="sprint-label">S1 — Foundation Build &#x2705;</span>
+      <span class="sprint-stats">23/23 tasks | 74h burned | G1-G3 PASS</span>
+    </div>
+    <div class="bar-container"><div class="bar-done" style="width: 100%"></div></div>
+  </div>
+  <div class="sprint-section">
+    <div class="sprint-header">
+      <span class="sprint-label">S2 — Social &amp; Publishing &#x2190; NEXT</span>
+      <span class="sprint-stats">0/22 tasks | 0/86h | G4-G5 pending</span>
+    </div>
+    <div class="bar-container"><div class="bar-pending" style="width: 100%"></div></div>
+  </div>
+  <div class="sprint-section">
+    <div class="sprint-header">
+      <span class="sprint-label">S3 — Polish &amp; Scale</span>
+      <span class="sprint-stats">0/21 tasks | 0/67h | G6-G7 pending</span>
+    </div>
+    <div class="bar-container"><div class="bar-pending" style="width: 100%"></div></div>
+  </div>
+</div>
+
+<!-- CYBER GATE STATUS -->
+<div class="section-title">Cyber Gate Status</div>
+<div class="card" style="margin-bottom: 24px;">
+  <div class="gate-row">
+    <div class="gate gate-pass">G0 — Hardening &#x2705;</div>
+    <div class="gate gate-pass">G1 — Data Model &#x2705;</div>
+    <div class="gate gate-pass">G2 — RSS/AI &#x2705;</div>
+    <div class="gate gate-pass">G3 — Foundation &#x2705;</div>
+    <div class="gate gate-next">G4 — Social APIs &#x2190; NEXT</div>
+    <div class="gate gate-pending">G5 — Publishing</div>
+    <div class="gate gate-pending">G6 — Scale</div>
+  </div>
+</div>
+
+<!-- SECURITY BURNDOWN -->
+<div class="section-title">Security Task Burndown</div>
+<div class="card" style="margin-bottom: 24px;">
+  <table>
+    <thead>
+      <tr><th>Sprint</th><th>SEC Tasks</th><th>Done</th><th>Remaining</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>S0</td><td>7</td><td>7</td><td>0</td><td><span class="status status-done">COMPLETE</span></td></tr>
+      <tr><td>S1</td><td>8</td><td>8</td><td>0</td><td><span class="status status-done">COMPLETE</span></td></tr>
+      <tr><td>S2</td><td>8</td><td>0</td><td>8</td><td><span class="status status-next">NEXT</span></td></tr>
+      <tr><td>S3</td><td>8</td><td>0</td><td>8</td><td><span class="status status-pending">PENDING</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- DEPLOYED SNIPPETS -->
+<div class="section-title">WordPress Code Snippets (Production)</div>
+<div class="card" style="margin-bottom: 24px;">
+  <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Gate 3 snippets deployed via REST API — all active, zero errors</p>
+  <div class="snippet-grid">
+    <div class="snippet-card"><span class="snippet-id">ID:30</span> S1.17 Token Vault <span class="snippet-scope">| admin | pri:10</span></div>
+    <div class="snippet-card"><span class="snippet-id">ID:31</span> NS Vault Key <span class="snippet-scope">| global | pri:1</span></div>
+    <div class="snippet-card"><span class="snippet-id">ID:32</span> S1.22 Audit Logging <span class="snippet-scope">| admin | pri:10</span></div>
+    <div class="snippet-card"><span class="snippet-id">ID:33</span> S1.18 Nonce Verification <span class="snippet-scope">| admin | pri:10</span></div>
+    <div class="snippet-card"><span class="snippet-id">ID:34</span> S1.21 Rate Limiting <span class="snippet-scope">| global | pri:10</span></div>
+    <div class="snippet-card"><span class="snippet-id">ID:35</span> S1.20 Key Rotation <span class="snippet-scope">| admin | pri:10</span></div>
+    <div class="snippet-card"><span class="snippet-id">ID:36</span> S1.19 App Passwords <span class="snippet-scope">| global | pri:10</span></div>
+    <div class="snippet-card"><span class="snippet-id">ID:37</span> S1.23 Diagnostic Logger <span class="snippet-scope">| global | pri:2</span></div>
+  </div>
+</div>
+
+<!-- SPRINT 1 COMPLETED TASKS -->
+<div class="section-title">Sprint 1 — Completed Tasks (GitLab Issues #8-#29, #73)</div>
+<div class="card" style="margin-bottom: 24px; overflow-x: auto;">
+  <table>
+    <thead>
+      <tr><th>#</th><th>ID</th><th>Type</th><th>Task</th><th>Owner</th><th>Gate</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr style="opacity: 0.7;"><td>#8</td><td>S1.1</td><td><span class="tag tag-func">FUNC</span></td><td>Register ns_feed_item CPT with 15 meta fields</td><td>DevOps</td><td>G1</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#9</td><td>S1.2</td><td><span class="tag tag-func">FUNC</span></td><td>Register 4 custom taxonomies</td><td>DevOps</td><td>G1</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#10</td><td>S1.3</td><td><span class="tag tag-sec">SEC</span></td><td>Input validation on all CPT meta fields</td><td>Cyber Ops</td><td>G1</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#11</td><td>S1.4</td><td><span class="tag tag-func">FUNC</span></td><td>Configure WP RSS Aggregator Pro</td><td>DevOps</td><td>G2</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#12</td><td>S1.5</td><td><span class="tag tag-func">FUNC</span></td><td>Configure 40 starter feeds across 6 domains</td><td>Taskmaster</td><td>G2</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#13</td><td>S1.6</td><td><span class="tag tag-func">FUNC</span></td><td>Build auto-domain tagging</td><td>DevOps</td><td>G2</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#14</td><td>S1.7</td><td><span class="tag tag-func">FUNC</span></td><td>Build dedup logic — URL + title similarity</td><td>DevOps</td><td>G2</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#15</td><td>S1.8</td><td><span class="tag tag-sec">SEC</span></td><td>RSS feed sanitization</td><td>Cyber Ops</td><td>G2</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#16</td><td>S1.9</td><td><span class="tag tag-func">FUNC</span></td><td>Build Claude feed scoring — 4h cron</td><td>DevOps</td><td>G2</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#17</td><td>S1.10</td><td><span class="tag tag-func">FUNC</span></td><td>Build morning digest — 0600 CST</td><td>DevOps</td><td>G2</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr style="opacity: 0.7;"><td>#18</td><td>S1.11</td><td><span class="tag tag-sec">SEC</span></td><td>Prompt injection detection</td><td>Cyber Ops</td><td>G2</td><td><span class="status status-done">CLOSED</span></td></tr>
+      <tr><td>#19</td><td>S1.12</td><td><span class="tag tag-func">FUNC</span></td><td>Build editorial dashboard</td><td>DevOps</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#20</td><td>S1.13</td><td><span class="tag tag-func">FUNC</span></td><td>Build promote + block assignment</td><td>DevOps</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#21</td><td>S1.14</td><td><span class="tag tag-func">FUNC</span></td><td>Build 7-block page template</td><td>Foreman</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#22</td><td>S1.15</td><td><span class="tag tag-func">FUNC</span></td><td>Build commentary cards — 3 styles</td><td>DevOps</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#23</td><td>S1.16</td><td><span class="tag tag-func">FUNC</span></td><td>Build auto-refresh — 15 min poll</td><td>DevOps</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#24</td><td>S1.17</td><td><span class="tag tag-sec">SEC</span></td><td>Build token vault — AES-256-CBC</td><td>Cyber Ops</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#25</td><td>S1.18</td><td><span class="tag tag-sec">SEC</span></td><td>Nonce verification on all AJAX</td><td>Cyber Ops</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#26</td><td>S1.19</td><td><span class="tag tag-sec">SEC</span></td><td>App passwords for REST API auth</td><td>Cyber Ops</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#27</td><td>S1.20</td><td><span class="tag tag-sec">SEC</span></td><td>Key rotation procedure</td><td>Cyber Ops</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#28</td><td>S1.21</td><td><span class="tag tag-sec">SEC</span></td><td>Rate limiting — 60 req/min/IP</td><td>DevOps</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#29</td><td>S1.22</td><td><span class="tag tag-sec">SEC</span></td><td>Audit logging — custom DB table</td><td>DevOps</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+      <tr><td>#73</td><td>S1.23</td><td><span class="tag tag-func">FUNC</span></td><td>Diagnostic logger — structured logging + admin viewer</td><td>Foreman</td><td>G3</td><td><span class="status status-done">DEPLOYED</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SPRINT 2 UPCOMING -->
+<div class="section-title">Sprint 2 — Social &amp; Publishing (Upcoming)</div>
+<div class="card" style="margin-bottom: 24px; overflow-x: auto;">
+  <table>
+    <thead>
+      <tr><th>#</th><th>ID</th><th>Type</th><th>Task</th><th>Owner</th><th>Gate</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>#30</td><td>S2.1</td><td><span class="tag tag-func">FUNC</span></td><td>X (Twitter) API — OAuth 2.0 PKCE, tweet + thread</td><td>DevOps</td><td>G4</td><td><span class="status status-next">NEXT</span></td></tr>
+      <tr><td>#31</td><td>S2.2</td><td><span class="tag tag-func">FUNC</span></td><td>LinkedIn API — OAuth 2.0, personal profile</td><td>DevOps</td><td>G4</td><td><span class="status status-next">NEXT</span></td></tr>
+      <tr><td>#32</td><td>S2.3</td><td><span class="tag tag-func">FUNC</span></td><td>Instagram API — Graph API via Facebook</td><td>DevOps</td><td>G4</td><td><span class="status status-blocked">BLOCKED</span></td></tr>
+      <tr><td>#33</td><td>S2.4</td><td><span class="tag tag-func">FUNC</span></td><td>YouTube API — Data API v3, community posts</td><td>DevOps</td><td>G4</td><td><span class="status status-next">NEXT</span></td></tr>
+      <tr><td>#34</td><td>S2.5</td><td><span class="tag tag-func">FUNC</span></td><td>Medium API — bearer token, draft creation</td><td>DevOps</td><td>G4</td><td><span class="status status-next">NEXT</span></td></tr>
+      <tr><td>#35</td><td>S2.6</td><td><span class="tag tag-sec">SEC</span></td><td>OAuth callback URL validation</td><td>Cyber Ops</td><td>G4</td><td><span class="status status-pending">PENDING</span></td></tr>
+      <tr><td>#36</td><td>S2.7</td><td><span class="tag tag-sec">SEC</span></td><td>Token refresh automation</td><td>Cyber Ops</td><td>G4</td><td><span class="status status-pending">PENDING</span></td></tr>
+      <tr><td>#37</td><td>S2.8</td><td><span class="tag tag-sec">SEC</span></td><td>Platform API error handling</td><td>Cyber Ops</td><td>G4</td><td><span class="status status-pending">PENDING</span></td></tr>
+      <tr><td>#38</td><td>S2.9</td><td><span class="tag tag-func">FUNC</span></td><td>AI content reformatter — 5 platform versions</td><td>Foreman</td><td>G5</td><td><span class="status status-pending">PENDING</span></td></tr>
+      <tr><td>#39</td><td>S2.10</td><td><span class="tag tag-func">FUNC</span></td><td>7-block daily summary — 0800 CST</td><td>DevOps</td><td>G5</td><td><span class="status status-pending">PENDING</span></td></tr>
+      <tr style="opacity: 0.5;"><td colspan="7" style="text-align:center; color: var(--muted);">+ 12 more tasks in Sprint 2</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- BLOCKERS -->
+<div class="section-title">Blockers &amp; Dependencies</div>
+<div class="card" style="margin-bottom: 24px;">
+  <div class="blocker-item">
+    <span class="blocker-id">BLK-001</span> — Facebook App Review not submitted (Instagram API, 2-4 week lead time)
+    <br><span class="blocker-age">Affects: S2.3 Instagram integration | Owner: Yeti | Age: 1 day</span>
+  </div>
+  <div class="blocker-item blocker-resolved">
+    <span class="blocker-id-resolved">BLK-002 &#x2705;</span> — Sprint 0 complete — all 7 hardening tasks closed
+    <br><span class="blocker-age">Resolved: 2026-03-08</span>
+  </div>
+  <div class="blocker-item blocker-resolved">
+    <span class="blocker-id-resolved">BLK-003 &#x2705;</span> — Session artifacts persistence resolved
+    <br><span class="blocker-age">Resolved: 2026-03-08</span>
+  </div>
+  <div class="blocker-item blocker-resolved">
+    <span class="blocker-id-resolved">BLK-004 &#x2705;</span> — Dev favicon images committed
+    <br><span class="blocker-age">Resolved: 2026-03-08</span>
+  </div>
+  <div class="blocker-item blocker-resolved">
+    <span class="blocker-id-resolved">BLK-005 &#x2705;</span> — Sprint 1 SEC tail blocking Sprint 2 start
+    <br><span class="blocker-age">Resolved: 2026-03-09 | All 6 SEC tasks deployed, Sprint 2 unblocked</span>
+  </div>
+</div>
+
+<!-- OWNER BREAKDOWN -->
+<div class="section-title">Owner Breakdown — Sprint 1 (Final)</div>
+<div class="card" style="margin-bottom: 24px;">
+  <div class="owner-grid">
+    <div class="owner-card">
+      <div class="owner-name">DevOps</div>
+      <div class="owner-hours" style="color: var(--green);">12/12</div>
+      <div class="metric-sub">10 FUNC + 2 SEC</div>
+    </div>
+    <div class="owner-card">
+      <div class="owner-name">Cyber Ops</div>
+      <div class="owner-hours" style="color: var(--green);">8/8</div>
+      <div class="metric-sub">8 SEC tasks</div>
+    </div>
+    <div class="owner-card">
+      <div class="owner-name">Taskmaster</div>
+      <div class="owner-hours" style="color: var(--green);">1/1</div>
+      <div class="metric-sub">Feed config</div>
+    </div>
+    <div class="owner-card">
+      <div class="owner-name">Foreman</div>
+      <div class="owner-hours" style="color: var(--green);">2/2</div>
+      <div class="metric-sub">Template + Logger</div>
+    </div>
+  </div>
+</div>
+
+<!-- CROSS LINKS -->
+<div class="cross-link">
+  <strong>Cross-links:</strong>
+  <a href="https://justin-kuiper.com/wp-admin/edit.php?post_type=ns_feed_item&page=ns-diagnostic-log">Diagnostic Log</a> |
+  <a href="https://justin-kuiper.com/wp-admin/edit.php?post_type=ns_feed_item&page=ns-audit-log">Audit Log</a> |
+  <a href="https://justin-kuiper.com/wp-admin/edit.php?post_type=ns_feed_item&page=ns-token-vault">Token Vault</a> |
+  <a href="https://gitlab.com/h3ndriks.j/JK.com-ver02/-/issues">GitLab Issues (Source of Truth)</a>
+</div>
+
+<script>
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+  document.getElementById('date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
