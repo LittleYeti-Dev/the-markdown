@@ -31,6 +31,8 @@
     --text2: #9CA3AF;
     --text3: #6B7280;
     --border: #2D3340;
+    --deployed: #10B981;
+    --deployed-dim: rgba(16,185,129,0.12);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Source Sans Pro', sans-serif; padding: 30px; min-height: 100vh; }
@@ -38,12 +40,37 @@
   .page-title { font-family: 'Rajdhani', sans-serif; font-size: 42px; font-weight: 700; text-align: center; letter-spacing: 6px; margin-bottom: 4px; }
   .page-title span { color: var(--blue); }
   .page-subtitle { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text3); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
-  .page-date { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 2px; margin-bottom: 30px; }
+  .page-date { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 2px; margin-bottom: 20px; }
+
+  /* SPRINT PROGRESS BAR */
+  .sprint-progress {
+    max-width: 800px; margin: 0 auto 30px;
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px;
+  }
+  .sprint-progress-title {
+    font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--text2); margin-bottom: 10px;
+    text-align: center;
+  }
+  .sprint-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .sprint-bar-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px;
+    color: var(--text3); width: 50px; text-align: right;
+  }
+  .sprint-bar-track {
+    flex: 1; height: 18px; background: var(--bg4); border-radius: 3px; overflow: hidden; position: relative;
+  }
+  .sprint-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; display: flex; align-items: center; justify-content: center; }
+  .sprint-bar-fill span { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #fff; font-weight: 500; letter-spacing: 1px; }
+  .sprint-bar-count {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); width: 50px;
+  }
 
   /* LEGEND */
   .legend { display: flex; justify-content: center; gap: 24px; margin-bottom: 30px; flex-wrap: wrap; }
   .legend-item { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 1px; }
   .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .dot-deployed { background: var(--green); }
   .dot-have { background: var(--green); }
   .dot-partial { background: var(--yellow); }
   .dot-need { background: var(--red); }
@@ -74,6 +101,7 @@
   .layer-ingest .layer-header { background: linear-gradient(90deg, rgba(6,182,212,0.2), rgba(6,182,212,0.05)); color: var(--cyan); }
   .layer-social .layer-header { background: linear-gradient(90deg, rgba(249,115,22,0.2), rgba(249,115,22,0.05)); color: var(--orange); }
   .layer-ai .layer-header { background: linear-gradient(90deg, rgba(236,72,153,0.2), rgba(236,72,153,0.05)); color: var(--pink); }
+  .layer-security .layer-header { background: linear-gradient(90deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05)); color: var(--red); }
   .layer-infra .layer-header { background: linear-gradient(90deg, rgba(16,185,129,0.2), rgba(16,185,129,0.05)); color: var(--green); }
 
   /* NODES GRID */
@@ -102,6 +130,11 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px; color: var(--text3); letter-spacing: 1px;
   }
+  .node-snippet {
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: var(--green); letter-spacing: 1px;
+  }
 
   /* STATUS BADGES */
   .status {
@@ -109,11 +142,13 @@
     font-family: 'JetBrains Mono', monospace; font-size: 9px;
     letter-spacing: 1px; text-transform: uppercase; font-weight: 500;
   }
+  .status-deployed { background: var(--deployed-dim); color: var(--deployed); border: 1px solid rgba(16,185,129,0.4); }
   .status-have { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
   .status-partial { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,158,11,0.3); }
   .status-need { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
   .status-blocked { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.5); animation: pulse 2s infinite; }
   .status-infra { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(139,92,246,0.3); }
+  .status-hardened { background: rgba(239,68,68,0.08); color: #F87171; border: 1px solid rgba(239,68,68,0.25); }
 
   @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
 
@@ -208,12 +243,46 @@
 
 <div class="page-title">THE <span>MARK</span>DOWN</div>
 <div class="page-subtitle">System Architecture &bull; Non Sequitur Ecosystem</div>
-<div class="page-date">Justin "Yeti" Kuiper &bull; March 7, 2026 &bull; justin-kuiper.com</div>
+<div class="page-date">Justin "Yeti" Kuiper &bull; Updated March 9, 2026 &bull; justin-kuiper.com</div>
+
+<!-- SPRINT PROGRESS -->
+<div class="sprint-progress">
+  <div class="sprint-progress-title">Sprint Progress &mdash; 30 / 73 Tasks Complete (41%)</div>
+  <div class="sprint-bar-row">
+    <div class="sprint-bar-label">S0</div>
+    <div class="sprint-bar-track">
+      <div class="sprint-bar-fill" style="width:100%; background: linear-gradient(90deg, var(--green), #059669);"><span>7/7 COMPLETE</span></div>
+    </div>
+    <div class="sprint-bar-count">100%</div>
+  </div>
+  <div class="sprint-bar-row">
+    <div class="sprint-bar-label">S1</div>
+    <div class="sprint-bar-track">
+      <div class="sprint-bar-fill" style="width:100%; background: linear-gradient(90deg, var(--green), #059669);"><span>23/23 COMPLETE</span></div>
+    </div>
+    <div class="sprint-bar-count">100%</div>
+  </div>
+  <div class="sprint-bar-row">
+    <div class="sprint-bar-label">S2</div>
+    <div class="sprint-bar-track">
+      <div class="sprint-bar-fill" style="width:0%; background: var(--orange);"></div>
+    </div>
+    <div class="sprint-bar-count">0/22</div>
+  </div>
+  <div class="sprint-bar-row">
+    <div class="sprint-bar-label">S3</div>
+    <div class="sprint-bar-track">
+      <div class="sprint-bar-fill" style="width:0%; background: var(--purple);"></div>
+    </div>
+    <div class="sprint-bar-count">0/21</div>
+  </div>
+</div>
 
 <!-- LEGEND -->
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot dot-have"></div> HAVE (in place)</div>
-  <div class="legend-item"><div class="legend-dot dot-partial"></div> PARTIAL (exists, needs config)</div>
+  <div class="legend-item"><div class="legend-dot dot-deployed"></div> DEPLOYED (live in production)</div>
+  <div class="legend-item"><div class="legend-dot dot-have"></div> HAVE (pre-existing)</div>
+  <div class="legend-item"><div class="legend-dot dot-partial"></div> PARTIAL (needs config)</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> NEED (must build)</div>
   <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> INFRASTRUCTURE</div>
 </div>
@@ -231,10 +300,10 @@
     <div style="margin-bottom:14px; font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:600; letter-spacing:1px; color:var(--blue);">WORDPRESS PAGES</div>
     <div class="pages-grid" style="margin-bottom:16px;">
       <div class="page-card">
-        <div class="page-card-title" style="color:var(--blue);">The Markdown</div>
+        <div class="page-card-title" style="color:var(--green);">The Markdown</div>
         <div class="page-card-desc">7-block aggregator<br>Main daily feed</div>
         <div class="page-card-url">/the-markdown</div>
-        <div style="margin-top:4px;"><span class="status status-need">BUILD</span></div>
+        <div style="margin-top:4px;"><span class="status status-deployed">DEPLOYED</span></div>
       </div>
       <div class="page-card">
         <div class="page-card-title" style="color:var(--green);">Homepage</div>
@@ -258,13 +327,13 @@
         <div class="page-card-title" style="color:var(--red);">Archive</div>
         <div class="page-card-desc">Historical editions<br>Date/domain filter</div>
         <div class="page-card-url">/the-markdown/archive</div>
-        <div style="margin-top:4px;"><span class="status status-need">PHASE 2</span></div>
+        <div style="margin-top:4px;"><span class="status status-need">SPRINT 3</span></div>
       </div>
       <div class="page-card">
         <div class="page-card-title" style="color:var(--red);">Social Wall</div>
         <div class="page-card-desc">Aggregated social<br>Cross-platform feed</div>
         <div class="page-card-url">/social</div>
-        <div style="margin-top:4px;"><span class="status status-need">PHASE 3</span></div>
+        <div style="margin-top:4px;"><span class="status status-need">SPRINT 3</span></div>
       </div>
       <div class="page-card">
         <div class="page-card-title" style="color:var(--green);">Contact</div>
@@ -276,7 +345,7 @@
         <div class="page-card-title" style="color:var(--red);">RSS Feed</div>
         <div class="page-card-desc">Public feed output<br>For subscribers</div>
         <div class="page-card-url">/feed/the-markdown</div>
-        <div style="margin-top:4px;"><span class="status status-need">BUILD</span></div>
+        <div style="margin-top:4px;"><span class="status status-need">SPRINT 2</span></div>
       </div>
     </div>
 
@@ -314,19 +383,22 @@
 
     <div class="nodes" style="margin-top: 14px;">
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Custom Page Template</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Custom Page Template</div>
         <div class="node-desc">WordPress PHP template rendering 7 blocks from ns_feed_item queries. Dark mode. Responsive 3-col grid.</div>
         <div class="node-tech">PHP &bull; CSS GRID &bull; WP_QUERY</div>
+        <div class="node-snippet">S1.14 &bull; SNIPPET DEPLOYED</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Commentary Cards</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Commentary Cards</div>
         <div class="node-desc">3 embed styles (tweet card, pull quote, inline) rendered per block. Click opens live social post.</div>
         <div class="node-tech">PHP &bull; JS &bull; SOCIAL_POST_URLS META</div>
+        <div class="node-snippet">S1.15 &bull; SNIPPET DEPLOYED</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Auto-Refresh</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Auto-Refresh</div>
         <div class="node-desc">AJAX polling every 15 min. No full page reload. REST API endpoint returns block data.</div>
         <div class="node-tech">WP REST API &bull; JAVASCRIPT &bull; FETCH</div>
+        <div class="node-snippet">S1.16 &bull; SNIPPET DEPLOYED</div>
       </div>
       <div class="node">
         <div class="node-title"><span class="status status-have">HAVE</span> Design System</div>
@@ -351,31 +423,34 @@
     <div class="nodes">
       <div class="node">
         <div class="node-title"><span class="status status-have">HAVE</span> WordPress Install</div>
-        <div class="node-desc">Live at justin-kuiper.com. Hosting active. Theme installed. SSL cert.</div>
-        <div class="node-tech">WORDPRESS 6.x &bull; PHP 8.x &bull; MYSQL</div>
+        <div class="node-desc">Live at justin-kuiper.com. Hosting active. Theme installed. SSL cert. 30 active Code Snippets.</div>
+        <div class="node-tech">WORDPRESS 6.x &bull; PHP 8.x &bull; MYSQL &bull; CODE SNIPPETS</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> ns_feed_item CPT</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> ns_feed_item CPT</div>
         <div class="node-desc">Custom Post Type with 15 meta fields: source_url, domain_tag, relevance_score, block_assignment, social_post_urls, etc.</div>
         <div class="node-tech">register_post_type() &bull; register_meta()</div>
+        <div class="node-snippet">S1.1 &bull; GATE 1 PASSED</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Custom Taxonomies (4)</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Custom Taxonomies (4)</div>
         <div class="node-desc">content_domain (6 terms), thematic_arc (3 terms), item_status (7 terms), platform_published (6 terms)</div>
         <div class="node-tech">register_taxonomy() &bull; HIERARCHICAL</div>
+        <div class="node-snippet">S1.2 &bull; GATE 1 PASSED</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Editorial Dashboard</div>
-        <div class="node-desc">Admin view: DEV feed list, filterable by domain/score/status. Color-coded. Promote button. Block assignment dropdown.</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Editorial Dashboard</div>
+        <div class="node-desc">Admin view: feed list, filterable by domain/score/status. Color-coded. Promote button. Block assignment dropdown.</div>
         <div class="node-tech">WP ADMIN &bull; CUSTOM COLUMNS &bull; BULK ACTIONS</div>
+        <div class="node-snippet">S1.12 + S1.13 &bull; GATE 3 PASSED</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Quick-Publish Panel</div>
+        <div class="node-title"><span class="status status-need">SPRINT 2</span> Quick-Publish Panel</div>
         <div class="node-desc">Inline editor: write commentary, toggle platforms, preview all 5 versions side-by-side, publish with one click.</div>
         <div class="node-tech">REACT/JS &bull; WP REST API &bull; ADMIN AJAX</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> REST API Endpoints</div>
+        <div class="node-title"><span class="status status-need">SPRINT 2</span> REST API Endpoints</div>
         <div class="node-desc">Custom endpoints for block data, feed items, publish actions, scoring triggers.</div>
         <div class="node-tech">register_rest_route() &bull; APP PASSWORDS</div>
       </div>
@@ -391,28 +466,43 @@
 <div class="layer layer-ingest">
   <div class="layer-header">
     <span class="layer-num">L3</span> RSS Ingest Pipeline
-    <span class="layer-desc">Feed sources &bull; Auto-tagging &bull; DEV lane</span>
+    <span class="layer-desc">Feed sources &bull; Auto-tagging &bull; Scoring &bull; Gate 2 Complete</span>
   </div>
   <div class="layer-body">
     <div class="nodes">
       <div class="node node-wide">
-        <div class="node-title"><span class="status status-partial">CONFIG</span> WP RSS Aggregator Pro</div>
-        <div class="node-desc">Plugin handles feed import → ns_feed_item mapping. Need to purchase Pro license, configure 40 feeds, set import templates, map to CPT.</div>
-        <div class="node-tech">PLUGIN: WP-RSS-AGGREGATOR &bull; PRO LICENSE ~$79/yr</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> WP RSS Aggregator Pro</div>
+        <div class="node-desc">Plugin handles feed import &rarr; ns_feed_item mapping. Pro license active, 40 feeds configured, import templates mapped to CPT.</div>
+        <div class="node-tech">PLUGIN: WP-RSS-AGGREGATOR &bull; PRO LICENSE ACTIVE</div>
+        <div class="node-snippet">S1.4 + S1.5 &bull; 40 FEEDS ACROSS 6 DOMAINS</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Auto-Domain Tagging</div>
-        <div class="node-desc">Keyword rules assign content_domain taxonomy based on source feed + headline keywords.</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Auto-Domain Tagging</div>
+        <div class="node-desc">Keyword rules assign content_domain taxonomy based on source feed + headline keywords. >90% accuracy.</div>
         <div class="node-tech">PHP FILTER HOOKS &bull; KEYWORD RULES</div>
+        <div class="node-snippet">S1.6 &bull; GATE 2 PASSED</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Dedup Logic</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Dedup Logic</div>
         <div class="node-desc">URL matching + title similarity (90% threshold). Prevents duplicate items in feed.</div>
         <div class="node-tech">PHP &bull; SIMILAR_TEXT() &bull; URL NORMALIZE</div>
+        <div class="node-snippet">S1.7 &bull; GATE 2 PASSED</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Claude Feed Scoring</div>
+        <div class="node-desc">Every 4h cron. Score new items 1-10 on relevance (domain signal + arc alignment + recency + source authority).</div>
+        <div class="node-tech">CLAUDE API &bull; WP CRON &bull; META WRITE</div>
+        <div class="node-snippet">S1.9 &bull; GATE 2 PASSED</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Morning Digest</div>
+        <div class="node-desc">Daily 0600 CST. Top 20 items grouped by domain. Scores, arc alignment, source links.</div>
+        <div class="node-tech">CLAUDE &bull; SCHEDULED TASK &bull; EMAIL</div>
+        <div class="node-snippet">S1.10 &bull; GATE 2 PASSED</div>
       </div>
     </div>
 
-    <div style="margin-top:14px; font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:1px; color:var(--cyan); margin-bottom:8px;">40 STARTER FEEDS ACROSS 6 DOMAINS</div>
+    <div style="margin-top:14px; font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:1px; color:var(--cyan); margin-bottom:8px;">40 ACTIVE FEEDS ACROSS 6 DOMAINS</div>
     <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px;">
       <div style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2); border-radius:4px; padding:6px 8px; text-align:center;">
         <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--cyan); letter-spacing:1px;">AI / GEN AI</div>
@@ -456,20 +546,20 @@
 <div class="layer layer-social">
   <div class="layer-header">
     <span class="layer-num">L4</span> Social Media Publishing
-    <span class="layer-desc">5 platforms &bull; API integrations &bull; Quick-publish dispatch</span>
+    <span class="layer-desc">5 platforms &bull; API integrations &bull; Sprint 2 scope</span>
   </div>
   <div class="layer-body">
     <div class="nodes">
       <div class="node">
         <div class="node-title" style="color:var(--blue);">
-          <span class="status status-need">BUILD</span> X (Twitter)
+          <span class="status status-need">SPRINT 2</span> X (Twitter)
         </div>
         <div class="node-desc">API v2, OAuth 2.0 PKCE. Tweets + threads. Free: 1,500/mo. Basic ($100): 3,000/mo.</div>
         <div class="node-tech">OAUTH 2.0 &bull; 280 CHAR &bull; MEDIA UPLOAD</div>
       </div>
       <div class="node">
         <div class="node-title" style="color:var(--blue);">
-          <span class="status status-need">BUILD</span> LinkedIn
+          <span class="status status-need">SPRINT 2</span> LinkedIn
         </div>
         <div class="node-desc">Community Management API. OAuth 2.0 3-legged. Personal profile posting. 100 calls/day.</div>
         <div class="node-tech">OAUTH 2.0 &bull; 3,000 CHAR &bull; IMAGE URN</div>
@@ -478,12 +568,12 @@
         <div class="node-title" style="color:var(--red);">
           <span class="status status-blocked">BLOCKED</span> Instagram
         </div>
-        <div class="node-desc">Graph API via Facebook. Requires App Review (2-4 weeks). Container-based publish. 25 posts/day max.</div>
+        <div class="node-desc">Graph API via Facebook. Requires App Review (2-4 weeks). BLK-001 OPEN. Container-based publish.</div>
         <div class="node-tech">FACEBOOK OAUTH &bull; PUBLIC IMAGE URL REQ &bull; 2-STEP PUBLISH</div>
       </div>
       <div class="node">
         <div class="node-title" style="color:var(--red);">
-          <span class="status status-need">BUILD</span> YouTube
+          <span class="status status-need">SPRINT 2</span> YouTube
         </div>
         <div class="node-desc">Data API v3. Community posts (~50 quota units). 10K daily quota. Video upload Phase 2.</div>
         <div class="node-tech">OAUTH 2.0 &bull; 5,000 CHAR &bull; QUOTA MGMT</div>
@@ -518,22 +608,24 @@
   <div class="layer-body">
     <div class="nodes">
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Feed Scoring</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Feed Scoring</div>
         <div class="node-desc">Every 4h cron. Score new items 1-10 on relevance (domain signal + arc alignment + recency + source authority).</div>
         <div class="node-tech">CLAUDE API &bull; WP CRON &bull; META WRITE</div>
+        <div class="node-snippet">S1.9 &bull; TOKEN VIA VAULT</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Morning Digest</div>
-        <div class="node-desc">Daily 0600 CST. Top 20 items grouped by domain. Scores, arc alignment, source links. Sent via Gmail MCP.</div>
-        <div class="node-tech">CLAUDE &bull; GMAIL MCP &bull; SCHEDULED TASK</div>
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Morning Digest</div>
+        <div class="node-desc">Daily 0600 CST. Top 20 items grouped by domain. Scores, arc alignment, source links.</div>
+        <div class="node-tech">CLAUDE &bull; SCHEDULED TASK &bull; EMAIL</div>
+        <div class="node-snippet">S1.10 &bull; GATE 2 PASSED</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Content Reformatter</div>
+        <div class="node-title"><span class="status status-need">SPRINT 2</span> Content Reformatter</div>
         <div class="node-desc">Single editorial note &rarr; 5 platform-optimized versions. Tone, length, format per platform. One API call.</div>
         <div class="node-tech">CLAUDE API &bull; PROMPT TEMPLATES &bull; 5-OUTPUT</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> 7-Block Summary</div>
+        <div class="node-title"><span class="status status-need">SPRINT 2</span> 7-Block Summary</div>
         <div class="node-desc">Daily 0800 CST. One-line per block for Gunther morning standup briefing.</div>
         <div class="node-tech">CLAUDE &bull; STANDUP INTEGRATION</div>
       </div>
@@ -543,9 +635,102 @@
         <div class="node-tech">CANVA MCP &bull; 6 DOMAIN TEMPLATES</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Arc Scoring</div>
+        <div class="node-title"><span class="status status-need">SPRINT 2</span> Arc Scoring</div>
         <div class="node-desc">Item content vs. active thematic arc description. Secondary ranking signal for curation.</div>
         <div class="node-tech">CLAUDE &bull; THEMATIC ARC TAXONOMY</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="flow-arrow"><span class="arrow">&darr;</span> SECURED BY SPRINT 0 HARDENING + SPRINT 1 SECURITY GATES</div>
+
+<!-- ========================================
+     LAYER 6: SECURITY LAYER (NEW)
+     ======================================== -->
+<div class="layer layer-security">
+  <div class="layer-header">
+    <span class="layer-num">L6</span> Security Layer
+    <span class="layer-desc">Sprint 0 Hardening &bull; Sprint 1 Security Gates &bull; All Deployed</span>
+  </div>
+  <div class="layer-body">
+    <div style="margin-bottom:12px; font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:1px; color:#F87171;">SPRINT 0 &mdash; IMMEDIATE HARDENING (7/7 COMPLETE)</div>
+    <div class="nodes" style="margin-bottom:16px;">
+      <div class="node">
+        <div class="node-title"><span class="status status-hardened">HARDENED</span> wp-config.php</div>
+        <div class="node-desc">Moved above webroot. File permissions 400. Sensitive constants protected.</div>
+        <div class="node-tech">S0.1 &bull; FILE PERMISSIONS &bull; CRITICAL</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-hardened">HARDENED</span> XML-RPC Disabled</div>
+        <div class="node-desc">xmlrpc.php blocked at server level. Eliminates brute force attack vector.</div>
+        <div class="node-tech">S0.2 &bull; SERVER BLOCK</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-hardened">HARDENED</span> Security Headers</div>
+        <div class="node-desc">CSP, X-Frame-Options, HSTS, X-Content-Type-Options all set.</div>
+        <div class="node-tech">S0.4 &bull; HTTP HEADERS &bull; CRITICAL</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-hardened">HARDENED</span> HTTPS + Version Hidden</div>
+        <div class="node-desc">All HTTP redirects to HTTPS. WordPress version generator meta tag removed. Directory listing disabled.</div>
+        <div class="node-tech">S0.3, S0.5, S0.6, S0.7</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px; font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; letter-spacing:1px; color:#F87171;">SPRINT 1 &mdash; SECURITY GATES (8/8 SEC TASKS COMPLETE)</div>
+    <div class="nodes">
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Input Validation</div>
+        <div class="node-desc">sanitize_callback on all register_meta calls. esc_html/esc_url on output. All 15 meta fields covered.</div>
+        <div class="node-tech">S1.3 &bull; GATE 1 SEC</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> RSS Sanitization</div>
+        <div class="node-desc">Strip scripts from RSS content, validate URLs, limit payload to 50KB. All feed input sanitized.</div>
+        <div class="node-tech">S1.8 &bull; GATE 2 SEC</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Prompt Injection Detection</div>
+        <div class="node-desc">Input filtering on RSS-to-LLM pipeline. 20-payload test suite — all blocked.</div>
+        <div class="node-tech">S1.11 &bull; GATE 2 SEC</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Token Vault</div>
+        <div class="node-desc">AES-256 encrypted wp_options storage. Vault key in separate snippet (priority 1). Stores all API tokens.</div>
+        <div class="node-tech">S1.17 &bull; SNIPPET #30 &bull; GATE 3 SEC</div>
+        <div class="node-snippet">CRITICAL PATH: #26, #27 depend on vault</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Nonce Verification</div>
+        <div class="node-desc">All admin AJAX endpoints protected with WordPress nonces. CSRF prevention on all admin actions.</div>
+        <div class="node-tech">S1.18 &bull; SNIPPET #33 &bull; GATE 3 SEC</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> App Passwords</div>
+        <div class="node-desc">REST API authentication enforced via Application Passwords. No plain credentials in requests.</div>
+        <div class="node-tech">S1.19 &bull; SNIPPET #36 &bull; GATE 3 SEC</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Key Rotation</div>
+        <div class="node-desc">Claude API key rotation procedure documented and tested. Manual trigger with verification.</div>
+        <div class="node-tech">S1.20 &bull; SNIPPET #35 &bull; GATE 3 SEC</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Rate Limiting</div>
+        <div class="node-desc">60 req/min/IP on all custom REST endpoints. Prevents abuse and DDoS on custom routes.</div>
+        <div class="node-tech">S1.21 &bull; SNIPPET #34 &bull; GATE 3 SEC</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Audit Logging</div>
+        <div class="node-desc">Custom DB table for all admin actions. Timestamp, user, action, context. Admin viewer with filters.</div>
+        <div class="node-tech">S1.22 &bull; SNIPPET #32 &bull; GATE 3 SEC</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-deployed">DEPLOYED</span> Diagnostic Logger</div>
+        <div class="node-desc">Structured error/warning/info logging with ns_diag_write() API. 30-day rotation. REST health endpoint. Admin viewer.</div>
+        <div class="node-tech">S1.23 &bull; SNIPPET #37 &bull; TAIL TASK</div>
+        <div class="node-snippet">FORWARDS FROM ns_log() &bull; /ns/v1/diagnostics/health</div>
       </div>
     </div>
   </div>
@@ -554,49 +739,39 @@
 <div class="flow-arrow"><span class="arrow">&darr;</span> RUNS ON TOP OF INFRASTRUCTURE</div>
 
 <!-- ========================================
-     LAYER 6: INFRASTRUCTURE
+     LAYER 7: INFRASTRUCTURE
      ======================================== -->
 <div class="layer layer-infra">
   <div class="layer-header">
-    <span class="layer-num">L6</span> Infrastructure
-    <span class="layer-desc">Hosting &bull; Auth &bull; Version control &bull; Secrets &bull; Monitoring</span>
+    <span class="layer-num">L7</span> Infrastructure
+    <span class="layer-desc">Hosting &bull; Version control &bull; CI/CD &bull; Monitoring</span>
   </div>
   <div class="layer-body">
     <div class="nodes">
       <div class="node">
         <div class="node-title"><span class="status status-have">HAVE</span> WordPress Hosting</div>
-        <div class="node-desc">justin-kuiper.com live. PHP 8.x, MySQL, SSL. Current host supports WP cron + REST API.</div>
-        <div class="node-tech">HOSTING PROVIDER &bull; SSL &bull; PHP 8</div>
+        <div class="node-desc">justin-kuiper.com live. PHP 8.x, MySQL, SSL. 30 active Code Snippets, 0 code errors.</div>
+        <div class="node-tech">WORDPRESS.COM &bull; CODE SNIPPETS PLUGIN &bull; REST API</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-have">HAVE</span> GitLab Repo</div>
-        <div class="node-desc">JK.com-ver02 (new). jk-com (existing). Pages deployed. CI/CD configured.</div>
-        <div class="node-tech">gitlab.com/h3ndriks.j &bull; PAGES &bull; CI/CD</div>
+        <div class="node-title"><span class="status status-have">HAVE</span> GitLab Repo + Pages</div>
+        <div class="node-desc">JK.com-ver02 repo. CI/CD pipeline passing. GitLab Pages deployed: prototype, architecture, burndown.</div>
+        <div class="node-tech">gitlab.com/h3ndriks.j &bull; PAGES &bull; CI/CD &bull; 73 ISSUES</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Token Vault</div>
-        <div class="node-desc">Encrypted storage for 5 platform tokens + GitLab PAT. wp-config.php defines or secrets manager plugin.</div>
-        <div class="node-tech">WP OPTIONS (ENCRYPTED) &bull; ENV VARS</div>
-      </div>
-      <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Token Refresh Cron</div>
+        <div class="node-title"><span class="status status-need">SPRINT 2</span> Token Refresh Cron</div>
         <div class="node-desc">Daily check: auto-refresh expiring tokens. Email alert if manual re-auth needed. Covers all 5 platforms.</div>
         <div class="node-tech">WP CRON &bull; OAUTH REFRESH &bull; EMAIL ALERT</div>
       </div>
       <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Rate Limit Handler</div>
-        <div class="node-desc">Retry with exponential backoff. Rate headers monitored. Queue prevents burst publishing.</div>
-        <div class="node-tech">PHP QUEUE &bull; BACKOFF &bull; HEADER PARSE</div>
-      </div>
-      <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Audit Log</div>
-        <div class="node-desc">Custom DB table: timestamp, platform, post URL, item ID, user. All publish actions logged.</div>
-        <div class="node-tech">CUSTOM TABLE &bull; $wpdb &bull; ADMIN VIEW</div>
-      </div>
-      <div class="node">
-        <div class="node-title"><span class="status status-need">BUILD</span> Feed Health Monitor</div>
+        <div class="node-title"><span class="status status-need">SPRINT 3</span> Feed Health Monitor</div>
         <div class="node-desc">Detect broken feeds. Dashboard widget. Email alert to Yeti when feeds fail.</div>
         <div class="node-tech">WP CRON &bull; HTTP CHECK &bull; DASHBOARD WIDGET</div>
+      </div>
+      <div class="node">
+        <div class="node-title"><span class="status status-need">SPRINT 3</span> Analytics Dashboard</div>
+        <div class="node-desc">Cross-platform engagement tracking. Views, clicks, shares aggregated per item.</div>
+        <div class="node-tech">CUSTOM TABLE &bull; API POLLING &bull; ADMIN VIEW</div>
       </div>
       <div class="node">
         <div class="node-title"><span class="status status-partial">LATER</span> Subdomain</div>
@@ -608,7 +783,57 @@
 </div>
 
 <!-- ========================================
-     SUMMARY TABLE
+     DEPLOYED SNIPPETS INVENTORY
+     ======================================== -->
+<div class="section-divider">Deployed Code Snippets</div>
+
+<div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-top:10px;">
+  <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:10px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px;">SNIPPET #30</div>
+      <div style="font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--green);">Token Vault</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3);">S1.17 &bull; admin &bull; p:10</div>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:10px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px;">SNIPPET #31</div>
+      <div style="font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--green);">Vault Key</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3);">key store &bull; global &bull; p:1</div>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:10px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px;">SNIPPET #32</div>
+      <div style="font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--green);">Audit Log</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3);">S1.22 &bull; admin &bull; p:10</div>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:10px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px;">SNIPPET #33</div>
+      <div style="font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--green);">Nonce Verify</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3);">S1.18 &bull; admin &bull; p:10</div>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:10px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px;">SNIPPET #34</div>
+      <div style="font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--green);">Rate Limiter</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3);">S1.21 &bull; global &bull; p:10</div>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:10px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px;">SNIPPET #35</div>
+      <div style="font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--green);">Key Rotation</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3);">S1.20 &bull; admin &bull; p:10</div>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:10px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px;">SNIPPET #36</div>
+      <div style="font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--green);">App Passwords</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3);">S1.19 &bull; global &bull; p:10</div>
+    </div>
+    <div style="background:var(--bg3); border:1px solid var(--border); border-radius:4px; padding:10px; text-align:center;">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px;">SNIPPET #37</div>
+      <div style="font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--green);">Diag Logger</div>
+      <div style="font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--text3);">S1.23 &bull; global &bull; p:2</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     READINESS SUMMARY TABLE
      ======================================== -->
 <div class="section-divider">Readiness Summary</div>
 
@@ -618,42 +843,64 @@
       <tr>
         <th style="width:30%;">Component</th>
         <th style="width:15%;">Status</th>
-        <th style="width:35%;">What&rsquo;s Needed</th>
+        <th style="width:35%;">Notes</th>
         <th style="width:20%;">Sprint</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>WordPress Core</td><td><span class="status status-have">HAVE</span></td><td>Live and running</td><td>&mdash;</td></tr>
-      <tr><td>Domain + SSL</td><td><span class="status status-have">HAVE</span></td><td>Active at justin-kuiper.com</td><td>&mdash;</td></tr>
-      <tr><td>GitLab Repos</td><td><span class="status status-have">HAVE</span></td><td>jk-com + JK.com-ver02 both active</td><td>&mdash;</td></tr>
+      <!-- HAVE / INFRASTRUCTURE -->
+      <tr><td>WordPress Core + SSL</td><td><span class="status status-have">HAVE</span></td><td>Live at justin-kuiper.com, 30 active snippets</td><td>&mdash;</td></tr>
+      <tr><td>GitLab Repos + CI/CD + Pages</td><td><span class="status status-have">HAVE</span></td><td>JK.com-ver02, 73 issues tracked, Pages live</td><td>&mdash;</td></tr>
       <tr><td>Homepage / Blog / Contact</td><td><span class="status status-have">HAVE</span></td><td>Existing pages, no changes needed</td><td>&mdash;</td></tr>
       <tr><td>Design System / Prototype</td><td><span class="status status-have">HAVE</span></td><td>Live on GitLab Pages</td><td>&mdash;</td></tr>
-      <tr><td>Canva MCP</td><td><span class="status status-partial">PARTIAL</span></td><td>Connected, need 6 domain templates</td><td>Sprint 3</td></tr>
-      <tr><td>WP RSS Aggregator Pro</td><td><span class="status status-partial">PARTIAL</span></td><td>Purchase license (~$79/yr), configure feeds</td><td>Sprint 1</td></tr>
-      <tr><td>ns_feed_item CPT + Taxonomies</td><td><span class="status status-need">BUILD</span></td><td>Custom plugin: CPT, 4 taxonomies, 15 meta fields</td><td>Sprint 1</td></tr>
-      <tr><td>Editorial Dashboard</td><td><span class="status status-need">BUILD</span></td><td>Admin UI for DEV feed + promote + block assign</td><td>Sprint 1</td></tr>
-      <tr><td>The Markdown Page Template</td><td><span class="status status-need">BUILD</span></td><td>PHP template rendering 7-block layout from data</td><td>Sprint 1</td></tr>
-      <tr><td>Claude Feed Scoring</td><td><span class="status status-need">BUILD</span></td><td>4h cron, API integration, meta writes</td><td>Sprint 1</td></tr>
-      <tr><td>Claude Morning Digest</td><td><span class="status status-need">BUILD</span></td><td>Daily email via Gmail MCP</td><td>Sprint 1</td></tr>
-      <tr><td>X API Integration</td><td><span class="status status-need">BUILD</span></td><td>OAuth 2.0, tweet/thread, callback</td><td>Sprint 2</td></tr>
-      <tr><td>LinkedIn API Integration</td><td><span class="status status-need">BUILD</span></td><td>OAuth 2.0, personal profile posting</td><td>Sprint 2</td></tr>
-      <tr><td>Instagram API</td><td><span class="status status-blocked">BLOCKED</span></td><td>Facebook App Review (2-4 weeks). Submit NOW.</td><td>Sprint 2</td></tr>
-      <tr><td>YouTube API</td><td><span class="status status-need">BUILD</span></td><td>OAuth 2.0, community posts</td><td>Sprint 2</td></tr>
-      <tr><td>Medium API</td><td><span class="status status-partial">EASY</span></td><td>Integration token, draft creation</td><td>Sprint 2</td></tr>
-      <tr><td>AI Reformatting Engine</td><td><span class="status status-need">BUILD</span></td><td>Prompt templates, 5-output generation</td><td>Sprint 2</td></tr>
-      <tr><td>Quick-Publish Admin Panel</td><td><span class="status status-need">BUILD</span></td><td>Inline editor + toggles + preview + dispatch</td><td>Sprint 2</td></tr>
-      <tr><td>Token Vault + Refresh</td><td><span class="status status-need">BUILD</span></td><td>Encrypted storage, auto-refresh cron</td><td>Sprint 3</td></tr>
-      <tr><td>Rate Limit Handler</td><td><span class="status status-need">BUILD</span></td><td>Queue + backoff + header monitoring</td><td>Sprint 3</td></tr>
-      <tr><td>Archive Page</td><td><span class="status status-need">BUILD</span></td><td>Historical editions, filterable</td><td>Sprint 3</td></tr>
-      <tr><td>Analytics Dashboard</td><td><span class="status status-need">BUILD</span></td><td>Cross-platform engagement tracking</td><td>Sprint 3</td></tr>
-      <tr><td>Subdomain</td><td><span class="status status-partial">LATER</span></td><td>DNS + routing + SSL for markdown.*</td><td>Sprint 3</td></tr>
+      <!-- SPRINT 0 COMPLETE -->
+      <tr><td>S0 Hardening (7 tasks)</td><td><span class="status status-hardened">HARDENED</span></td><td>wp-config, XML-RPC, headers, HTTPS, version hide</td><td>S0 &#10003;</td></tr>
+      <!-- SPRINT 1 COMPLETE -->
+      <tr><td>ns_feed_item CPT + 4 Taxonomies</td><td><span class="status status-deployed">DEPLOYED</span></td><td>15 meta fields, input validation on all</td><td>S1 G1 &#10003;</td></tr>
+      <tr><td>RSS Aggregator + 40 Feeds</td><td><span class="status status-deployed">DEPLOYED</span></td><td>Pro license active, auto-tagging, dedup</td><td>S1 G2 &#10003;</td></tr>
+      <tr><td>Claude Feed Scoring + Digest</td><td><span class="status status-deployed">DEPLOYED</span></td><td>4h cron scoring, 0600 morning digest</td><td>S1 G2 &#10003;</td></tr>
+      <tr><td>RSS + Prompt Injection Security</td><td><span class="status status-deployed">DEPLOYED</span></td><td>Sanitization, 50KB limit, 20-payload test passed</td><td>S1 G2 &#10003;</td></tr>
+      <tr><td>Editorial Dashboard + Promote</td><td><span class="status status-deployed">DEPLOYED</span></td><td>Admin feed list, filters, block assignment</td><td>S1 G3 &#10003;</td></tr>
+      <tr><td>Page Template + Cards + Refresh</td><td><span class="status status-deployed">DEPLOYED</span></td><td>7-block layout, 3 card styles, 15min AJAX</td><td>S1 G3 &#10003;</td></tr>
+      <tr><td>Token Vault (AES-256)</td><td><span class="status status-deployed">DEPLOYED</span></td><td>Encrypted wp_options, key in snippet #31</td><td>S1 G3 &#10003;</td></tr>
+      <tr><td>Nonce + App Passwords + Rate Limit</td><td><span class="status status-deployed">DEPLOYED</span></td><td>CSRF protection, REST auth, 60 req/min/IP</td><td>S1 G3 &#10003;</td></tr>
+      <tr><td>Audit Log + Diagnostic Logger</td><td><span class="status status-deployed">DEPLOYED</span></td><td>DB tables, admin viewers, health endpoint</td><td>S1 G3 &#10003;</td></tr>
+      <tr><td>Key Rotation Procedure</td><td><span class="status status-deployed">DEPLOYED</span></td><td>Documented + tested for Claude API key</td><td>S1 G3 &#10003;</td></tr>
+      <!-- SPRINT 2 TODO -->
+      <tr><td>X + LinkedIn + YouTube + Medium APIs</td><td><span class="status status-need">BUILD</span></td><td>OAuth integrations, token refresh, dispatch</td><td>Sprint 2</td></tr>
+      <tr><td>Instagram API</td><td><span class="status status-blocked">BLOCKED</span></td><td>BLK-001: Facebook App Review (2-4 weeks)</td><td>Sprint 2</td></tr>
+      <tr><td>AI Reformatter + Arc Scoring</td><td><span class="status status-need">BUILD</span></td><td>1 note &rarr; 5 versions, thematic alignment</td><td>Sprint 2</td></tr>
+      <tr><td>Quick-Publish + REST Endpoints</td><td><span class="status status-need">BUILD</span></td><td>Inline editor, platform toggles, dispatch</td><td>Sprint 2</td></tr>
+      <!-- SPRINT 3 TODO -->
+      <tr><td>Canva Domain Templates</td><td><span class="status status-partial">PARTIAL</span></td><td>MCP connected, need 6 branded templates</td><td>Sprint 3</td></tr>
+      <tr><td>Archive + Social Wall + Analytics</td><td><span class="status status-need">BUILD</span></td><td>Historical editions, cross-platform feed, engagement</td><td>Sprint 3</td></tr>
+      <tr><td>Final Security Review + Pen Test</td><td><span class="status status-need">BUILD</span></td><td>OWASP Top 10, incident response, OPSEC</td><td>Sprint 3</td></tr>
+      <tr><td>Subdomain</td><td><span class="status status-partial">LATER</span></td><td>markdown.justin-kuiper.com DNS + routing</td><td>Sprint 3</td></tr>
     </tbody>
   </table>
 </div>
 
+<!-- BLOCKERS -->
+<div class="section-divider">Active Blockers</div>
+<div style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-top:10px;">
+  <div class="nodes" style="grid-template-columns: 1fr 1fr;">
+    <div class="node" style="border-color: rgba(239,68,68,0.3);">
+      <div class="node-title"><span class="status status-blocked">BLK-001</span> Facebook App Review</div>
+      <div class="node-desc">Instagram API access requires 2-4 week Facebook App Review. Blocks S2.3 only &mdash; rest of Sprint 2 can proceed.</div>
+      <div class="node-tech">ACTION: SUBMIT VIA FACEBOOK DEVELOPER PORTAL</div>
+    </div>
+    <div class="node" style="border-color: rgba(245,158,11,0.3);">
+      <div class="node-title"><span class="status status-partial">BLK-004</span> Dev Favicon Images</div>
+      <div class="node-desc">Base64 encoding error on multi-file GitLab commit. Non-blocking &mdash; cosmetic only.</div>
+      <div class="node-tech">FIX: RETRY INDIVIDUAL FILE COMMITS</div>
+    </div>
+  </div>
+</div>
+
 <div style="text-align:center; margin-top:30px; padding:16px; border-top:1px solid var(--border);">
-  <div style="font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:600; letter-spacing:3px; color:var(--text3); text-transform:uppercase;">The Markdown &bull; Non Sequitur &bull; Architecture v1.0</div>
-  <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text3); letter-spacing:1px; margin-top:4px;">ARCHITECT &rarr; HARDEN &rarr; SCALE &bull; THE MISSION DEFINES THE ARCHITECTURE</div>
+  <div style="font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:600; letter-spacing:3px; color:var(--text3); text-transform:uppercase;">The Markdown &bull; Non Sequitur &bull; Architecture v2.0</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text3); letter-spacing:1px; margin-top:4px;">SPRINT 0 &#10003; &bull; SPRINT 1 &#10003; &bull; SPRINT 2 NEXT &bull; 30/73 TASKS COMPLETE</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); letter-spacing:1px; margin-top:2px;">UPDATED 2026-03-09 BY TASKMASTER &bull; THE MISSION DEFINES THE ARCHITECTURE</div>
 </div>
 
 </body>
