@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Markdown — Sprint 2.5 Retrospective</title>
+<style>
+  :root {
+    --bg: #0a0e17; --surface: #131a2b; --surface2: #1a2340; --border: #243054;
+    --text: #d4daf0; --dim: #7a85a8;
+    --green: #22c55e; --green-bg: rgba(34,197,94,0.12);
+    --amber: #f59e0b; --amber-bg: rgba(245,158,11,0.12);
+    --red: #ef4444; --red-bg: rgba(239,68,68,0.12);
+    --blue: #3b82f6; --blue-bg: rgba(59,130,246,0.12);
+    --cyan: #06b6d4; --purple: #a855f7;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); padding:24px; line-height:1.6; }
+
+  .header { text-align:center; margin-bottom:32px; }
+  .header h1 { font-size:28px; font-weight:700; letter-spacing:-0.5px; }
+  .header h1 span { color:var(--cyan); }
+  .header .sub { color:var(--dim); font-size:14px; margin-top:4px; }
+
+  .metrics { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:28px; }
+  .mc { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; }
+  .mc .v { font-size:28px; font-weight:700; }
+  .mc .l { font-size:11px; color:var(--dim); margin-top:4px; text-transform:uppercase; letter-spacing:0.5px; }
+  .mc.g .v{color:var(--green)} .mc.a .v{color:var(--amber)} .mc.b .v{color:var(--blue)} .mc.r .v{color:var(--red)} .mc.c .v{color:var(--cyan)} .mc.p .v{color:var(--purple)}
+
+  .section { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:20px; }
+  .section h2 { font-size:18px; margin-bottom:16px; }
+  .section h3 { font-size:15px; margin:16px 0 8px; color:var(--cyan); }
+  .section p { font-size:14px; margin-bottom:10px; }
+  .section .evidence { font-size:12px; color:var(--dim); border-left:3px solid var(--border); padding-left:12px; margin:8px 0 16px; }
+
+  .tag { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:600; margin-right:6px; }
+  .tag-green { background:var(--green-bg); color:var(--green); border:1px solid var(--green); }
+  .tag-amber { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber); }
+  .tag-red { background:var(--red-bg); color:var(--red); border:1px solid var(--red); }
+  .tag-blue { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue); }
+
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+  th { text-align:left; padding:10px 12px; border-bottom:2px solid var(--border); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--dim); }
+  td { padding:9px 12px; border-bottom:1px solid var(--border); }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:rgba(59,130,246,0.04); }
+  .status-done { color:var(--green); font-weight:600; }
+  .status-partial { color:var(--amber); font-weight:600; }
+  .status-open { color:var(--red); font-weight:600; }
+
+  .pbar { height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; margin:6px 0; }
+  .pfill { height:100%; border-radius:4px; }
+  .pfill-g { background:var(--green); }
+  .pfill-a { background:var(--amber); }
+
+  .ssc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .ssc-card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:18px; }
+  .ssc-card h3 { font-size:15px; margin-bottom:12px; }
+  .ssc-card.start { border-top:3px solid var(--green); }
+  .ssc-card.stop { border-top:3px solid var(--red); }
+  .ssc-card.continue { border-top:3px solid var(--blue); }
+  .ssc-card ul { font-size:13px; padding-left:18px; }
+  .ssc-card li { margin-bottom:8px; }
+
+  .exec { background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(59,130,246,0.08)); border:1px solid var(--cyan); border-radius:12px; padding:24px; margin-bottom:28px; }
+  .exec p { font-size:15px; }
+
+  .carry-fwd { background:var(--amber-bg); border:1px solid var(--amber); border-radius:10px; padding:18px; margin-bottom:20px; }
+  .carry-fwd h3 { color:var(--amber); font-size:15px; margin-bottom:10px; }
+  .carry-fwd ul { font-size:13px; padding-left:18px; }
+  .carry-fwd li { margin-bottom:6px; }
+
+  .footer { text-align:center; color:var(--dim); font-size:12px; margin-top:32px; padding-top:16px; border-top:1px solid var(--border); }
+  a { color:var(--cyan); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+
+  @media (max-width:900px) {
+    .metrics { grid-template-columns:repeat(3,1fr); }
+    .ssc-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>The Markdown — <span>Sprint 2.5 Retrospective</span></h1>
+  <div class="sub">Integration Gate &bull; March 10, 2026 &bull; Facilitated by Taskmaster</div>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="exec">
+  <p>Sprint 2.5 was a lightweight verification gate — 6 tasks, ~4 hours, designed to confirm the editorial pipeline and security stack still function correctly at 85+ snippet scale before Sprint 3 build begins. <strong>Result: CONDITIONAL PASS.</strong> All 6 tasks closed. Security passed 6/6. The editorial chain passed 6/8 with the same 2 partials carried from Sprint 1.5 (Claude API key not provisioned, digest not firing). No new defects. The RSS feed is structurally valid but needs a permalink flush and auto-discovery tag. Zero regressions from Sprint 2 deployment. Sprint 3 is unlocked.</p>
+</div>
+
+<!-- TOP METRICS -->
+<div class="metrics">
+  <div class="mc g"><div class="v">6/6</div><div class="l">Tasks Closed</div></div>
+  <div class="mc g"><div class="v">6/6</div><div class="l">Security Pass</div></div>
+  <div class="mc a"><div class="v">6+2P</div><div class="l">Smoke Test</div></div>
+  <div class="mc g"><div class="v">85</div><div class="l">Snippets Total</div></div>
+  <div class="mc g"><div class="v">0</div><div class="l">New Defects</div></div>
+</div>
+
+<!-- TASK RESULTS -->
+<div class="section">
+  <h2>Task Results</h2>
+  <table>
+    <tr><th>ID</th><th>Task</th><th>Result</th><th>Status</th></tr>
+    <tr><td>S2.5.1</td><td>Full editorial chain smoke test</td><td>6 PASS, 2 PARTIAL (AI key + digest — same as S1.5)</td><td class="status-done">CLOSED</td></tr>
+    <tr><td>S2.5.2</td><td>Security stack re-verification at 74 active snippets</td><td>6/6 PASS — vault, nonce, rate limit, audit, logger, sanitization</td><td class="status-done">CLOSED</td></tr>
+    <tr><td>S2.5.3</td><td>Snippet inventory audit</td><td>85 total, 74 active, 11 inactive, 0 errors, no priority conflicts</td><td class="status-done">CLOSED</td></tr>
+    <tr><td>S2.5.4</td><td>REST endpoint health check</td><td>6/6 endpoints healthy, all &lt;2s response time</td><td class="status-done">CLOSED</td></tr>
+    <tr><td>S2.5.5</td><td>RSS feed verification</td><td>Valid RSS 2.0 at query-param URL; permalink 404 (needs flush); no auto-discovery</td><td class="status-partial">CLOSED (partial)</td></tr>
+    <tr><td>S2.5.6</td><td>Operational Playbook update (v1.0 → v2.0)</td><td>Updated for Sprint 3 — tool landscape, snippet count, feed URLs</td><td class="status-done">CLOSED</td></tr>
+  </table>
+</div>
+
+<!-- BY THE NUMBERS -->
+<div class="section">
+  <h2>By the Numbers</h2>
+  <table>
+    <tr><th>Metric</th><th>Sprint 2.5</th><th>Cumulative</th></tr>
+    <tr><td>Tasks closed</td><td>6/6 (100%)</td><td>65/91 (71%)</td></tr>
+    <tr><td>Active snippets verified</td><td>74 of 85</td><td>74 active, 11 inactive</td></tr>
+    <tr><td>Security components verified</td><td>6/6</td><td>All 6 passed at 74-snippet scale</td></tr>
+    <tr><td>REST endpoints healthy</td><td>6/6</td><td>All &lt;2s response time</td></tr>
+    <tr><td>New defects found</td><td>0</td><td>0</td></tr>
+    <tr><td>Regressions from Sprint 2</td><td>0</td><td>0</td></tr>
+    <tr><td>Integration gates completed</td><td>2 (S1.5 + S2.5)</td><td>Both passed</td></tr>
+    <tr><td>Playbook version</td><td>v2.0</td><td>Updated 2026-03-10</td></tr>
+    <tr><td>GitLab commit</td><td><code>63d25f3b</code></td><td>7 files pushed</td></tr>
+  </table>
+</div>
+
+<!-- WHAT WENT WELL -->
+<div class="section">
+  <h2>What Went Well</h2>
+
+  <h3>1. Zero regressions at 85-snippet scale</h3>
+  <p>Sprint 2 deployed 23 new snippets on top of the Sprint 0+1 foundation. The S2.5 gate confirmed that none of the new code broke existing functionality. The editorial pipeline, security stack, and REST endpoints all behaved identically to their S1.5 verification baseline.</p>
+  <div class="evidence">Evidence: S2.5.1 smoke test results match S1.5.1 exactly — same 6 PASS, same 2 PARTIAL (both pre-existing operational gaps, not code failures).</div>
+
+  <h3>2. Integration gate pattern continues to prove its value</h3>
+  <p>This is the second integration gate (S1.5, now S2.5) and both have been high-ROI. Even finding zero new defects, the gate provides verified confidence that the foundation is solid before layering Sprint 3 on top. The ~4 hour investment eliminates days of potential debugging later.</p>
+  <div class="evidence">Evidence: Zero defects found = zero defects shipped into Sprint 3 foundation. Cost: ~4h. Risk eliminated: unknowable.</div>
+
+  <h3>3. Snippet inventory management is clean</h3>
+  <p>85 total snippets with zero errors, zero priority conflicts, and a clear active/inactive split. The load-order management and naming conventions established in Sprint 1 continue to hold at scale. No snippet dependency issues emerged.</p>
+
+  <h3>4. Playbook update (v2.0) keeps continuity artifacts fresh</h3>
+  <p>The Operational Playbook was updated in-place from v1.0 to v2.0 as part of this gate. This ensures Sprint 3 agents boot with current snippet counts, feed URLs, and tool landscape — not stale Sprint 1 data.</p>
+</div>
+
+<!-- WHAT DIDN'T GO WELL -->
+<div class="section">
+  <h2>What Didn't Go Well</h2>
+
+  <h3>1. Same 2 partials persist — AI scoring and daily digest still inactive</h3>
+  <p>The Claude API key has not been provisioned since project inception. AI scoring is coded, deployed, and verified — but returns 0/760 scored items because there's no API key. The daily digest depends on scored items, so it's also inactive. These two partials have now appeared in both S1.5.1 and S2.5.1. They're operational gaps, not code failures, but they represent unused capability.</p>
+  <div class="evidence">Impact: Two core features (AI relevance scoring + morning digest) are built but dormant. No timeline for API key provisioning.</div>
+
+  <h3>2. RSS feed permalink still returns 404</h3>
+  <p>The pretty URL <code>/feed/the-markdown</code> returns 404 because WordPress needs a permalink flush (Settings → Permalinks → Save). The feed works fine at the query-param URL <code>/?feed=the-markdown</code> but returns zero items because nothing has been promoted yet. Additionally, there's no <code>&lt;link rel="alternate"&gt;</code> auto-discovery tag in the site head.</p>
+  <div class="evidence">Impact: RSS subscribers can't discover the feed automatically. Requires two manual actions: permalink flush + auto-discovery snippet.</div>
+
+  <h3>3. GitLab wasn't updated during the gate — required a separate push</h3>
+  <p>All 6 S2.5 verification tasks were completed and results documented locally, but GitLab wasn't updated until explicitly prompted. The session exit checklist (retro action A21/B5) continues to be inconsistently followed.</p>
+</div>
+
+<!-- CARRY-FORWARD ITEMS -->
+<div class="carry-fwd">
+  <h3>Carry-Forward Into Sprint 3</h3>
+  <ul>
+    <li><strong>CF-1: Flush permalinks</strong> — Save Settings → Permalinks to activate <code>/feed/the-markdown</code>. (Manual, ~30 seconds)</li>
+    <li><strong>CF-2: Claude API key</strong> — Still not provisioned. AI scoring inactive (0/760 items scored). This has been a partial since Sprint 1.5.</li>
+    <li><strong>CF-3: RSS auto-discovery</strong> — Add <code>&lt;link rel="alternate" type="application/rss+xml"&gt;</code> to site head. Sprint 3 snippet candidate.</li>
+    <li><strong>CF-4: BLK-001 Instagram</strong> — Facebook App Review not submitted. Now 4 sprints of carry-forward. Deferred to Sprint 3.5.</li>
+    <li><strong>CF-5: GitLab sync discipline</strong> — Enforce sync at every session close, not just when asked.</li>
+  </ul>
+</div>
+
+<!-- S2 RETRO ACTION ITEM REVIEW -->
+<div class="section">
+  <h2>Sprint 2 Retro Action Item Status</h2>
+  <p style="font-size:13px; color:var(--dim); margin-bottom:12px;">Tracking the 10 action items from the Sprint 2 retrospective.</p>
+  <table>
+    <tr><th>ID</th><th>Action</th><th>Status</th></tr>
+    <tr><td>B1</td><td>Submit Facebook App Review for Instagram API (BLK-001)</td><td class="status-open">NOT DONE</td></tr>
+    <tr><td>B2</td><td>Set due dates on all GitLab milestones</td><td class="status-open">NOT DONE</td></tr>
+    <tr><td>B3</td><td>Build scripted sprint close-out procedure</td><td class="status-open">NOT DONE</td></tr>
+    <tr><td>B4</td><td>Insert Sprint 2.5 integration gate before Sprint 3</td><td class="status-done">DONE — this sprint</td></tr>
+    <tr><td>B5</td><td>Enforce GitLab sync at session close</td><td class="status-partial">PARTIAL — still inconsistent</td></tr>
+    <tr><td>B6</td><td>Refine Lego block size guidance (contextual targets)</td><td class="status-open">NOT DONE — Sprint 3 candidate</td></tr>
+    <tr><td>B7</td><td>Review monolithic Sprint 1 snippets (DR-0023)</td><td class="status-open">NOT DONE — Sprint 3 candidate</td></tr>
+    <tr><td>B8</td><td>Push dashboards to GitLab Pages</td><td class="status-open">NOT DONE</td></tr>
+    <tr><td>B9</td><td>Add external dependency forcing function for blockers</td><td class="status-open">NOT DONE</td></tr>
+    <tr><td>B10</td><td>Update Operational Playbook for Sprint 3</td><td class="status-done">DONE — v2.0</td></tr>
+  </table>
+  <div style="margin-top:12px;">
+    <span class="tag tag-green">2 DONE</span>
+    <span class="tag tag-amber">1 PARTIAL</span>
+    <span class="tag tag-red">7 NOT DONE</span>
+    <span style="font-size:12px; color:var(--dim); margin-left:8px;">— B1, B2, B3, B5, B8, B9 carry forward. B6, B7 become Sprint 3 tasks.</span>
+  </div>
+</div>
+
+<!-- START / STOP / CONTINUE -->
+<div class="section">
+  <h2>Start / Stop / Continue</h2>
+  <div class="ssc-grid">
+    <div class="ssc-card start">
+      <h3 style="color:var(--green);">Start</h3>
+      <ul>
+        <li><strong>Provision the Claude API key</strong> — two integration gates have now confirmed the AI pipeline works but is dormant. Time to activate it.</li>
+        <li><strong>RSS auto-discovery snippet</strong> — feed is valid but invisible to subscribers without the link tag.</li>
+        <li><strong>GitLab sync as gate exit criterion</strong> — make "pushed to GitLab" part of the gate pass definition, not an afterthought.</li>
+      </ul>
+    </div>
+    <div class="ssc-card stop">
+      <h3 style="color:var(--red);">Stop</h3>
+      <ul>
+        <li><strong>Treating API key provisioning as deferred</strong> — it's been a partial since S1.5. Two gates later, the same partial. Decision needed: provision or formally descope.</li>
+        <li><strong>Ignoring B-series action items</strong> — 7/10 Sprint 2 retro actions are still open. Action items that aren't acted on erode trust in the retro process.</li>
+      </ul>
+    </div>
+    <div class="ssc-card continue">
+      <h3 style="color:var(--blue);">Continue</h3>
+      <ul>
+        <li><strong>Integration gates between feature sprints</strong> — S2.5 found zero regressions and confirmed safe to build Sprint 3 on top. Pattern is validated twice now.</li>
+        <li><strong>Operational Playbook updates at gate boundaries</strong> — v2.0 keeps Sprint 3 agents current.</li>
+        <li><strong>Snippet inventory audits</strong> — clean audit at 85 snippets gives confidence for Sprint 3's additions.</li>
+        <li><strong>REST endpoint health checks</strong> — quick, cheap verification that the API surface is healthy.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SPRINT 3 READINESS -->
+<div class="section">
+  <h2>Sprint 3 Readiness Assessment</h2>
+  <table>
+    <tr><th>Criterion</th><th>Status</th><th>Notes</th></tr>
+    <tr><td>Editorial pipeline verified</td><td class="status-done">PASS</td><td>6/8 PASS, 2 PARTIAL (pre-existing, not regressions)</td></tr>
+    <tr><td>Security stack verified</td><td class="status-done">PASS</td><td>6/6 at 74-snippet scale</td></tr>
+    <tr><td>Snippet inventory clean</td><td class="status-done">PASS</td><td>85 total, 0 errors, 0 conflicts</td></tr>
+    <tr><td>REST endpoints healthy</td><td class="status-done">PASS</td><td>6/6, all &lt;2s</td></tr>
+    <tr><td>Playbook updated</td><td class="status-done">PASS</td><td>v2.0 — Sprint 3 ready</td></tr>
+    <tr><td>GitLab synced</td><td class="status-done">PASS</td><td>Commit 63d25f3b, 7 files</td></tr>
+    <tr><td>No new blockers</td><td class="status-done">PASS</td><td>BLK-001 is carry-forward, not new</td></tr>
+  </table>
+  <p style="margin-top:16px; color:var(--green); font-weight:600;">Verdict: Sprint 3 is UNLOCKED. Gate 2.5 passed. Build when ready.</p>
+</div>
+
+<div class="footer">
+  The Markdown — Sprint 2.5 Retrospective &bull; Taskmaster &bull; 2026-03-10<br>
+  Source of Truth: <a href="https://gitlab.com/h3ndriks.j/JK.com-ver02/-/issues">GitLab Issues</a> &bull;
+  <a href="Retrospective_Sprint2.html">S2 Retro</a> &bull;
+  <a href="Scrum_Burndown_Dashboard.html">Burndown</a> &bull;
+  <a href="Cyber_Gate_Dashboard.html">Cyber Gates</a> &bull;
+  Commit: <a href="https://gitlab.com/h3ndriks.j/JK.com-ver02/-/commit/63d25f3b1900e7ee7cf336720944d25349b690b6">63d25f3b</a>
+</div>
+
+</body>
+</html>
