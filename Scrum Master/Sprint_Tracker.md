@@ -157,9 +157,10 @@
 
 ## Sprint 3 — Scale & Polish
 
-**Status:** ⬜ NOT STARTED | **Tasks:** 0/18 closed | **Milestone:** Sprint 3 — Scale & Polish
-**Estimated:** ~55h
-**Note:** S3.4, S3.7, and S2.3 moved to Sprint 3.5 (pay-to-play decision gate)
+**Status:** 🔵 IN PROGRESS | **Tasks:** 0/20 closed | **Milestone:** Sprint 3 — Scale & Polish
+**Estimated:** ~55h | **Started:** 2026-03-10
+**Execution:** 3 waves — Wave 1 (10 tasks, independent) → Wave 2 (5 tasks, dependent) → Wave 3 / Gate 7 (5 tasks, cyber)
+**Note:** S3.4, S3.7, and S2.3 moved to Sprint 3.5 (pay-to-play decision gate). CF-1 + CF-3 added from S2.5 retro.
 
 ### Gate 6 — Visual & Infrastructure
 
@@ -225,9 +226,9 @@
 | S1.5 — Integration Gate | 8 | 8 | 0 | ✅ COMPLETE (closed) |
 | S2 — Social & Publishing | 22 | 21 | 1 | 🔶 21/22 (S2.3 deferred to S3.5) |
 | S2.5 — Integration Gate | 6 | 6 | 0 | ✅ COMPLETE |
-| S3 — Scale & Polish | 18 | 0 | 18 | ⬜ NOT STARTED |
+| S3 — Scale & Polish | 20 | 0 | 20 | 🔵 IN PROGRESS |
 | S3.5 — Pay-to-Play Gate | 7 | 0 | 7 | ⬜ NOT STARTED |
-| **Total** | **91** | **65** | **26** | **71% complete** |
+| **Total** | **93** | **65** | **28** | **70% complete** |
 
 ---
 
