@@ -7,6 +7,8 @@ pages:
     - cp the-markdown/the-markdown-prototype.html public/index.html
     - cp the-markdown/TheMarkdown_Architecture_Diagram.html public/architecture.html
     - cp "Scrum Master/Scrum_Burndown_Dashboard.html" public/burndown.html
+    - cp "Scrum Master/Cyber_Gate_Dashboard.html" public/cyber.html
+    - cp "Scrum Master/Retrospective_Sprint2.html" public/retro-s2.html
   artifacts:
     paths:
       - public

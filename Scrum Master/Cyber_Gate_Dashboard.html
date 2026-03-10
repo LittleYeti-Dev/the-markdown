@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Markdown — Cyber Gate Dashboard</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #131a2b;
+    --surface2: #1a2340;
+    --border: #243054;
+    --text: #d4daf0;
+    --dim: #7a85a8;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.12);
+    --amber: #f59e0b;
+    --amber-bg: rgba(245,158,11,0.12);
+    --red: #ef4444;
+    --red-bg: rgba(239,68,68,0.12);
+    --blue: #3b82f6;
+    --blue-bg: rgba(59,130,246,0.12);
+    --cyan: #06b6d4;
+    --purple: #a855f7;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); padding: 24px; }
+  .header { text-align: center; margin-bottom: 32px; }
+  .header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  .header h1 span { color: var(--cyan); }
+  .header .sub { color: var(--dim); font-size: 14px; margin-top: 4px; }
+
+  /* Top metrics row */
+  .metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 28px; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+  .metric-card .value { font-size: 32px; font-weight: 700; }
+  .metric-card .label { font-size: 12px; color: var(--dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .metric-card.green .value { color: var(--green); }
+  .metric-card.amber .value { color: var(--amber); }
+  .metric-card.blue .value { color: var(--blue); }
+  .metric-card.red .value { color: var(--red); }
+
+  /* Gate pipeline */
+  .pipeline { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 28px; }
+  .pipeline h2 { font-size: 18px; margin-bottom: 20px; }
+  .gate-row { display: flex; align-items: stretch; gap: 0; margin-bottom: 8px; }
+  .gate-node { flex: 1; background: var(--surface2); border: 2px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align: center; position: relative; transition: all 0.2s; }
+  .gate-node.passed { border-color: var(--green); background: var(--green-bg); }
+  .gate-node.pending { border-color: var(--amber); background: var(--amber-bg); }
+  .gate-node.blocked { border-color: var(--red); background: var(--red-bg); }
+  .gate-node .gate-id { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--dim); }
+  .gate-node.passed .gate-id { color: var(--green); }
+  .gate-node.pending .gate-id { color: var(--amber); }
+  .gate-node .gate-name { font-size: 13px; font-weight: 600; margin: 6px 0 4px; }
+  .gate-node .gate-status { font-size: 11px; }
+  .gate-node.passed .gate-status { color: var(--green); }
+  .gate-node.pending .gate-status { color: var(--amber); }
+  .gate-arrow { display: flex; align-items: center; padding: 0 4px; color: var(--dim); font-size: 18px; }
+
+  /* Sprint Security Sections */
+  .sprint-sec { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .sprint-sec h2 { font-size: 18px; margin-bottom: 6px; }
+  .sprint-sec .sprint-meta { font-size: 13px; color: var(--dim); margin-bottom: 16px; }
+  .sprint-sec .sprint-meta .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-left: 8px; }
+  .badge-passed { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+  .badge-pending { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+  .badge-blocked { background: var(--red-bg); color: var(--red); border: 1px solid var(--red); }
+
+  /* Task tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--dim); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(59,130,246,0.04); }
+  .status-closed { color: var(--green); font-weight: 600; }
+  .status-open { color: var(--amber); font-weight: 600; }
+  .status-blocked { color: var(--red); font-weight: 600; }
+  .owner { color: var(--cyan); font-weight: 500; }
+
+  /* Security architecture diagram */
+  .arch { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .arch h2 { font-size: 18px; margin-bottom: 16px; }
+  .arch-flow { display: flex; flex-direction: column; gap: 0; align-items: center; }
+  .arch-layer { width: 80%; max-width: 600px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; }
+  .arch-layer.active { border-color: var(--green); }
+  .arch-layer.pending-layer { border-color: var(--amber); border-style: dashed; }
+  .arch-layer .layer-name { font-weight: 600; font-size: 13px; }
+  .arch-layer .layer-id { font-size: 11px; color: var(--dim); }
+  .arch-layer .layer-badge { font-size: 11px; padding: 2px 8px; border-radius: 8px; font-weight: 600; }
+  .arch-layer.active .layer-badge { background: var(--green-bg); color: var(--green); }
+  .arch-layer.pending-layer .layer-badge { background: var(--amber-bg); color: var(--amber); }
+  .arch-arrow-down { color: var(--dim); font-size: 16px; padding: 4px 0; }
+
+  /* Verification card */
+  .verify-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+  .verify-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .verify-card.pass { border-left: 3px solid var(--green); }
+  .verify-card .v-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .verify-card .v-detail { font-size: 11px; color: var(--dim); }
+  .verify-card .v-result { font-size: 12px; font-weight: 600; color: var(--green); margin-top: 6px; }
+
+  /* Progress bars */
+  .progress-bar { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+  .progress-fill.green { background: var(--green); }
+  .progress-fill.amber { background: var(--amber); }
+
+  /* Summary */
+  .summary { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .summary h2 { font-size: 18px; margin-bottom: 16px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .summary-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .summary-item h3 { font-size: 14px; margin-bottom: 8px; }
+  .summary-item p { font-size: 12px; color: var(--dim); line-height: 1.5; }
+
+  .footer { text-align: center; color: var(--dim); font-size: 12px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+  @media (max-width: 768px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .gate-row { flex-wrap: wrap; }
+    .gate-node { min-width: 120px; }
+    .verify-grid { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>The Markdown — <span>Cyber Gate Dashboard</span></h1>
+  <div class="sub">Security posture across all sprints &bull; Updated 2026-03-10</div>
+</div>
+
+<!-- TOP METRICS -->
+<div class="metrics">
+  <div class="metric-card green">
+    <div class="value">6/7</div>
+    <div class="label">Cyber Gates Passed</div>
+  </div>
+  <div class="metric-card green">
+    <div class="value">22/28</div>
+    <div class="label">SEC Tasks Closed</div>
+  </div>
+  <div class="metric-card blue">
+    <div class="value">6/6</div>
+    <div class="label">S1.5 Verification</div>
+  </div>
+  <div class="metric-card green">
+    <div class="value">0</div>
+    <div class="label">Errors (24h)</div>
+  </div>
+  <div class="metric-card amber">
+    <div class="value">1</div>
+    <div class="label">Open Blockers</div>
+  </div>
+</div>
+
+<!-- SEVEN CYBER GATES PIPELINE -->
+<div class="pipeline">
+  <h2>Seven Cyber Gates</h2>
+  <div class="gate-row">
+    <div class="gate-node passed">
+      <div class="gate-id">G0</div>
+      <div class="gate-name">Architecture Review</div>
+      <div class="gate-status">PASSED &mdash; Sprint 0</div>
+    </div>
+    <div class="gate-arrow">&rarr;</div>
+    <div class="gate-node passed">
+      <div class="gate-id">G1</div>
+      <div class="gate-name">Code Security</div>
+      <div class="gate-status">PASSED &mdash; Sprint 1</div>
+    </div>
+    <div class="gate-arrow">&rarr;</div>
+    <div class="gate-node passed">
+      <div class="gate-id">G2</div>
+      <div class="gate-name">Credential Security</div>
+      <div class="gate-status">PASSED &mdash; Sprint 1</div>
+    </div>
+    <div class="gate-arrow">&rarr;</div>
+    <div class="gate-node passed">
+      <div class="gate-id">G3</div>
+      <div class="gate-name">AI Pipeline Security</div>
+      <div class="gate-status">PASSED &mdash; Sprint 1</div>
+    </div>
+    <div class="gate-arrow">&rarr;</div>
+    <div class="gate-node passed">
+      <div class="gate-id">G4</div>
+      <div class="gate-name">Publish Security</div>
+      <div class="gate-status">PASSED &mdash; Sprint 2</div>
+    </div>
+    <div class="gate-arrow">&rarr;</div>
+    <div class="gate-node passed">
+      <div class="gate-id">G5</div>
+      <div class="gate-name">Deployment Security</div>
+      <div class="gate-status">PASSED &mdash; Sprint 2</div>
+    </div>
+    <div class="gate-arrow">&rarr;</div>
+    <div class="gate-node pending">
+      <div class="gate-id">G6</div>
+      <div class="gate-name">Incident Readiness</div>
+      <div class="gate-status">PENDING &mdash; Sprint 3</div>
+    </div>
+  </div>
+  <div class="progress-bar" style="margin-top: 16px;">
+    <div class="progress-fill green" style="width: 85.7%;"></div>
+  </div>
+  <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--dim); margin-top:4px;">
+    <span>6 of 7 gates passed (85.7%)</span>
+    <span>G6 — Sprint 3</span>
+  </div>
+</div>
+
+<!-- SECURITY ARCHITECTURE FLOW -->
+<div class="arch">
+  <h2>Security Architecture — Request Flow</h2>
+  <div class="arch-flow">
+    <div class="arch-layer active">
+      <div><span class="layer-name">Rate Limiting</span><br><span class="layer-id">S1.21 + S2.22 — 60 req/min/IP + exponential backoff</span></div>
+      <span class="layer-badge">ACTIVE</span>
+    </div>
+    <div class="arch-arrow-down">&darr;</div>
+    <div class="arch-layer active">
+      <div><span class="layer-name">App Passwords / OAuth 2.0</span><br><span class="layer-id">S1.19 + S2.6 — REST auth + callback validation</span></div>
+      <span class="layer-badge">ACTIVE</span>
+    </div>
+    <div class="arch-arrow-down">&darr;</div>
+    <div class="arch-layer active">
+      <div><span class="layer-name">CSRF / Nonce Verification</span><br><span class="layer-id">S1.18 + S2.19 — AJAX nonce + publish CSRF tokens</span></div>
+      <span class="layer-badge">ACTIVE</span>
+    </div>
+    <div class="arch-arrow-down">&darr;</div>
+    <div class="arch-layer active">
+      <div><span class="layer-name">Token Vault (AES-256)</span><br><span class="layer-id">S1.17 + S2.7 — Encrypted storage + auto-refresh cron</span></div>
+      <span class="layer-badge">ACTIVE</span>
+    </div>
+    <div class="arch-arrow-down">&darr;</div>
+    <div class="arch-layer active">
+      <div><span class="layer-name">AI Pipeline Security</span><br><span class="layer-id">S1.11 + S2.12 + S2.13 — Injection detection + output validation + length enforcement</span></div>
+      <span class="layer-badge">ACTIVE</span>
+    </div>
+    <div class="arch-arrow-down">&darr;</div>
+    <div class="arch-layer active">
+      <div><span class="layer-name">Content Escaping / XSS Prevention</span><br><span class="layer-id">S1.3 + S2.20 — Input sanitization + social media output escaping</span></div>
+      <span class="layer-badge">ACTIVE</span>
+    </div>
+    <div class="arch-arrow-down">&darr;</div>
+    <div class="arch-layer active">
+      <div><span class="layer-name">Audit Trail + Diagnostics</span><br><span class="layer-id">S1.22 + S1.23 + S2.21 — Admin audit + system diagnostics + publish dispatch log</span></div>
+      <span class="layer-badge">ACTIVE</span>
+    </div>
+    <div class="arch-arrow-down">&darr;</div>
+    <div class="arch-layer pending-layer">
+      <div><span class="layer-name">Incident Response + Monitoring</span><br><span class="layer-id">S3.17 + S3.18 — Response plan + alerting (Sprint 3)</span></div>
+      <span class="layer-badge">PENDING</span>
+    </div>
+  </div>
+</div>
+
+<!-- S1.5 VERIFICATION RESULTS -->
+<div class="sprint-sec">
+  <h2>Security Stack Verification (Sprint 1.5)</h2>
+  <div class="sprint-meta">Full-chain verification &bull; 6/6 components tested <span class="badge badge-passed">ALL PASS</span></div>
+  <div class="verify-grid">
+    <div class="verify-card pass">
+      <div class="v-title">Token Vault (S1-17)</div>
+      <div class="v-detail">AES-256-CBC &bull; Nonce-protected AJAX &bull; 16 vault functions</div>
+      <div class="v-result">PASS</div>
+    </div>
+    <div class="verify-card pass">
+      <div class="v-title">Nonce Verification (S1-18)</div>
+      <div class="v-detail">Blanket enforcement on all ns_ AJAX &bull; Structured JSON errors</div>
+      <div class="v-result">PASS</div>
+    </div>
+    <div class="verify-card pass">
+      <div class="v-title">App Passwords (S1-19)</div>
+      <div class="v-detail">REST auth &bull; 401 on unauthed writes &bull; User ID 204791015</div>
+      <div class="v-result">PASS</div>
+    </div>
+    <div class="verify-card pass">
+      <div class="v-title">Rate Limiting (S1-21)</div>
+      <div class="v-detail">43/65 requests blocked &bull; X-RateLimit headers &bull; 60 req/min/IP</div>
+      <div class="v-result">PASS</div>
+    </div>
+    <div class="verify-card pass">
+      <div class="v-title">Audit Logging (S1-22)</div>
+      <div class="v-detail">Custom DB table &bull; 57 entries &bull; Called by 4 security snippets</div>
+      <div class="v-result">PASS</div>
+    </div>
+    <div class="verify-card pass">
+      <div class="v-title">Diagnostic Logger (S1-23)</div>
+      <div class="v-detail">Health endpoint &bull; 0 errors 24h &bull; 30-day retention + auto-purge</div>
+      <div class="v-result">PASS</div>
+    </div>
+  </div>
+</div>
+
+<!-- SPRINT 0 — HARDENING -->
+<div class="sprint-sec">
+  <h2>Sprint 0 — Platform Hardening</h2>
+  <div class="sprint-meta">7 SEC tasks &bull; Gate G0: Architecture Review <span class="badge badge-passed">7/7 CLOSED</span></div>
+  <table>
+    <tr><th>#</th><th>ID</th><th>Task</th><th>Owner</th><th>Status</th><th>Closed</th></tr>
+    <tr><td>1</td><td>S0.1</td><td>Harden wp-config.php — move above webroot, set file permissions 400</td><td class="owner">Cyber Ops</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>2</td><td>S0.2</td><td>Disable XML-RPC — block xmlrpc.php at server level</td><td class="owner">Cyber Ops</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>3</td><td>S0.3</td><td>Remove default admin account — create unique admin username</td><td class="owner">Taskmaster</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>4</td><td>S0.4</td><td>Set security headers — CSP, X-Frame-Options, HSTS, X-Content-Type</td><td class="owner">Cyber Ops</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>5</td><td>S0.5</td><td>Enforce HTTPS everywhere — redirect all HTTP to HTTPS</td><td class="owner">Cyber Ops</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>6</td><td>S0.6</td><td>Disable directory listing — prevent index browsing</td><td class="owner">Cyber Ops</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>7</td><td>S0.7</td><td>Hide WordPress version — remove generator meta tag</td><td class="owner">Cyber Ops</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+  </table>
+</div>
+
+<!-- SPRINT 1 — FOUNDATION SECURITY -->
+<div class="sprint-sec">
+  <h2>Sprint 1 — Foundation Security</h2>
+  <div class="sprint-meta">10 SEC tasks &bull; Gates G1 + G2 + G3 <span class="badge badge-passed">10/10 CLOSED</span></div>
+  <table>
+    <tr><th>#</th><th>ID</th><th>Task</th><th>Owner</th><th>Gate</th><th>Status</th><th>Closed</th></tr>
+    <tr><td>10</td><td>S1.3</td><td>Input validation on all CPT meta fields — sanitize, validate, escape</td><td class="owner">Cyber Ops</td><td>G1</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>15</td><td>S1.8</td><td>RSS feed sanitization — strip scripts, validate URLs, limit payload</td><td class="owner">Cyber Ops</td><td>G2</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>18</td><td>S1.11</td><td>Prompt injection detection — input filtering on RSS-to-LLM pipeline</td><td class="owner">Cyber Ops</td><td>G3</td><td class="status-closed">CLOSED</td><td>2026-03-08</td></tr>
+    <tr><td>24</td><td>S1.17</td><td>Build token vault — encrypted wp_options, AES-256</td><td class="owner">Cyber Ops</td><td>G2</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>25</td><td>S1.18</td><td>Nonce verification on all admin AJAX endpoints</td><td class="owner">Cyber Ops</td><td>G1</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>26</td><td>S1.19</td><td>Application passwords for REST API auth</td><td class="owner">Cyber Ops</td><td>G2</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>27</td><td>S1.20</td><td>Claude API key rotation procedure — document + test</td><td class="owner">Cyber Ops</td><td>G2</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>28</td><td>S1.21</td><td>Rate limiting on custom REST endpoints (60 req/min/IP)</td><td class="owner">DevOps</td><td>G1</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>29</td><td>S1.22</td><td>Audit logging — custom DB table for all admin actions</td><td class="owner">DevOps</td><td>G1</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>30</td><td>S1.23</td><td>Diagnostic logger — structured error/warning/info logging</td><td class="owner">DevOps</td><td>G1</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+  </table>
+</div>
+
+<!-- SPRINT 2 — PUBLISH + DEPLOYMENT SECURITY -->
+<div class="sprint-sec">
+  <h2>Sprint 2 — Publish &amp; Deployment Security</h2>
+  <div class="sprint-meta">8 SEC tasks &bull; Gates G4 + G5 <span class="badge badge-passed">8/8 CLOSED</span></div>
+  <table>
+    <tr><th>#</th><th>ID</th><th>Task</th><th>Owner</th><th>Gate</th><th>Status</th><th>Closed</th></tr>
+    <tr><td>35</td><td>S2.6</td><td>OAuth callback URL validation — whitelist registered callbacks</td><td class="owner">Cyber Ops</td><td>G4</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>36</td><td>S2.7</td><td>Token refresh automation — daily cron, email alert on failure</td><td class="owner">Cyber Ops</td><td>G4</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>37</td><td>S2.8</td><td>Platform API error handling — graceful failure, no token leakage</td><td class="owner">Cyber Ops</td><td>G4</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>41</td><td>S2.12</td><td>AI output validation — sanitize all Claude-generated content</td><td class="owner">Cyber Ops</td><td>G5</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>42</td><td>S2.13</td><td>AI response length enforcement — prevent token overflow</td><td class="owner">Cyber Ops</td><td>G5</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>48</td><td>S2.19</td><td>CSRF protection on quick-publish actions</td><td class="owner">Cyber Ops</td><td>G5</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>49</td><td>S2.20</td><td>Content escaping on social media output — XSS prevention</td><td class="owner">Cyber Ops</td><td>G5</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+    <tr><td>50</td><td>S2.21</td><td>Publish audit trail — log all social media dispatch events</td><td class="owner">Cyber Ops</td><td>G5</td><td class="status-closed">CLOSED</td><td>2026-03-09</td></tr>
+  </table>
+</div>
+
+<!-- SPRINT 3 — REMAINING SECURITY -->
+<div class="sprint-sec">
+  <h2>Sprint 3 — Incident Readiness (Upcoming)</h2>
+  <div class="sprint-meta">7 SEC tasks &bull; Gates G6 + Final Cyber Gate Review <span class="badge badge-pending">0/7 — NOT STARTED</span></div>
+  <table>
+    <tr><th>#</th><th>ID</th><th>Task</th><th>Owner</th><th>Status</th></tr>
+    <tr><td>60</td><td>S3.9</td><td>GitLab CI/CD pipeline security — protected branches, signed commits</td><td class="owner">Cyber Ops</td><td class="status-open">OPEN</td></tr>
+    <tr><td>61</td><td>S3.10</td><td>WordPress plugin audit — remove unused, update all, allowlist</td><td class="owner">Cyber Ops</td><td class="status-open">OPEN</td></tr>
+    <tr><td>62</td><td>S3.11</td><td>Database backup automation — daily encrypted backups</td><td class="owner">DevOps</td><td class="status-open">OPEN</td></tr>
+    <tr><td>63</td><td>S3.12</td><td>File permission hardening — wp-content, uploads, themes</td><td class="owner">Cyber Ops</td><td class="status-open">OPEN</td></tr>
+    <tr><td>67</td><td>S3.16</td><td>Penetration test — OWASP Top 10 scan on all endpoints</td><td class="owner">Cyber Ops</td><td class="status-open">OPEN</td></tr>
+    <tr><td>68</td><td>S3.17</td><td>Incident response plan — document response procedures</td><td class="owner">Cyber Ops</td><td class="status-open">OPEN</td></tr>
+    <tr><td>69</td><td>S3.18</td><td>Security monitoring setup — alerts for suspicious activity</td><td class="owner">Cyber Ops</td><td class="status-open">OPEN</td></tr>
+  </table>
+  <div style="margin-top: 12px; font-size: 12px; color: var(--dim);">
+    <strong>Also in Sprint 3 Gate 7:</strong> S3.19 (Final cyber gate review — all 7 gates pass), S3.20 (OPSEC review — no secrets in repos/logs), S3.21 (Security architecture doc + runbooks)
+  </div>
+</div>
+
+<!-- BLOCKER -->
+<div class="sprint-sec" style="border-color: var(--red);">
+  <h2 style="color: var(--red);">Open Blocker</h2>
+  <table>
+    <tr><th>ID</th><th>Task</th><th>Reason</th><th>Impact</th><th>Lead Time</th></tr>
+    <tr>
+      <td><strong>BLK-001</strong></td>
+      <td>S2.3 — Instagram API Integration</td>
+      <td>Blocked by Facebook App Review</td>
+      <td class="status-blocked">Gate 4 incomplete (7/8)</td>
+      <td>2-4 weeks</td>
+    </tr>
+  </table>
+</div>
+
+<!-- SEC TASK SUMMARY -->
+<div class="summary">
+  <h2>Security Task Summary by Sprint</h2>
+  <table>
+    <tr><th>Sprint</th><th>SEC Tasks</th><th>Closed</th><th>Open</th><th>Cyber Gates</th><th>Status</th></tr>
+    <tr><td>Sprint 0 (Hardening)</td><td>7</td><td class="status-closed">7</td><td>0</td><td>G0</td><td class="status-closed">COMPLETE</td></tr>
+    <tr><td>Sprint 1 (Foundation)</td><td>10</td><td class="status-closed">10</td><td>0</td><td>G1 + G2 + G3</td><td class="status-closed">COMPLETE</td></tr>
+    <tr><td>Sprint 1.5 (Integration)</td><td>1 (verify)</td><td class="status-closed">1</td><td>0</td><td>Verification</td><td class="status-closed">COMPLETE</td></tr>
+    <tr><td>Sprint 2 (Social)</td><td>8</td><td class="status-closed">8</td><td>0</td><td>G4 + G5</td><td class="status-closed">COMPLETE</td></tr>
+    <tr><td>Sprint 3 (Scale)</td><td>7 (+3 gate)</td><td>0</td><td class="status-open">7</td><td>G6 + Final</td><td class="status-open">NOT STARTED</td></tr>
+    <tr style="font-weight:700; border-top: 2px solid var(--border);">
+      <td>TOTAL</td><td>28 (+4)</td><td class="status-closed">22</td><td class="status-open">7</td><td>6/7 passed</td><td>79%</td>
+    </tr>
+  </table>
+</div>
+
+<!-- OWNER BREAKDOWN -->
+<div class="summary">
+  <h2>SEC Task Owner Breakdown</h2>
+  <div class="summary-grid">
+    <div class="summary-item">
+      <h3 style="color: var(--cyan);">Cyber Ops</h3>
+      <p>22 SEC tasks total &bull; 16 closed &bull; 6 open (all Sprint 3)<br>
+      Owns: Token vault, nonce, OAuth, XSS, CSRF, audit, AI validation, pen test, incident response, OPSEC</p>
+      <div class="progress-bar"><div class="progress-fill green" style="width: 72.7%;"></div></div>
+      <div style="font-size:11px; color:var(--dim); margin-top:4px;">16/22 complete (72.7%)</div>
+    </div>
+    <div class="summary-item">
+      <h3 style="color: var(--cyan);">DevOps</h3>
+      <p>6 SEC tasks total &bull; 5 closed &bull; 1 open (S3.11 backup automation)<br>
+      Owns: Rate limiting, audit logging, diagnostic logger, rate limit handler, DB backups</p>
+      <div class="progress-bar"><div class="progress-fill green" style="width: 83.3%;"></div></div>
+      <div style="font-size:11px; color:var(--dim); margin-top:4px;">5/6 complete (83.3%)</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  The Markdown &mdash; Cyber Gate Dashboard &bull; Generated by Taskmaster &bull; 2026-03-10<br>
+  Source of Truth: <a href="https://gitlab.com/h3ndriks.j/JK.com-ver02/-/issues" style="color:var(--cyan);">GitLab Issues #1–#72</a>
+</div>
+
+</body>
+</html>

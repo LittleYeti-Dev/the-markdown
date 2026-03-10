@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Markdown — Sprint 2 Retrospective</title>
+<style>
+  :root {
+    --bg: #0a0e17; --surface: #131a2b; --surface2: #1a2340; --border: #243054;
+    --text: #d4daf0; --dim: #7a85a8;
+    --green: #22c55e; --green-bg: rgba(34,197,94,0.12);
+    --amber: #f59e0b; --amber-bg: rgba(245,158,11,0.12);
+    --red: #ef4444; --red-bg: rgba(239,68,68,0.12);
+    --blue: #3b82f6; --blue-bg: rgba(59,130,246,0.12);
+    --cyan: #06b6d4; --purple: #a855f7;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); padding:24px; line-height:1.6; }
+
+  .header { text-align:center; margin-bottom:32px; }
+  .header h1 { font-size:28px; font-weight:700; letter-spacing:-0.5px; }
+  .header h1 span { color:var(--cyan); }
+  .header .sub { color:var(--dim); font-size:14px; margin-top:4px; }
+
+  /* Metrics */
+  .metrics { display:grid; grid-template-columns:repeat(6,1fr); gap:14px; margin-bottom:28px; }
+  .mc { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center; }
+  .mc .v { font-size:28px; font-weight:700; }
+  .mc .l { font-size:11px; color:var(--dim); margin-top:4px; text-transform:uppercase; letter-spacing:0.5px; }
+  .mc.g .v{color:var(--green)} .mc.a .v{color:var(--amber)} .mc.b .v{color:var(--blue)} .mc.r .v{color:var(--red)} .mc.c .v{color:var(--cyan)} .mc.p .v{color:var(--purple)}
+
+  /* Sections */
+  .section { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:20px; }
+  .section h2 { font-size:18px; margin-bottom:16px; }
+  .section h3 { font-size:15px; margin:16px 0 8px; color:var(--cyan); }
+  .section p { font-size:14px; margin-bottom:10px; }
+  .section .evidence { font-size:12px; color:var(--dim); border-left:3px solid var(--border); padding-left:12px; margin:8px 0 16px; }
+
+  /* Tags */
+  .tag { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:600; margin-right:6px; }
+  .tag-green { background:var(--green-bg); color:var(--green); border:1px solid var(--green); }
+  .tag-amber { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber); }
+  .tag-red { background:var(--red-bg); color:var(--red); border:1px solid var(--red); }
+  .tag-blue { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue); }
+
+  /* Tables */
+  table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+  th { text-align:left; padding:10px 12px; border-bottom:2px solid var(--border); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:var(--dim); }
+  td { padding:9px 12px; border-bottom:1px solid var(--border); }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:rgba(59,130,246,0.04); }
+  .status-done { color:var(--green); font-weight:600; }
+  .status-partial { color:var(--amber); font-weight:600; }
+  .status-open { color:var(--red); font-weight:600; }
+
+  /* Progress bars */
+  .pbar { height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; margin:6px 0; }
+  .pfill { height:100%; border-radius:4px; }
+  .pfill-g { background:var(--green); }
+  .pfill-a { background:var(--amber); }
+
+  /* SSC grid */
+  .ssc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .ssc-card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:18px; }
+  .ssc-card h3 { font-size:15px; margin-bottom:12px; }
+  .ssc-card.start { border-top:3px solid var(--green); }
+  .ssc-card.stop { border-top:3px solid var(--red); }
+  .ssc-card.continue { border-top:3px solid var(--blue); }
+  .ssc-card ul { font-size:13px; padding-left:18px; }
+  .ssc-card li { margin-bottom:8px; }
+
+  /* Executive summary callout */
+  .exec { background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(59,130,246,0.08)); border:1px solid var(--cyan); border-radius:12px; padding:24px; margin-bottom:28px; }
+  .exec p { font-size:15px; }
+
+  /* Timeline */
+  .timeline { display:flex; gap:0; margin:16px 0; }
+  .tl-node { flex:1; text-align:center; padding:12px 8px; background:var(--surface2); border:1px solid var(--border); }
+  .tl-node:first-child { border-radius:10px 0 0 10px; }
+  .tl-node:last-child { border-radius:0 10px 10px 0; }
+  .tl-node.done { border-color:var(--green); background:var(--green-bg); }
+  .tl-node.blocked { border-color:var(--red); background:var(--red-bg); }
+  .tl-node .tl-label { font-size:11px; font-weight:700; color:var(--dim); text-transform:uppercase; }
+  .tl-node.done .tl-label { color:var(--green); }
+  .tl-node.blocked .tl-label { color:var(--red); }
+  .tl-node .tl-text { font-size:12px; margin-top:4px; }
+
+  .footer { text-align:center; color:var(--dim); font-size:12px; margin-top:32px; padding-top:16px; border-top:1px solid var(--border); }
+  a { color:var(--cyan); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+
+  @media (max-width:900px) {
+    .metrics { grid-template-columns:repeat(3,1fr); }
+    .ssc-grid { grid-template-columns:1fr; }
+    .timeline { flex-wrap:wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>The Markdown — <span>Sprint 2 Retrospective</span></h1>
+  <div class="sub">Social &amp; Publishing Sprint &bull; March 9, 2026 &bull; Facilitated by Taskmaster</div>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="exec">
+  <p>Sprint 2 delivered social media integration, AI content reformatting, quick-publish workflow, and deployment security in a single session — <strong>21 of 22 tasks closed (95%)</strong>, with only Instagram blocked by an external dependency. 23 new snippets deployed (IDs 63–85), bringing production total to ~85 active snippets. Cyber Gates G4 and G5 both passed. Zero rollbacks, zero production errors. The Lego block architecture (DR-0016) proved itself: all 23 snippets deployed without a single WAF block.</p>
+</div>
+
+<!-- TOP METRICS -->
+<div class="metrics">
+  <div class="mc g"><div class="v">21/22</div><div class="l">Tasks Closed</div></div>
+  <div class="mc b"><div class="v">23</div><div class="l">Snippets Deployed</div></div>
+  <div class="mc g"><div class="v">0</div><div class="l">WAF Blocks</div></div>
+  <div class="mc g"><div class="v">0</div><div class="l">Prod Errors</div></div>
+  <div class="mc g"><div class="v">6/7</div><div class="l">Cyber Gates</div></div>
+  <div class="mc r"><div class="v">1</div><div class="l">Blocker</div></div>
+</div>
+
+<!-- BY THE NUMBERS -->
+<div class="section">
+  <h2>By the Numbers</h2>
+  <table>
+    <tr><th>Metric</th><th>Sprint 2</th><th>Cumulative</th></tr>
+    <tr><td>Tasks closed</td><td>21/22 (95%)</td><td>59/81 (73%)</td></tr>
+    <tr><td>Snippets deployed</td><td>23 (IDs 63–85)</td><td>~85 total active</td></tr>
+    <tr><td>Gate reviews passed</td><td>G4, G5</td><td>G0–G5 (6 of 7)</td></tr>
+    <tr><td>GitLab issues closed</td><td>14 (#38–#51)</td><td>59 of 81</td></tr>
+    <tr><td>WAF blocks</td><td>0</td><td>0 in Sprint 2</td></tr>
+    <tr><td>Production errors (24h)</td><td>0</td><td>0</td></tr>
+    <tr><td>Rollbacks</td><td>0</td><td>0 lifetime</td></tr>
+    <tr><td>Decisions logged</td><td>DR-0024</td><td>24 total</td></tr>
+    <tr><td>Blockers</td><td>BLK-001 (carry-forward)</td><td>1 open</td></tr>
+    <tr><td>New REST endpoints</td><td>/ns/v1/reformat, /ns/v1/publish, /ns/v1/feed-items</td><td>—</td></tr>
+    <tr><td>New admin pages</td><td>Quick Publish, Editorial Arcs, Publish History</td><td>—</td></tr>
+    <tr><td>RSS feed</td><td>/feed/the-markdown</td><td>Live</td></tr>
+  </table>
+</div>
+
+<!-- SPRINT TIMELINE -->
+<div class="section">
+  <h2>Sprint 2 Execution Timeline</h2>
+  <div class="timeline">
+    <div class="tl-node done">
+      <div class="tl-label">Sprint 1.5</div>
+      <div class="tl-text">Integration Gate<br>8/8 verified</div>
+    </div>
+    <div class="tl-node done">
+      <div class="tl-label">Gate 4</div>
+      <div class="tl-text">Social APIs<br>7/8 closed</div>
+    </div>
+    <div class="tl-node blocked">
+      <div class="tl-label">BLK-001</div>
+      <div class="tl-text">Instagram<br>FB App Review</div>
+    </div>
+    <div class="tl-node done">
+      <div class="tl-label">Gate 5</div>
+      <div class="tl-text">AI + Quick Publish<br>14/14 closed</div>
+    </div>
+    <div class="tl-node done">
+      <div class="tl-label">Close-out</div>
+      <div class="tl-text">Dashboards<br>All synced</div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT WENT WELL -->
+<div class="section">
+  <h2>What Went Well</h2>
+
+  <h3>1. Lego block architecture eliminated WAF issues entirely</h3>
+  <p>The biggest pain point from Sprint 1 — large monolithic snippets triggering WordPress.com WAF blocks — was completely resolved. All 23 Gate 5 snippets deployed without a single WAF rejection. The micro-snippet pattern (DR-0016) proved itself as the correct architecture for WordPress.com Code Snippets delivery.</p>
+  <div class="evidence">Evidence: 23 snippets deployed, 0 WAF blocks, 0 deployment failures. Compare to Sprint 1 Gate 3 where multiple large snippets required debugging and rework.</div>
+
+  <h3>2. Sprint 1.5 integration gate caught zero defects — foundation was solid</h3>
+  <p>The Sprint 1.5 checkpoint (DR-0019) verified all 8 functional chains and all 6 security components. Everything passed first try. This gave full confidence to build Sprint 2 on top of the Sprint 0+1 foundation without worrying about hidden integration failures.</p>
+  <div class="evidence">Evidence: S1.5.1 functional smoke test 8/8 PASS, S1.5.2 security verification 6/6 PASS. Zero defects discovered.</div>
+
+  <h3>3. Operational Playbook eliminated the "context wall" problem</h3>
+  <p>The Operational Playbook (DR-0020) solved the recurring issue of agents losing context between sessions. Sprint 2 agents booted with the Playbook + Credential Protocol as the first two files to read — no more re-learning the platform, tool selection, or deployment procedure from scratch.</p>
+  <div class="evidence">Evidence: Sprint 2 sessions used REST API as default tool from the start (no browser fallback). Tool selection was consistent across sessions.</div>
+
+  <h3>4. Gate model scaled from 3 gates to 5 with no friction</h3>
+  <p>Sprint 2 added Gates G4 (Publish Security) and G5 (Deployment Security) to the existing G0–G3 chain. The gate taxonomy, GitLab labels, and verification process all scaled without modification. The Seven Cyber Gates model (DR-0006) continues to enforce security as a hard boundary.</p>
+  <div class="evidence">Evidence: G4 and G5 both passed with all SEC tasks closed. 8/8 Sprint 2 SEC tasks deployed and verified.</div>
+
+  <h3>5. Parallel SEC + FUNC execution was faster than serial</h3>
+  <p>Gate 4 ran 5 social API integrations (FUNC) alongside 3 security tasks (SEC) in parallel. Gate 5 interleaved 6 FUNC tasks with 4 SEC tasks. The safe activation ordering pattern from Sprint 1 (DR-0013) continued to work — security tasks deployed first, then functional tasks that depend on them.</p>
+
+  <h3>6. Execution prompts as handoff documents — pattern validated at scale</h3>
+  <p>The Sprint 1.5 lesson about detailed execution prompts (single-document handoff with status, file list, task definitions, done criteria) was applied to both Gate 4 and Gate 5. Both gates executed from a single cowork prompt with zero clarification loops needed.</p>
+</div>
+
+<!-- WHAT DIDN'T GO WELL -->
+<div class="section">
+  <h2>What Didn't Go Well</h2>
+
+  <h3>1. Instagram API remains blocked (BLK-001) — now a 3-sprint carry-forward</h3>
+  <p>Facebook App Review was identified as a blocker in the Sprint 0/1 retro (A1: "Submit Facebook App Review before Sprint 2 starts"). Sprint 2 is now closing with S2.3 still blocked. This external dependency has been open since project inception and is now carrying into Sprint 3.</p>
+  <div class="evidence">Impact: Gate 4 is 7/8 instead of 8/8. Instagram is the only social platform not integrated. 2–4 week lead time means Sprint 3 may also close without it.</div>
+
+  <h3>2. Lego block size target was unrealistic for complex UI components</h3>
+  <p>DR-0016 set an 80-line target per snippet. In practice, 19 of 21 Gate 4 snippets exceeded this (range: 95–160 lines). OAuth handlers, admin settings pages, and quick-publish UI panels inherently require more code surface area than the simple utility functions that established the 80-line benchmark in Sprint 1.</p>
+  <div class="evidence">Impact: DR-0024 formally accepted the deviation as tech debt. Updated guidance: target &lt;80, practical ceiling ~150 for complex snippets. Zero WAF blocks confirms the ceiling is safe.</div>
+
+  <h3>3. GitLab PAT rotation caused a session delay</h3>
+  <p>The first GitLab PAT provided in the close-out session was already revoked. Yeti's OPSEC practice of rotating PATs multiple times daily (DR-0022) is the right security posture, but it created a brief interruption when the revoked token was attempted.</p>
+  <div class="evidence">Impact: ~5 minutes lost to token rotation. Minimal, but the pattern will recur every session. Credential handling protocol (DR-0022) is working as designed.</div>
+
+  <h3>4. Tracker files drifted from GitLab during sprint execution</h3>
+  <p>Sprint_Tracker.md showed 7/22 for Sprint 2 when GitLab showed 21/22 closed. The local markdown trackers fell behind because deployments updated GitLab but not the local files. The "sync GitLab before session close" action item (A21) from the Sprint 1.5 addendum wasn't consistently applied during Gate 4 and Gate 5 execution sessions.</p>
+  <div class="evidence">Impact: Close-out session required a full re-sync of Sprint_Tracker.md, Sprint_2_Task_List.md, and all dashboards. Extra 30+ minutes of reconciliation work.</div>
+
+  <h3>5. No milestone due dates set (recurring gap from S0/S1 retro)</h3>
+  <p>Action item A2 from the Sprint 0/1 retro ("Set due dates on all GitLab milestones") was not completed. All milestones still have no due dates. This prevents proper burndown tracking and velocity calculation.</p>
+</div>
+
+<!-- WHAT WE LEARNED -->
+<div class="section">
+  <h2>What We Learned</h2>
+
+  <h3>Process Lessons</h3>
+  <p><strong>1. The Lego block architecture works — but the size target needs to be contextual, not absolute.</strong> An 80-line target is right for utility functions and API wrappers. Complex UI panels and OAuth flows need 100–160 lines. The WAF tolerance threshold is well above both ranges. The real rule is: one responsibility per snippet, as small as the responsibility allows. DR-0024 codifies this.</p>
+
+  <p><strong>2. Integration gates before feature sprints are high-ROI, even when they find nothing.</strong> Sprint 1.5 found zero defects but provided the confidence to ship Sprint 2 without hesitation. The cost was ~4 hours; the value was eliminating foundation risk for the entire sprint. This pattern should repeat before Sprint 3.</p>
+
+  <p><strong>3. Execution prompts are the highest-leverage continuity artifact.</strong> A well-structured execution prompt (status, files, tasks, done criteria, constraints) lets an agent execute a full gate in a single session with zero back-and-forth. Both Gate 4 and Gate 5 were executed from single prompts. This is the model for all future sprint gates.</p>
+
+  <p><strong>4. External dependencies need a forcing function, not just a tracker entry.</strong> BLK-001 has been logged since Sprint 0 but no action has been taken. A blocker that requires external action (Facebook App Review) needs a specific owner, a submission date, and a follow-up cadence — not just a row in the blocker register.</p>
+
+  <h3>Technical Lessons</h3>
+  <p><strong>5. WordPress.com Code Snippets scales to 85+ active snippets without degradation.</strong> The health endpoint shows 0 errors, 0 warnings, all snippets active. Snippet priority ordering and load-order management work at this scale. No evidence of performance impact from snippet count.</p>
+
+  <p><strong>6. REST API-first deployment is reliable and fast.</strong> All 23 Gate 5 snippets deployed via REST API with zero failures. The REST approach (vs. browser automation) is now proven across 3 gates. The Operational Playbook's tool hierarchy (REST > WP-CLI > Browser) is validated.</p>
+
+  <p><strong>7. Multi-dashboard artifact management needs automation.</strong> Updating 5+ HTML/MD files at sprint close is labor-intensive and error-prone. The Scrum Burndown Dashboard, Architecture Diagram, Cyber Gate Dashboard, Sprint Tracker, Sprint Task List, and PROJECT_INDEX all need synchronized updates. This should be a scripted close-out procedure, not manual.</p>
+</div>
+
+<!-- S0/S1 ACTION ITEM REVIEW -->
+<div class="section">
+  <h2>S0/S1 Retro Action Item Review</h2>
+  <p style="font-size:13px; color:var(--dim); margin-bottom:12px;">Tracking completion of the 23 action items from the Sprint 0/1 retrospective.</p>
+  <table>
+    <tr><th>ID</th><th>Action</th><th>Status</th></tr>
+    <tr><td>A1</td><td>Submit Facebook App Review for Instagram API (BLK-001)</td><td class="status-open">NOT DONE</td></tr>
+    <tr><td>A2</td><td>Set due dates on all GitLab milestones</td><td class="status-open">NOT DONE</td></tr>
+    <tr><td>A3</td><td>Audit all 5 social platform API constraints before writing code</td><td class="status-done">DONE</td></tr>
+    <tr><td>A4</td><td>Add "next-sprint readiness" checklist to sprint planning template</td><td class="status-done">DONE</td></tr>
+    <tr><td>A5</td><td>Resolve BLK-004 (favicon commit)</td><td class="status-partial">DEFERRED</td></tr>
+    <tr><td>A6</td><td>Document persistence architecture (dual-sync) as a runbook</td><td class="status-done">DONE — in Operational Playbook</td></tr>
+    <tr><td>A7</td><td>Close Sprint 0 and Sprint 1 milestones in GitLab</td><td class="status-done">DONE</td></tr>
+    <tr><td>A8</td><td>Assign S1.23 to Sprint 1 milestone in GitLab</td><td class="status-done">DONE</td></tr>
+    <tr><td>A9</td><td>Adopt Lego block snippet architecture for all Sprint 2 code</td><td class="status-done">DONE — DR-0016, DR-0024</td></tr>
+    <tr><td>A10</td><td>Refactor Sprint 1 monolithic snippets before Sprint 2</td><td class="status-partial">DEFERRED — DR-0023</td></tr>
+    <tr><td>A11</td><td>Build end-to-end integration smoke test for Sprint 0+1 stack</td><td class="status-done">DONE — Sprint 1.5 (S1.5.1)</td></tr>
+    <tr><td>A12</td><td>Add integration smoke test as mandatory gate criterion</td><td class="status-done">DONE — DR-0017</td></tr>
+    <tr><td>A13</td><td>Implement architecture change freeze protocol</td><td class="status-done">DONE — DR-0018</td></tr>
+    <tr><td>A14</td><td>Update all continuity artifacts for micro-snippet architecture</td><td class="status-done">DONE — Sprint 1.5 (S1.5.3–S1.5.7)</td></tr>
+    <tr><td>A15</td><td>Build living Operational Playbook</td><td class="status-done">DONE — DR-0020</td></tr>
+    <tr><td>A16</td><td>Add Operational Playbook to system prompt boot sequence</td><td class="status-done">DONE</td></tr>
+    <tr><td>A17</td><td>Design short focused session pattern (deploy/test tasks)</td><td class="status-done">DONE — Gate prompts validated</td></tr>
+    <tr><td>A18</td><td>Sprint-boundary tool &amp; methodology review</td><td class="status-done">DONE — DR-0021</td></tr>
+    <tr><td>A19</td><td>Establish transparent tool selection protocol</td><td class="status-done">DONE — DR-0021</td></tr>
+    <tr><td>A20</td><td>Define credential handling protocol in Operational Playbook</td><td class="status-done">DONE — DR-0022</td></tr>
+    <tr><td>A21</td><td>Add GitLab sync to session exit checklist</td><td class="status-partial">PARTIAL — Added but not consistently followed</td></tr>
+    <tr><td>A22</td><td>Complete each file fully before moving to next (compaction resilience)</td><td class="status-done">DONE — Applied in Sprint 2</td></tr>
+    <tr><td>A23</td><td>Always count records after writing, never pre-count</td><td class="status-done">DONE</td></tr>
+  </table>
+  <div style="margin-top:12px;">
+    <span class="tag tag-green">17 DONE</span>
+    <span class="tag tag-amber">3 PARTIAL/DEFERRED</span>
+    <span class="tag tag-red">2 NOT DONE</span>
+    <span style="font-size:12px; color:var(--dim); margin-left:8px;">— A1 and A2 carry forward to Sprint 3</span>
+  </div>
+</div>
+
+<!-- ACTION ITEMS FOR SPRINT 3 -->
+<div class="section">
+  <h2>Action Items for Sprint 3</h2>
+  <table>
+    <tr><th>#</th><th>Action</th><th>Owner</th><th>Priority</th></tr>
+    <tr><td>B1</td><td>Submit Facebook App Review for Instagram API (BLK-001) — carry-forward from A1, now 3 sprints overdue</td><td>Yeti</td><td class="status-open">CRITICAL</td></tr>
+    <tr><td>B2</td><td>Set due dates on all GitLab milestones — carry-forward from A2</td><td>Taskmaster</td><td class="status-partial">HIGH</td></tr>
+    <tr><td>B3</td><td>Build scripted sprint close-out procedure — automate tracker/dashboard sync instead of manual updates</td><td>DevOps</td><td class="status-partial">HIGH</td></tr>
+    <tr><td>B4</td><td>Insert Sprint 2.5 integration gate before Sprint 3 build — verify full social publish chain end-to-end</td><td>DevOps + Foreman</td><td class="status-open">CRITICAL</td></tr>
+    <tr><td>B5</td><td>Enforce GitLab sync at session close — make it a checklist item agents can't skip</td><td>Taskmaster</td><td class="status-partial">HIGH</td></tr>
+    <tr><td>B6</td><td>Refine Lego block size guidance — document contextual targets: utility &lt;80, UI/OAuth &lt;150, with rationale</td><td>Taskmaster</td><td>MEDIUM</td></tr>
+    <tr><td>B7</td><td>Review monolithic Sprint 1 snippets (DR-0023) — refactor any that Sprint 3 will modify</td><td>DevOps</td><td>MEDIUM</td></tr>
+    <tr><td>B8</td><td>Push all dashboards to GitLab Pages — burndown, architecture, cyber gate, retros</td><td>DevOps</td><td class="status-partial">HIGH</td></tr>
+    <tr><td>B9</td><td>Add external dependency forcing function — blockers requiring external action get an owner, submission date, and weekly follow-up</td><td>Taskmaster</td><td class="status-partial">HIGH</td></tr>
+    <tr><td>B10</td><td>Update Operational Playbook for Sprint 3 — review tool landscape, platform changes, new connectors</td><td>Taskmaster</td><td class="status-open">CRITICAL</td></tr>
+  </table>
+</div>
+
+<!-- START / STOP / CONTINUE -->
+<div class="section">
+  <h2>Start / Stop / Continue</h2>
+  <div class="ssc-grid">
+    <div class="ssc-card start">
+      <h3 style="color:var(--green);">Start</h3>
+      <ul>
+        <li><strong>Scripted sprint close-out</strong> — automate dashboard/tracker sync instead of manual multi-file updates</li>
+        <li><strong>Contextual snippet size targets</strong> — utility &lt;80 lines, UI/OAuth &lt;150, documented with rationale</li>
+        <li><strong>External dependency forcing function</strong> — owner + submission date + weekly follow-up for blockers requiring external action</li>
+        <li><strong>GitLab Pages hosting</strong> for all dashboards — single URL for project health visibility</li>
+        <li><strong>Sprint 2.5 integration gate</strong> — verify the full social publish chain before Sprint 3 build</li>
+      </ul>
+    </div>
+    <div class="ssc-card stop">
+      <h3 style="color:var(--red);">Stop</h3>
+      <ul>
+        <li><strong>Carrying BLK-001 without action</strong> — 3 sprints of carrying an external dependency with no submission is unacceptable</li>
+        <li><strong>Manual dashboard reconciliation</strong> — updating 5+ files by hand at sprint close wastes time and introduces drift</li>
+        <li><strong>Skipping GitLab sync at session end</strong> — A21 was added in Sprint 1.5 but not consistently followed</li>
+        <li><strong>One-size-fits-all snippet size targets</strong> — the 80-line absolute was immediately violated at scale</li>
+      </ul>
+    </div>
+    <div class="ssc-card continue">
+      <h3 style="color:var(--blue);">Continue</h3>
+      <ul>
+        <li><strong>Lego block architecture</strong> — zero WAF blocks in Sprint 2, pattern is proven</li>
+        <li><strong>Execution prompts as handoff documents</strong> — single-document gate execution works at scale</li>
+        <li><strong>Integration gates before feature sprints</strong> — high ROI even when no defects found</li>
+        <li><strong>Operational Playbook as boot-time reference</strong> — solved the context wall problem</li>
+        <li><strong>Seven Cyber Gates model</strong> — scaled from 4 to 6 passed gates with no friction</li>
+        <li><strong>REST API-first deployment</strong> — fast, reliable, no browser fragility</li>
+        <li><strong>Parallel SEC + FUNC execution</strong> — faster without sacrificing security</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SPRINT 3 RISK REGISTER -->
+<div class="section">
+  <h2>Sprint 3 Risk Register (Forward-Looking)</h2>
+  <table>
+    <tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th></tr>
+    <tr><td>Instagram API still blocked at Sprint 3 close</td><td class="status-open">HIGH</td><td>MEDIUM</td><td>Submit App Review immediately (B1); plan S2.3 as deferred to post-Sprint 3 if needed</td></tr>
+    <tr><td>85+ snippets create load-order conflicts</td><td>LOW</td><td class="status-partial">HIGH</td><td>Snippet inventory audit in Sprint 2.5; dependency mapping; priority ordering verification</td></tr>
+    <tr><td>Social API rate limits hit during multi-platform publish</td><td>MEDIUM</td><td>MEDIUM</td><td>S2.22 rate limit handler with exponential backoff already deployed; monitor in production</td></tr>
+    <tr><td>Sprint 3 pen test (S3.16) discovers critical vulnerabilities</td><td>LOW</td><td class="status-open">CRITICAL</td><td>6 cyber gates already passed; security stack verified; pen test validates existing posture</td></tr>
+    <tr><td>Monolithic Sprint 1 snippets cause WAF issues when modified for Sprint 3</td><td>MEDIUM</td><td>MEDIUM</td><td>Refactor only the specific monoliths that Sprint 3 touches (B7, DR-0023)</td></tr>
+    <tr><td>Context compaction mid-gate corrupts execution state</td><td>MEDIUM</td><td>MEDIUM</td><td>Keep gates as single-session tasks; use execution prompts for handoff; batch edits by file</td></tr>
+  </table>
+</div>
+
+<!-- CLOSING -->
+<div class="section">
+  <h2>Closing Notes</h2>
+  <p>Sprint 2 validated the process infrastructure built in Sprint 0/1 and the Sprint 1.5 retro. The Lego block architecture, Operational Playbook, execution prompt pattern, and cyber gate model all performed exactly as designed at a larger scale (22 tasks, 23 snippets, 2 gates).</p>
+  <p>The three biggest takeaways:</p>
+  <p><strong>1. Architecture decisions compound.</strong> DR-0016 (Lego blocks) was the single most impactful decision from the S0/S1 retro. It eliminated WAF issues entirely and made Sprint 2 deployment frictionless. Good architecture decisions pay dividends across every subsequent sprint.</p>
+  <p><strong>2. Process infrastructure scales.</strong> Gates, execution prompts, the Operational Playbook, and GitLab-as-truth all handled Sprint 2's increased scope without modification. The investment in process during Sprint 0/1 is now yielding returns.</p>
+  <p><strong>3. External dependencies need active management, not passive tracking.</strong> BLK-001 is the single blemish on an otherwise clean sprint. The lesson isn't that blockers happen — it's that blockers requiring external action need a fundamentally different management approach than internal work items.</p>
+  <p style="margin-top:16px; color:var(--cyan); font-weight:600;">Next action: Sprint 2.5 integration gate, then Sprint 3 planning.</p>
+</div>
+
+<div class="footer">
+  The Markdown — Sprint 2 Retrospective &bull; Taskmaster &bull; 2026-03-10<br>
+  Source of Truth: <a href="https://gitlab.com/h3ndriks.j/JK.com-ver02/-/issues">GitLab Issues #1–#72</a> &bull;
+  <a href="Scrum_Burndown_Dashboard.html">Burndown</a> &bull;
+  <a href="TheMarkdown_Architecture_Diagram.html">Architecture</a> &bull;
+  <a href="Cyber_Gate_Dashboard.html">Cyber Gates</a>
+</div>
+
+</body>
+</html>
