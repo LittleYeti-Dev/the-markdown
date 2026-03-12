@@ -421,6 +421,12 @@ function jk_get_share_urls( $item_title, $block_id ) {
     return array(
         'x'        => 'https://twitter.com/intent/tweet?url=' . urlencode( $page_url ) . '&text=' . urlencode( $text ),
         'linkedin' => 'https://www.linkedin.com/shareArticle?mini=true&url=' . urlencode( $page_url ) . '&title=' . urlencode( $text ),
+        'instagram' => 'https://www.instagram.com/',
+        // NOTE: Instagram has no intent/share URL like X or LinkedIn.
+        // Button opens IG web app. Yeti creates a story/post manually and
+        // pastes The Markdown URL. If Yeti has a Meta Business Suite account,
+        // swap this to: 'https://business.facebook.com/latest/home'
+        // for desktop posting with link support.
     );
 }
 ```
@@ -432,7 +438,7 @@ https://twitter.com/intent/tweet?url=https://justin-kuiper.com/the-markdown/%23b
 
 Twitter's web UI loads with the post pre-filled. Yeti logs in (or is already logged in), hits post. The tweet links back to The Markdown page anchored to Box 02. Visitors land on the curated board, not on the source article.
 
-**Same pattern for LinkedIn** and any future platforms (Instagram, Medium, YouTube share links can be added later).
+**Same pattern for LinkedIn.** Instagram button also present on every card — opens IG web app for Yeti to post manually (IG has no intent URL). All three buttons (X, LinkedIn, Instagram) appear in the Admin Approval UI on every item card during the review/approve flow. Yeti promotes or rejects items AND distributes them to social — all from the same screen. That's the human-in-the-loop: curation + distribution in one workflow.
 
 **For the front-end rendering** (Box cards on the live page), add the same share icons to each card so site visitors can also share items. This is a minor patch to the existing card renderer (M06 from S3.5-W2). Create a small supplemental snippet if needed. The front-end share buttons use the same `jk_get_share_urls()` helper — all traffic flows back to The Markdown.
 
@@ -546,7 +552,9 @@ add_action( 'wp_ajax_jk_editorial_save_topic_interests', 'jk_handle_save_topic_i
 - ✅ Candidate pool displays with [Add to slot] dropdown
 - ✅ Rejected items tracked in a session list (for preference logging)
 - ✅ Topic Interests section: add, edit, remove topic interest entries
-- ✅ Per-item share icons (X, LinkedIn) generate intent URLs pointing to The Markdown page with block anchor (NOT source articles)
+- ✅ Per-item share icons (X, LinkedIn, Instagram) present on every item card
+- ✅ X and LinkedIn generate intent URLs pointing to The Markdown page with block anchor (NOT source articles)
+- ✅ Instagram button opens IG web app (no intent URL available — Yeti posts manually with credentials)
 - ✅ Visual diff highlights items that differ from current published board
 - ✅ Mobile-friendly: single column, large touch targets at ≤768px
 - ✅ All AJAX handlers verify nonce + capabilities
