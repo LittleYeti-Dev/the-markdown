@@ -1,6 +1,6 @@
 # Sprint 3.8 — Wave 2 DevOps Execution Prompt (CODE)
 
-**Version:** 1.0
+**Version:** 1.1
 **Date:** 2026-03-12
 **Sprint:** Sprint 3.8 — Editorial Approval Workflow
 **Wave:** Wave 2 (Pipeline + UI — Requires Wave 1 Complete)
@@ -405,26 +405,38 @@ add_action( 'admin_menu', function() {
   - **Reject** — removes from board, auto-fills from candidate pool, logs for preference learning
   - **Share** — per-item social share icons (see Social Sharing below)
 
-**Social Sharing Per Item:**
+**Social Sharing Per Item (DR-0031: All shares drive traffic to The Markdown):**
 
-Each item card gets a small share icon row. These are simple web intent URLs — no API calls needed.
+Each item card gets a small share icon row. These are simple web intent URLs — no API calls needed. **All share links point back to The Markdown page, NOT to source articles.** This is a deliberate ecosystem decision: every social share funnels traffic to Yeti's property.
 
 ```php
-// Share URL generators per item
-$share_urls = array(
-    'x'        => 'https://twitter.com/intent/tweet?url=' . urlencode($item_url) . '&text=' . urlencode($item_title),
-    'linkedin' => 'https://www.linkedin.com/shareArticle?mini=true&url=' . urlencode($item_url) . '&title=' . urlencode($item_title),
-);
+// Share URL generators — ALL links point back to The Markdown with block anchor
+$markdown_url = 'https://justin-kuiper.com/the-markdown/';
+
+// Build the share URL for a given item
+function jk_get_share_urls( $item_title, $block_id ) {
+    $page_url = 'https://justin-kuiper.com/the-markdown/#box-' . $block_id;
+    $text     = $item_title . ' — The Markdown';
+
+    return array(
+        'x'        => 'https://twitter.com/intent/tweet?url=' . urlencode( $page_url ) . '&text=' . urlencode( $text ),
+        'linkedin' => 'https://www.linkedin.com/shareArticle?mini=true&url=' . urlencode( $page_url ) . '&title=' . urlencode( $text ),
+    );
+}
 ```
 
-When Yeti (or a visitor on the front-end) clicks the X icon on item `010`, it opens:
+When Yeti clicks the X icon on item `020` ("Major healthcare breach"), the browser opens:
 ```
-https://twitter.com/intent/tweet?url=https://source-article.com/story&text=James+Webb+discovers+...
+https://twitter.com/intent/tweet?url=https://justin-kuiper.com/the-markdown/%23box-02&text=Major+healthcare+breach+exposes+2M+records+%E2%80%94+The+Markdown
 ```
 
-The tweet links back to the **source article URL**, driving traffic to the story. The front-end PUSH buttons (already in snippets 108–118) handle site-level sharing. These per-item share buttons are for sharing individual stories.
+Twitter's web UI loads with the post pre-filled. Yeti logs in (or is already logged in), hits post. The tweet links back to The Markdown page anchored to Box 02. Visitors land on the curated board, not on the source article.
 
-**For the front-end rendering** (Box cards on the live page), add share icons to each card too. This is a minor patch to the existing card renderer (M06 from S3.5-W2). Create a small supplemental snippet if needed.
+**Same pattern for LinkedIn** and any future platforms (Instagram, Medium, YouTube share links can be added later).
+
+**For the front-end rendering** (Box cards on the live page), add the same share icons to each card so site visitors can also share items. This is a minor patch to the existing card renderer (M06 from S3.5-W2). Create a small supplemental snippet if needed. The front-end share buttons use the same `jk_get_share_urls()` helper — all traffic flows back to The Markdown.
+
+**The existing site-level PUSH buttons** (snippets 108–118) remain unchanged — they share The Markdown page itself. The per-item buttons share specific blocks/stories within the page.
 
 **Rejection + Auto-Fill Flow:**
 
@@ -534,7 +546,7 @@ add_action( 'wp_ajax_jk_editorial_save_topic_interests', 'jk_handle_save_topic_i
 - ✅ Candidate pool displays with [Add to slot] dropdown
 - ✅ Rejected items tracked in a session list (for preference logging)
 - ✅ Topic Interests section: add, edit, remove topic interest entries
-- ✅ Per-item share icons (X, LinkedIn) generate correct intent URLs
+- ✅ Per-item share icons (X, LinkedIn) generate intent URLs pointing to The Markdown page with block anchor (NOT source articles)
 - ✅ Visual diff highlights items that differ from current published board
 - ✅ Mobile-friendly: single column, large touch targets at ≤768px
 - ✅ All AJAX handlers verify nonce + capabilities
