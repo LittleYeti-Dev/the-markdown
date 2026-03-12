@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprint 3.7 Session Retrospective — Repo Sync & Production Bugfix</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Source+Sans+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --bg:#0D0F13; --bg2:#1A1D23; --bg3:#22262E; --bg4:#2A2F38;
+    --text:#E8ECF1; --text2:#9CA3AF; --text3:#6B7280;
+    --border:#2D3340; --blue:#3B82F6; --green:#10B981;
+    --yellow:#FACC15; --red:#EF4444; --cyan:#06B6D4;
+    --purple:#C084FC; --orange:#FF6B35;
+  }
+
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:'Source Sans Pro',sans-serif; font-size:15px; line-height:1.6;
+    padding:0; min-height:100vh;
+  }
+
+  .retro-wrap { max-width:1200px; margin:0 auto; padding:24px; }
+
+  /* Header */
+  .retro-header {
+    text-align:center; padding:32px 24px 24px;
+    border-bottom:2px solid var(--orange); margin-bottom:32px;
+    background:linear-gradient(180deg,#0a0c10 0%,var(--bg) 100%);
+    border-radius:12px 12px 0 0;
+  }
+  .retro-header h1 {
+    font-family:'Rajdhani',sans-serif; font-size:36px; font-weight:700;
+    letter-spacing:4px; color:var(--text);
+  }
+  .retro-header h1 span { color:var(--orange); }
+  .retro-header .subtitle {
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    letter-spacing:3px; color:var(--text3); margin-top:4px;
+  }
+  .retro-header .sprint-label {
+    display:inline-block; margin-top:12px; padding:4px 16px;
+    background:var(--orange); color:#fff; border-radius:4px;
+    font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600;
+    letter-spacing:2px;
+  }
+  .retro-header .date {
+    font-family:'JetBrains Mono',monospace; font-size:12px;
+    color:var(--text3); margin-top:8px; letter-spacing:1px;
+  }
+
+  /* Section */
+  .section { margin-bottom:32px; }
+  .section-title {
+    font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700;
+    letter-spacing:2px; color:var(--text); margin-bottom:16px;
+    padding-bottom:8px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-title .icon { font-size:20px; }
+
+  /* KPI Row */
+  .kpi-row {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px; margin-bottom:24px;
+  }
+  .kpi-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:16px; text-align:center;
+  }
+  .kpi-value {
+    font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700;
+    line-height:1.1;
+  }
+  .kpi-label {
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:1.5px; color:var(--text3); margin-top:4px;
+    text-transform:uppercase;
+  }
+
+  /* Timeline */
+  .timeline { position:relative; padding-left:24px; margin:16px 0; }
+  .timeline::before {
+    content:''; position:absolute; left:8px; top:0; bottom:0;
+    width:2px; background:var(--border);
+  }
+  .timeline-item {
+    position:relative; margin-bottom:20px; padding:12px 16px;
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  }
+  .timeline-item::before {
+    content:''; position:absolute; left:-20px; top:16px;
+    width:10px; height:10px; border-radius:50%;
+    border:2px solid var(--bg);
+  }
+  .timeline-item.done::before { background:var(--green); }
+  .timeline-item.fix::before { background:var(--orange); }
+  .timeline-item.info::before { background:var(--blue); }
+  .timeline-item .step-label {
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    font-weight:500;
+  }
+  .timeline-item .step-label.green { color:var(--green); }
+  .timeline-item .step-label.orange { color:var(--orange); }
+  .timeline-item .step-label.blue { color:var(--blue); }
+  .timeline-item .step-title {
+    font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:600;
+    margin:2px 0;
+  }
+  .timeline-item .step-desc {
+    font-size:13px; color:var(--text2); line-height:1.5;
+  }
+  .tag {
+    display:inline-block; margin-top:6px; padding:2px 8px;
+    border-radius:3px; font-size:10px; font-weight:600;
+    letter-spacing:1px; text-transform:uppercase;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .tag-fix { background:rgba(255,107,53,0.15); color:var(--orange); }
+  .tag-done { background:rgba(16,185,129,0.15); color:var(--green); }
+  .tag-info { background:rgba(59,130,246,0.15); color:var(--blue); }
+  .tag-warn { background:rgba(250,204,21,0.15); color:var(--yellow); }
+
+  /* Retro Grid */
+  .retro-grid {
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;
+    margin-bottom:24px;
+  }
+  @media(max-width:900px) { .retro-grid { grid-template-columns:1fr; } }
+
+  .retro-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:20px; min-height:200px;
+  }
+  .retro-card h3 {
+    font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+    padding-bottom:8px; border-bottom:1px solid var(--border);
+  }
+  .retro-card.worked h3 { color:var(--green); border-bottom-color:var(--green); }
+  .retro-card.didnt h3 { color:var(--red); border-bottom-color:var(--red); }
+  .retro-card.changes h3 { color:var(--yellow); border-bottom-color:var(--yellow); }
+
+  .retro-card ul { list-style:none; }
+  .retro-card li {
+    padding:8px 0; border-bottom:1px solid rgba(45,51,64,0.4);
+    font-size:13px; line-height:1.5; color:var(--text2);
+  }
+  .retro-card li:last-child { border-bottom:none; }
+  .retro-card li strong { color:var(--text); font-weight:600; }
+
+  /* Bug anatomy card */
+  .bug-card {
+    background:var(--bg3); border:1px solid var(--red); border-radius:8px;
+    padding:20px; margin:16px 0;
+  }
+  .bug-card h4 {
+    font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700;
+    color:var(--red); margin-bottom:8px; letter-spacing:1px;
+  }
+  .bug-card .detail-grid {
+    display:grid; grid-template-columns:120px 1fr; gap:4px 12px;
+    font-size:13px;
+  }
+  .bug-card .label {
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    color:var(--text3); letter-spacing:1px;
+  }
+  .bug-card .value { color:var(--text2); }
+  .bug-card .value.bad { color:var(--red); }
+  .bug-card .value.good { color:var(--green); }
+  .bug-card code {
+    font-family:'JetBrains Mono',monospace; font-size:12px;
+    background:var(--bg); padding:2px 6px; border-radius:3px;
+    border:1px solid var(--border);
+  }
+
+  /* Decision card */
+  .decision-card {
+    background:var(--bg3); border:1px solid var(--cyan); border-radius:8px;
+    padding:20px; margin:16px 0;
+  }
+  .decision-card h4 {
+    font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700;
+    color:var(--cyan); margin-bottom:8px;
+  }
+  .decision-card p { font-size:13px; color:var(--text2); margin-bottom:6px; }
+  .decision-card .rationale {
+    font-size:12px; color:var(--text3); font-style:italic;
+    border-left:2px solid var(--cyan); padding-left:12px; margin-top:8px;
+  }
+
+  /* Progress bar */
+  .progress-bar-container {
+    background:var(--bg3); border-radius:6px; height:24px;
+    overflow:hidden; margin:8px 0; position:relative;
+  }
+  .progress-bar-fill {
+    height:100%; border-radius:6px; transition:width 0.6s ease;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    font-weight:600; color:#fff; letter-spacing:1px;
+  }
+
+  /* Task table */
+  .task-table {
+    width:100%; border-collapse:collapse; margin:16px 0; font-size:13px;
+  }
+  .task-table th {
+    background:var(--bg3); color:var(--text3); padding:8px 12px;
+    text-align:left; font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+    border-bottom:2px solid var(--border);
+  }
+  .task-table td {
+    padding:8px 12px; border-bottom:1px solid var(--border);
+    color:var(--text2);
+  }
+  .task-table tr:hover td { background:rgba(59,130,246,0.04); }
+  .status-done {
+    display:inline-block; padding:2px 8px; border-radius:3px;
+    font-size:10px; font-weight:600; letter-spacing:1px;
+    background:rgba(16,185,129,0.15); color:var(--green);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .status-fixed {
+    display:inline-block; padding:2px 8px; border-radius:3px;
+    font-size:10px; font-weight:600; letter-spacing:1px;
+    background:rgba(255,107,53,0.15); color:var(--orange);
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  /* Footer */
+  .retro-footer {
+    text-align:center; padding:24px 0; margin-top:24px;
+    border-top:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    color:var(--text3); letter-spacing:2px;
+  }
+</style>
+</head>
+<body>
+<div class="retro-wrap">
+
+  <!-- HEADER -->
+  <div class="retro-header">
+    <h1>SESSION <span>3.7</span> RETROSPECTIVE</h1>
+    <div class="subtitle">REPO SYNC &bull; PRODUCTION BUGFIX &bull; QA PRESERVATION</div>
+    <div class="sprint-label">THE MARKDOWN — NON SEQUITUR NEWS AGGREGATOR</div>
+    <div class="date">EXECUTED: 2026-03-12 | DURATION: SINGLE SESSION | TYPE: MAINTENANCE & HOTFIX</div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#9881;</span> SESSION METRICS</div>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green);">3</div>
+        <div class="kpi-label">OBJECTIVES MET</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--orange);">1</div>
+        <div class="kpi-label">PROD BUG FIXED</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--blue);">129</div>
+        <div class="kpi-label">FILES COMMITTED</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--cyan);">14</div>
+        <div class="kpi-label">COMMITS PULLED</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green);">0</div>
+        <div class="kpi-label">DATA LOST</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--purple);">e947992</div>
+        <div class="kpi-label">HEAD COMMIT</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUG ANATOMY -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128027;</span> PRODUCTION BUG — NAV LINK NXDOMAIN</div>
+
+    <div class="bug-card">
+      <h4>BF-08: "The Markdown" Nav Link → DNS_PROBE_FINISHED_NXDOMAIN</h4>
+      <div class="detail-grid">
+        <div class="label">SEVERITY</div>
+        <div class="value bad">P1 — BROKEN USER JOURNEY</div>
+        <div class="label">MENU ITEM</div>
+        <div class="value">#78 (Custom Link, Primary menu, position 3/5)</div>
+        <div class="label">BAD URL</div>
+        <div class="value bad"><code>https://markdown.justin-kuiper.com</code></div>
+        <div class="label">CORRECT URL</div>
+        <div class="value good"><code>https://justin-kuiper.com/the-markdown/</code></div>
+        <div class="label">ROOT CAUSE</div>
+        <div class="value">Menu item created with wrong subdomain. S3.6 configured <code>feed.justin-kuiper.com</code> for RSS, not <code>markdown.justin-kuiper.com</code>. Subdomain was never registered in DNS.</div>
+        <div class="label">FIX METHOD</div>
+        <div class="value">Direct edit via WP Admin → Appearance → Menus → Primary → The Markdown → URL field</div>
+        <div class="label">TIME TO FIX</div>
+        <div class="value good">&lt; 5 minutes from detection to verified fix</div>
+        <div class="label">VERIFIED</div>
+        <div class="value good">YES — clicked nav link, landed on /the-markdown-2/ with live feed data (128 items, 7 blocks)</div>
+      </div>
+    </div>
+
+    <p style="font-size:13px; color:var(--text2); margin-top:12px;">
+      <strong style="color:var(--yellow);">Note:</strong> API-based fix was attempted first (Code Snippets <code>wp_nav_menu_objects</code> filter) but the <code>yetisecurity</code> application password was returning 401. The browser-based WP Admin fix was faster and more direct. No snippet deployment required.
+    </p>
+  </div>
+
+  <!-- SESSION TIMELINE -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128337;</span> SESSION EXECUTION TIMELINE</div>
+    <div class="timeline">
+
+      <div class="timeline-item done">
+        <div class="step-label green">STEP 1 — GIT SYNC</div>
+        <div class="step-title">Pull 14 Commits from GitLab</div>
+        <div class="step-desc">Stash/rebase/pop to preserve local folder reorganization. Cleared stale <code>.git/index.lock</code> and 12 <code>tmp_obj_*</code> files blocking git operations.</div>
+        <span class="tag tag-done">COMPLETE</span>
+      </div>
+
+      <div class="timeline-item done">
+        <div class="step-label green">STEP 2 — QA AUDIT</div>
+        <div class="step-title">Cross-Reference All QA Issues vs Deployed Fixes</div>
+        <div class="step-desc">Full audit of S3 Wave 1/2, S3.5 Wave 1/2, and S3.6 QA results. Verified: all P1s and P2s resolved (7/7 bug fixes PASS), 3 P3/P4 cosmetic items in backlog, 4 Phase 2 content items documented as expected.</div>
+        <span class="tag tag-done">COMPLETE</span>
+      </div>
+
+      <div class="timeline-item fix">
+        <div class="step-label orange">STEP 3 — HOTFIX</div>
+        <div class="step-title">Fix Broken Nav Link (BF-08)</div>
+        <div class="step-desc">Detected live P1 bug: "The Markdown" nav → <code>markdown.justin-kuiper.com</code> (NXDOMAIN). Fixed via WP Admin menu editor. Verified live on production.</div>
+        <span class="tag tag-fix">HOTFIX</span>
+      </div>
+
+      <div class="timeline-item done">
+        <div class="step-label green">STEP 4 — REPO PRESERVATION</div>
+        <div class="step-title">Commit 129 Files to GitLab</div>
+        <div class="step-desc">Full portfolio reorganization committed: 7 functional area folders, all QA results, retrospectives, sprint task lists, prompts, snippets, dashboards. <code>.gitignore</code> added for <code>.claude/</code>, <code>.DS_Store</code>, <code>__pycache__/</code>.</div>
+        <span class="tag tag-done">PUSHED → e947992</span>
+      </div>
+
+      <div class="timeline-item info">
+        <div class="step-label blue">STEP 5 — API RECOVERY</div>
+        <div class="step-title">Restore Code Snippets API Access</div>
+        <div class="step-desc">Discovered <code>yetisecurity</code> application password expired. Correct admin username is <code>h3ndriksj</code> (not <code>yetisecurity</code>). New app password validated — Code Snippets CRUD confirmed operational.</div>
+        <span class="tag tag-info">RECOVERED</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TASKS COMPLETED -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#9989;</span> TASK LEDGER</div>
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Task</th>
+          <th>Type</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:12px;">BF-08</td>
+          <td>Fix nav menu item #78 — repoint from markdown.justin-kuiper.com to /the-markdown/</td>
+          <td><span class="tag tag-fix">HOTFIX</span></td>
+          <td><span class="status-fixed">FIXED</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:12px;">REPO-01</td>
+          <td>Pull 14 remote commits, resolve 7 merge conflicts from folder reorganization</td>
+          <td><span class="tag tag-info">MAINT</span></td>
+          <td><span class="status-done">DONE</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:12px;">REPO-02</td>
+          <td>Commit full portfolio restructure + all QA artifacts (129 files)</td>
+          <td><span class="tag tag-info">MAINT</span></td>
+          <td><span class="status-done">DONE</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:12px;">REPO-03</td>
+          <td>Push to GitLab origin/main</td>
+          <td><span class="tag tag-info">MAINT</span></td>
+          <td><span class="status-done">DONE</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace; font-size:12px;">AUTH-01</td>
+          <td>Validate new application password with correct username (h3ndriksj)</td>
+          <td><span class="tag tag-info">MAINT</span></td>
+          <td><span class="status-done">DONE</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- DECISIONS -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#9878;</span> DECISIONS MADE</div>
+
+    <div class="decision-card">
+      <h4>DR-0028: Nav Link Fix — Direct Edit vs Snippet Filter</h4>
+      <p><strong>Decision:</strong> Fix the nav URL directly in WP Admin menu editor rather than deploying a <code>wp_nav_menu_objects</code> filter snippet.</p>
+      <div class="rationale">Rationale: The broken URL was a one-time data error (wrong subdomain in menu item), not a systemic issue requiring a runtime filter. Direct edit is simpler, has no performance overhead, and doesn't add to the 120+ snippet inventory. The API was also returning 401 at the time, making direct WP Admin the fastest path to resolution.</div>
+    </div>
+
+    <div class="decision-card">
+      <h4>DR-0029: API Username — h3ndriksj Replaces yetisecurity</h4>
+      <p><strong>Decision:</strong> All future REST API calls use username <code>h3ndriksj</code> (admin account) instead of <code>yetisecurity</code> (insufficient permissions for Code Snippets).</p>
+      <div class="rationale">Rationale: The yetisecurity application password returns 401 on /wp/v2/users/me and "rest_forbidden" on /code-snippets/v1/. The h3ndriksj account is the actual admin (user ID 204791015) and successfully authenticates against both core and Code Snippets endpoints. Operational Playbook needs updating.</div>
+    </div>
+
+    <div class="decision-card">
+      <h4>DR-0030: .gitignore — Exclude .claude/, .DS_Store, __pycache__</h4>
+      <p><strong>Decision:</strong> Added <code>.gitignore</code> to repo root excluding Claude worktree artifacts, macOS metadata, and Python bytecode.</p>
+      <div class="rationale">Rationale: .claude/ worktree directories contain 2,505 ephemeral session files that balloon the repo. These are tool artifacts with no operational value. .DS_Store and __pycache__ are standard excludes.</div>
+    </div>
+  </div>
+
+  <!-- RETRO CARDS -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128161;</span> RETROSPECTIVE</div>
+    <div class="retro-grid">
+
+      <div class="retro-card worked">
+        <h3>What Worked</h3>
+        <ul>
+          <li><strong>Browser-based WP Admin fix was immediate.</strong> When the API was blocked, pivoting to direct WP Admin menu editing took under 5 minutes from detection to verified fix. No snippet deployment overhead.</li>
+          <li><strong>QA cross-reference was thorough.</strong> Full audit of all QA results (S3 W1/W2, S3.5 W1/W2, S3.6) confirmed zero data loss — every finding tracked from discovery through resolution.</li>
+          <li><strong>Git conflict resolution was clean.</strong> 7 DU conflicts from the folder reorg resolved correctly — old-path deletions accepted, new-path files staged, no data corruption.</li>
+          <li><strong>API recovery was fast.</strong> Once the correct username (h3ndriksj) was identified via the public /wp/v2/users endpoint, full CRUD was confirmed in one request.</li>
+        </ul>
+      </div>
+
+      <div class="retro-card didnt">
+        <h3>What Didn't</h3>
+        <ul>
+          <li><strong>Wrong subdomain in nav link went undetected for days.</strong> BF-08 was a P1 user-facing bug that lived in production since S3.5/S3.6. No automated link validation caught it.</li>
+          <li><strong>Application password confusion.</strong> The Operational Playbook referenced <code>yetisecurity</code> as the API username, but this account lacks Code Snippets permissions. Root cause: the account that deployed 120+ snippets was <code>h3ndriksj</code> all along — the playbook was never updated.</li>
+          <li><strong>No session transcripts for continuity.</strong> Previous session context about S3.6/S3.7 planning had to be reconstructed from artifacts rather than transcripts. The Transcripts/ folder was empty.</li>
+          <li><strong>.claude/ worktrees nearly bloated the commit.</strong> 2,505 ephemeral files were staged before being caught. No .gitignore existed to prevent this.</li>
+        </ul>
+      </div>
+
+      <div class="retro-card changes">
+        <h3>Action Items</h3>
+        <ul>
+          <li><strong>Update Operational Playbook</strong> — change API username from <code>yetisecurity</code> to <code>h3ndriksj</code>, document the new application password.</li>
+          <li><strong>Add link validation to QA checklist.</strong> Future QA passes should curl every nav link and verify HTTP 200/301 (no NXDOMAIN). Would have caught BF-08 in S3.5 QA.</li>
+          <li><strong>Start writing session transcripts.</strong> Every Taskmaster session should append to Transcripts/ for cross-session continuity, per the Scrum Master prompt's Continuity Protocol.</li>
+          <li><strong>Sprint Tracker needs S3.5/S3.6 completion data.</strong> The git-tracked Sprint_Tracker.md still shows S3 at 0/20 closed. Needs a full reconciliation pass.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OPEN ITEMS CARRIED FORWARD -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128203;</span> CARRIED FORWARD</div>
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Wave 3 security tasks (S3.12, S3.16–S3.21)</td>
+          <td><span class="tag tag-warn">SEC</span></td>
+          <td>HIGH</td>
+          <td>Required for Gate 6 clearance. Not started.</td>
+        </tr>
+        <tr>
+          <td>Sprint Tracker reconciliation (S3.5/S3.6 completions)</td>
+          <td><span class="tag tag-info">MAINT</span></td>
+          <td>MEDIUM</td>
+          <td>Tracker doesn't reflect actual build state</td>
+        </tr>
+        <tr>
+          <td>Operational Playbook — API username update</td>
+          <td><span class="tag tag-info">MAINT</span></td>
+          <td>MEDIUM</td>
+          <td>h3ndriksj replaces yetisecurity</td>
+        </tr>
+        <tr>
+          <td>Phase 2 content items (commentary, featured images, PUSH buttons, domain nav)</td>
+          <td><span class="tag tag-info">FEAT</span></td>
+          <td>LOW</td>
+          <td>Documented in S3.5 W2 QA as known items</td>
+        </tr>
+        <tr>
+          <td>Sprint 3.5 pay-to-play decision gate (S2.3, S3.4, S3.7)</td>
+          <td><span class="tag tag-warn">PLAN</span></td>
+          <td>LOW</td>
+          <td>Not started — requires scope decision</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- REPO STATE -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128230;</span> REPOSITORY STATE</div>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green); font-size:20px;">e947992</div>
+        <div class="kpi-label">HEAD COMMIT</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--blue);">main</div>
+        <div class="kpi-label">BRANCH</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green);">CLEAN</div>
+        <div class="kpi-label">WORKING TREE</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green);">SYNCED</div>
+        <div class="kpi-label">ORIGIN/MAIN</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px; color:var(--text2); margin-top:8px;">
+      <strong>Folder Structure (committed):</strong>
+    </div>
+    <pre style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--cyan); background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:12px; margin:8px 0; overflow-x:auto;">
+Gunther/
+├── 00 Chief of Staff/     ← RFI, zips
+├── 01 Scrum Master/       ← QA (8 files), Sprints (7), Retros (5), Dashboards (3), Prompts (8), Snippets (15+)
+├── 02 DevOps/             ← QA (9 files), Prompts (5), Snippets (full inventory)
+├── 03 Book Builder/       ← Prompts (4), Reference (3)
+├── 04 Build Stack Workshop/ ← RFI (2)
+├── 07 Cyber Team/         ← Prompts (2), CyberOps results
+└── Scrum Master/          ← Sprint_Tracker.md (legacy path, git-tracked)
+    </pre>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="retro-footer">
+    TASKMASTER &bull; SESSION 3.7 RETROSPECTIVE &bull; 2026-03-12 &bull; GUNTHER DELIVERY SYSTEM
+  </div>
+
+</div>
+</body>
+</html>
