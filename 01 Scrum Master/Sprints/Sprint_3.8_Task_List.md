@@ -239,6 +239,14 @@ The lead story (slot `00`) requires a hero image (688×300 placeholder currently
 
 ---
 
+## Future Sprint Backlog (Out of S3.8 Scope)
+
+| ID | Feature | Description | Depends On | Notes |
+|----|---------|-------------|-----------|-------|
+| BL-01 | Social embed loop | After Yeti posts a tweet via share button, capture the tweet URL and embed the tweet card under the corresponding item on The Markdown page. Twitter oEmbed API or iframe. Closes the curate→share→embed loop. | S3.8 share buttons (DR-0031) | Light lift — tweet ID from intent flow + oEmbed endpoint. No API key needed for public embeds. |
+| BL-02 | Phase 2 content items | Commentary placeholder, featured images, PUSH buttons | S3.5/S3.6 editorial page | From S3.7 retro |
+| BL-03 | Wave 3 security tasks | S3.12, S3.16–S3.21 | Overwatch gate review | Separate sprint |
+
 ## Carry-Forward Reference
 
 Items from S3.7 retro that feed into S3.8:
