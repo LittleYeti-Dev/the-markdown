@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprint 3.6 Retrospective — UI Drift Fixes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Source+Sans+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --bg:#0D0F13; --bg2:#1A1D23; --bg3:#22262E; --bg4:#2A2F38;
+    --text:#E8ECF1; --text2:#9CA3AF; --text3:#6B7280;
+    --border:#2D3340; --blue:#3B82F6; --green:#10B981;
+    --yellow:#FACC15; --red:#EF4444; --cyan:#06B6D4;
+    --purple:#C084FC; --orange:#FF6B35;
+  }
+
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:'Source Sans Pro',sans-serif; font-size:15px; line-height:1.6;
+    padding:0; min-height:100vh;
+  }
+
+  .retro-wrap { max-width:1200px; margin:0 auto; padding:24px; }
+
+  /* Header */
+  .retro-header {
+    text-align:center; padding:32px 0 24px;
+    border-bottom:2px solid var(--blue); margin-bottom:32px;
+    background:linear-gradient(180deg,#0a0c10 0%,var(--bg) 100%);
+    border-radius:12px 12px 0 0; padding:32px 24px 24px;
+  }
+  .retro-header h1 {
+    font-family:'Rajdhani',sans-serif; font-size:36px; font-weight:700;
+    letter-spacing:4px; color:var(--text);
+  }
+  .retro-header h1 span { color:var(--blue); }
+  .retro-header .subtitle {
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    letter-spacing:3px; color:var(--text3); margin-top:4px;
+  }
+  .retro-header .sprint-label {
+    display:inline-block; margin-top:12px; padding:4px 16px;
+    background:var(--blue); color:#fff; border-radius:4px;
+    font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600;
+    letter-spacing:2px;
+  }
+  .retro-header .date {
+    font-family:'JetBrains Mono',monospace; font-size:12px;
+    color:var(--text3); margin-top:8px; letter-spacing:1px;
+  }
+
+  /* Section */
+  .section { margin-bottom:32px; }
+  .section-title {
+    font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700;
+    letter-spacing:2px; color:var(--text); margin-bottom:16px;
+    padding-bottom:8px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-title .icon { font-size:20px; }
+
+  /* KPI Row */
+  .kpi-row {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px; margin-bottom:24px;
+  }
+  .kpi-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:16px; text-align:center;
+  }
+  .kpi-value {
+    font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700;
+    line-height:1.1;
+  }
+  .kpi-label {
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    letter-spacing:1.5px; color:var(--text3); margin-top:4px;
+    text-transform:uppercase;
+  }
+
+  /* Snippet Deploy Timeline */
+  .timeline { position:relative; padding-left:24px; margin:16px 0; }
+  .timeline::before {
+    content:''; position:absolute; left:8px; top:0; bottom:0;
+    width:2px; background:var(--border);
+  }
+  .timeline-item {
+    position:relative; margin-bottom:20px; padding:12px 16px;
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+  }
+  .timeline-item::before {
+    content:''; position:absolute; left:-20px; top:16px;
+    width:10px; height:10px; border-radius:50%; background:var(--green);
+    border:2px solid var(--bg);
+  }
+  .timeline-item .snippet-id {
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    color:var(--blue); font-weight:500;
+  }
+  .timeline-item .snippet-name {
+    font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:600;
+    margin:2px 0;
+  }
+  .timeline-item .snippet-desc {
+    font-size:13px; color:var(--text2); line-height:1.5;
+  }
+  .timeline-item .snippet-tag {
+    display:inline-block; margin-top:6px; padding:2px 8px;
+    border-radius:3px; font-size:10px; font-weight:600;
+    letter-spacing:1px; text-transform:uppercase;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .tag-updated { background:rgba(250,204,21,0.15); color:var(--yellow); }
+  .tag-new { background:rgba(16,185,129,0.15); color:var(--green); }
+
+  /* What Worked / Didn't / Changes */
+  .retro-grid {
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;
+    margin-bottom:24px;
+  }
+  @media(max-width:900px) { .retro-grid { grid-template-columns:1fr; } }
+
+  .retro-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:20px; min-height:200px;
+  }
+  .retro-card h3 {
+    font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700;
+    letter-spacing:2px; text-transform:uppercase; margin-bottom:12px;
+    padding-bottom:8px; border-bottom:1px solid var(--border);
+  }
+  .retro-card.worked h3 { color:var(--green); border-bottom-color:var(--green); }
+  .retro-card.didnt h3 { color:var(--red); border-bottom-color:var(--red); }
+  .retro-card.changes h3 { color:var(--yellow); border-bottom-color:var(--yellow); }
+
+  .retro-card ul { list-style:none; }
+  .retro-card li {
+    padding:8px 0; border-bottom:1px solid rgba(45,51,64,0.4);
+    font-size:13px; line-height:1.5; color:var(--text2);
+  }
+  .retro-card li:last-child { border-bottom:none; }
+  .retro-card li strong { color:var(--text); font-weight:600; }
+
+  /* Task Table */
+  .task-table {
+    width:100%; border-collapse:collapse; margin:16px 0;
+    font-size:13px;
+  }
+  .task-table th {
+    background:var(--bg3); color:var(--text3); padding:8px 12px;
+    text-align:left; font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+    border-bottom:2px solid var(--border);
+  }
+  .task-table td {
+    padding:8px 12px; border-bottom:1px solid var(--border);
+    color:var(--text2);
+  }
+  .task-table tr:hover td { background:rgba(59,130,246,0.04); }
+  .status-done {
+    display:inline-block; padding:2px 8px; border-radius:3px;
+    font-size:10px; font-weight:600; letter-spacing:1px;
+    background:rgba(16,185,129,0.15); color:var(--green);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .gitlab-link {
+    color:var(--blue); text-decoration:none; font-size:12px;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .gitlab-link:hover { text-decoration:underline; }
+
+  /* Architecture Pattern */
+  .pattern-card {
+    background:var(--bg3); border:1px solid var(--cyan);
+    border-radius:8px; padding:20px; margin:16px 0;
+  }
+  .pattern-card h4 {
+    font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700;
+    color:var(--cyan); margin-bottom:8px;
+  }
+  .pattern-card p { font-size:13px; color:var(--text2); margin-bottom:8px; }
+  .pattern-card code {
+    display:block; background:var(--bg); border:1px solid var(--border);
+    border-radius:4px; padding:12px; margin-top:8px;
+    font-family:'JetBrains Mono',monospace; font-size:12px;
+    color:var(--cyan); line-height:1.6; white-space:pre; overflow-x:auto;
+  }
+
+  /* Portfolio bar */
+  .progress-bar-container {
+    background:var(--bg3); border-radius:6px; height:24px;
+    overflow:hidden; margin:8px 0; position:relative;
+  }
+  .progress-bar-fill {
+    height:100%; border-radius:6px; transition:width 0.6s ease;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    font-weight:600; color:#fff; letter-spacing:1px;
+  }
+
+  /* Footer */
+  .retro-footer {
+    text-align:center; padding:24px 0; margin-top:24px;
+    border-top:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    color:var(--text3); letter-spacing:2px;
+  }
+
+  /* Dual stack diagram */
+  .stack-diagram {
+    display:grid; grid-template-columns:1fr 60px 1fr; gap:0;
+    align-items:center; margin:16px 0;
+  }
+  .stack-box {
+    background:var(--bg2); border:1px solid var(--border); border-radius:8px;
+    padding:16px; text-align:center;
+  }
+  .stack-box h4 {
+    font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700;
+    letter-spacing:1px; margin-bottom:8px;
+  }
+  .stack-box.active { border-color:var(--green); }
+  .stack-box.active h4 { color:var(--green); }
+  .stack-box.inactive { border-color:var(--text3); opacity:0.6; }
+  .stack-box.inactive h4 { color:var(--text3); }
+  .stack-box ul { list-style:none; font-size:11px; color:var(--text3); }
+  .stack-box li { padding:2px 0; }
+  .stack-vs {
+    text-align:center; font-family:'Rajdhani',sans-serif;
+    font-size:18px; font-weight:700; color:var(--yellow);
+  }
+</style>
+</head>
+<body>
+<div class="retro-wrap">
+
+  <!-- HEADER -->
+  <div class="retro-header">
+    <h1>SPRINT <span>3.6</span> RETROSPECTIVE</h1>
+    <div class="subtitle">UI DRIFT FIXES — PROTOTYPE → PRODUCTION ALIGNMENT</div>
+    <div class="sprint-label">THE MARKDOWN — NON SEQUITUR NEWS AGGREGATOR</div>
+    <div class="date">EXECUTED: 2026-03-12 | DURATION: SINGLE SESSION | EST: ~3H</div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#9881;</span> SPRINT METRICS</div>
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green);">5/5</div>
+        <div class="kpi-label">TASKS CLOSED</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--blue);">4</div>
+        <div class="kpi-label">SNIPPETS DEPLOYED</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green);">0</div>
+        <div class="kpi-label">ERRORS</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--green);">0</div>
+        <div class="kpi-label">ROLLBACKS</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--cyan);">4/4</div>
+        <div class="kpi-label">API 200s</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--purple);">120</div>
+        <div class="kpi-label">TOTAL SNIPPETS</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="color:var(--blue);">86%</div>
+        <div class="kpi-label">PORTFOLIO DONE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASK TABLE -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#9745;</span> TASK LEDGER</div>
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>GitLab</th><th>ID</th><th>Task</th><th>Snippet</th><th>Action</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/91" target="_blank">#91</a></td>
+          <td>S3.6-D01</td>
+          <td>Full-width breakout — override Hever 750px content constraint</td>
+          <td>#108</td>
+          <td><span class="snippet-tag tag-updated">UPDATED</span></td>
+          <td><span class="status-done">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/92" target="_blank">#92</a></td>
+          <td>S3.6-D02</td>
+          <td>Prototype font import — Rajdhani, Source Sans Pro, JetBrains Mono</td>
+          <td>#108</td>
+          <td><span class="snippet-tag tag-updated">UPDATED</span></td>
+          <td><span class="status-done">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/93" target="_blank">#93</a></td>
+          <td>S3.6-D04</td>
+          <td>Design token CSS variables — 6 accents, 3 fonts, bg/text/border</td>
+          <td>#108</td>
+          <td><span class="snippet-tag tag-updated">UPDATED</span></td>
+          <td><span class="status-done">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/94" target="_blank">#94</a></td>
+          <td>S3.6-D05</td>
+          <td>Per-category accent colors on blocks — data-domain + CSS cascade</td>
+          <td>#109 + #120</td>
+          <td><span class="snippet-tag tag-updated">UPDATED</span> <span class="snippet-tag tag-new">NEW</span></td>
+          <td><span class="status-done">CLOSED</span></td>
+        </tr>
+        <tr>
+          <td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/95" target="_blank">#95</a></td>
+          <td>S3.6-D07</td>
+          <td>Hide WordPress Share/Like widgets on The Markdown page</td>
+          <td>#119</td>
+          <td><span class="snippet-tag tag-new">NEW</span></td>
+          <td><span class="status-done">CLOSED</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SNIPPET DEPLOY TIMELINE -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128640;</span> DEPLOYMENT TIMELINE</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="snippet-id">#108 — PUT /code-snippets/v1/snippets/108</div>
+        <div class="snippet-name">S3.5-W2-M09a Markdown Styles — Layout</div>
+        <div class="snippet-desc">Full-width breakout (!important overrides on .entry-content, .site-main, .content-area, #content), Google Fonts preconnect + import (Rajdhani, Source Sans Pro, JetBrains Mono), design token CSS custom properties (6 accent colors, 3 font families, background/text/border hierarchy), entry-header hide.</div>
+        <span class="snippet-tag tag-updated">UPDATED</span>
+      </div>
+      <div class="timeline-item">
+        <div class="snippet-id">#109 — PUT /code-snippets/v1/snippets/109</div>
+        <div class="snippet-name">S3.5-W2-M09b Markdown Styles — Cards</div>
+        <div class="snippet-desc">Per-category --block-accent CSS variable cascade via [data-domain] attribute selectors. AI (#06B6D4), Cyber (#00FF88), Innovation (#FACC15), FNW (#C084FC), Space (#FF6B35), Digital (#14B8A6). Card hover, PUSH button, commentary card styles updated to use design tokens.</div>
+        <span class="snippet-tag tag-updated">UPDATED</span>
+      </div>
+      <div class="timeline-item">
+        <div class="snippet-id">#119 — POST /code-snippets/v1/snippets (NEW)</div>
+        <div class="snippet-name">S3.6-D07 Markdown — Hide WP Widgets</div>
+        <div class="snippet-desc">CSS-only snippet. Hides Jetpack sharing (.sharedaddy, .sd-sharing-enabled), likes (.jetpack-likes-widget-wrapper), and post flair (#jp-post-flair) on page 1077 via display:none!important.</div>
+        <span class="snippet-tag tag-new">NEW</span>
+      </div>
+      <div class="timeline-item">
+        <div class="snippet-id">#120 — POST /code-snippets/v1/snippets (NEW)</div>
+        <div class="snippet-name">S3.6-D05b Markdown — Block Domain Attributes</div>
+        <div class="snippet-desc">First client-side JavaScript in the snippet stack. Reads .md-block-domain text content, maps to canonical domain key via lookup table, sets data-domain attribute on parent .md-block element. Enables per-category CSS targeting without PHP template changes.</div>
+        <span class="snippet-tag tag-new">NEW — NEW PATTERN</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW ARCHITECTURE PATTERN -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#9889;</span> NEW ARCHITECTURAL PATTERN</div>
+    <div class="pattern-card">
+      <h4>DOM Enrichment via Client-Side JS Micro-Snippet</h4>
+      <p>Sprint 3.6 introduced the first client-side JavaScript in the micro-snippet stack. Snippet #120 enriches the DOM at runtime by reading existing text content and injecting data attributes — enabling CSS-only targeting of dynamically-generated WordPress content without modifying PHP templates.</p>
+      <p>This pattern decouples visual styling from server-side rendering. CSS selectors can target attributes that don't exist in the raw HTML, because the JS bridge adds them before paint.</p>
+      <code>// Pattern: Read DOM text → Map → Inject attribute → CSS targets attribute
+document.querySelectorAll('.md-block').forEach(function(b) {
+    var d = b.querySelector('.md-block-domain');
+    if (!d) return;
+    var key = map[d.textContent.trim().toLowerCase()];
+    if (key) b.setAttribute('data-domain', key);
+});
+
+// CSS cascade via custom property
+.md-block[data-domain="ai"]   { --block-accent: var(--accent-ai); }
+.md-block[data-domain="cyber"]{ --block-accent: var(--accent-cyber); }</code>
+    </div>
+  </div>
+
+  <!-- WHAT WORKED / DIDN'T / CHANGES -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128269;</span> RETROSPECTIVE ANALYSIS</div>
+    <div class="retro-grid">
+      <div class="retro-card worked">
+        <h3>&#9989; WHAT WORKED</h3>
+        <ul>
+          <li><strong>Micro-snippet architecture (DR-0016)</strong> — 4 separate visual problems solved by surgical snippet updates. No monolithic rewrites. Code Snippets REST API deployed all 4 without touching GitLab or WP admin.</li>
+          <li><strong>CSS Custom Properties cascade</strong> — --block-accent variable set once per domain, inherited by all child elements. Scales cleanly for new domains.</li>
+          <li><strong>JS DOM enrichment pattern</strong> — Solved the data-domain gap without refactoring S1.14 PHP. Opens a door for future client-side enrichment.</li>
+          <li><strong>Zero-error deployment</strong> — 4/4 API calls returned 200 on first attempt. No rollbacks, no conflicts, no credential issues.</li>
+          <li><strong>Full traceability</strong> — GitLab milestone, 5 issues, local artifacts, snippet inventory, DevOps folder — all synced in one session.</li>
+        </ul>
+      </div>
+      <div class="retro-card didnt">
+        <h3>&#10060; WHAT DIDN'T</h3>
+        <ul>
+          <li><strong>Per-category color gap not caught pre-deploy</strong> — CSS selectors targeted [data-domain] attributes that didn't exist in the DOM. Required a diagnostic cycle + new snippet (#120) to fix. Should have inspected DOM structure before writing CSS.</li>
+          <li><strong>Two rendering stacks diverging</strong> — S1.14 shortcode (ns_frontpage) and Sprint 3.5+ static HTML (.md-block) are separate rendering paths for the same page. Neither is aware of the other. This is technical debt.</li>
+          <li><strong>No visual diff process</strong> — Prototype-to-production comparison was manual eyeballing. No screenshot baseline, no automated visual regression.</li>
+        </ul>
+      </div>
+      <div class="retro-card changes">
+        <h3>&#9888;&#65039; WHAT CHANGES</h3>
+        <ul>
+          <li><strong>DOM audit before CSS deploys</strong> — New standing order: verify target elements have expected attributes/classes in live DOM before deploying CSS that depends on them.</li>
+          <li><strong>Resolve dual rendering stack (S3.7)</strong> — Architectural decision required: S1.14 shortcode pipeline vs Sprint 3.5+ static stack. Blocks all Phase B work in S3.8.</li>
+          <li><strong>Screenshot capture in deploy flow</strong> — Before/after screenshots for every snippet deploy. Manual is fine. Stored in DevOps folder.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DUAL STACK DISCOVERY -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128679;</span> DISCOVERY: DUAL RENDERING STACK</div>
+    <div class="stack-diagram">
+      <div class="stack-box active">
+        <h4>SPRINT 3.5+ STATIC STACK</h4>
+        <ul>
+          <li>Page 1077 — static HTML blocks</li>
+          <li>Snippets #108, #109, #119, #120</li>
+          <li>.md-block class targeting</li>
+          <li>CSS custom properties + JS enrichment</li>
+          <li>Design tokens, prototype fonts</li>
+          <li style="color:var(--green);font-weight:600;">CURRENTLY ACTIVE</li>
+        </ul>
+      </div>
+      <div class="stack-vs">VS</div>
+      <div class="stack-box inactive">
+        <h4>S1.14 SHORTCODE PIPELINE</h4>
+        <ul>
+          <li>[ns_frontpage] shortcode</li>
+          <li>Snippets #25, #26, #27, #28</li>
+          <li>WP_Query by promote_status + block_assignment</li>
+          <li>Editorial Dashboard + Promote/Assign</li>
+          <li>Commentary cards + auto-refresh</li>
+          <li style="color:var(--yellow);font-weight:600;">BUILT BUT NOT CONNECTED</li>
+        </ul>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--yellow);border-radius:8px;padding:16px;margin-top:12px;">
+      <p style="font-size:13px;color:var(--yellow);font-weight:600;margin-bottom:4px;">&#9888; S3.7 DECISION REQUIRED</p>
+      <p style="font-size:13px;color:var(--text2);">The editorial curation pipeline (S1.12 dashboard → S1.13 promote → S1.14 render) is fully built but page 1077 doesn't use it. The Sprint 3.5+ stack renders static HTML with CSS micro-snippets. Sprint 3.7 must decide which stack becomes the production rendering path. This decision gates all Phase B work in Sprint 3.8 (Editorial Curation Build).</p>
+    </div>
+  </div>
+
+  <!-- DEFERRED ITEMS -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128203;</span> DEFERRED TO SPRINT 3.7+</div>
+    <table class="task-table">
+      <thead><tr><th>Delta</th><th>Description</th><th>Reason</th><th>Target</th></tr></thead>
+      <tbody>
+        <tr><td>D-03</td><td>Block 00 hero image — placeholder in both stacks, needs real image asset system</td><td>Requires hero_image_url meta field + rendering logic</td><td>S3.8-B02/B03</td></tr>
+        <tr><td>D-06</td><td>Commentary card "JK" avatar styling refinement</td><td>Minor, cosmetic — low priority</td><td>S3.8-C05</td></tr>
+        <tr><td>D-08</td><td>Footer bottom spacing gap</td><td>Cascaded from D-01 full-width fix, minor</td><td>S3.7</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PORTFOLIO PROGRESS -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128200;</span> PORTFOLIO STATUS POST-SPRINT</div>
+    <div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+        <span style="font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;">OVERALL COMPLETION</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green);">91 / 106 TASKS (86%)</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" style="width:86%;background:linear-gradient(90deg,var(--blue),var(--green));">86%</div>
+      </div>
+    </div>
+
+    <div class="kpi-row" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+      <div class="kpi-card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px;">S0 HARDENING</div>
+        <div class="progress-bar-container" style="height:8px;">
+          <div class="progress-bar-fill" style="width:100%;background:var(--green);font-size:0;"></div>
+        </div>
+        <div class="kpi-label" style="margin-top:6px;">7/7 — COMPLETE</div>
+      </div>
+      <div class="kpi-card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px;">S1 FOUNDATION</div>
+        <div class="progress-bar-container" style="height:8px;">
+          <div class="progress-bar-fill" style="width:100%;background:var(--green);font-size:0;"></div>
+        </div>
+        <div class="kpi-label" style="margin-top:6px;">23/23 — COMPLETE</div>
+      </div>
+      <div class="kpi-card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px;">S2 SOCIAL</div>
+        <div class="progress-bar-container" style="height:8px;">
+          <div class="progress-bar-fill" style="width:95%;background:var(--yellow);font-size:0;"></div>
+        </div>
+        <div class="kpi-label" style="margin-top:6px;">21/22 — S2.3 DEFERRED</div>
+      </div>
+      <div class="kpi-card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px;">S3 SCALE</div>
+        <div class="progress-bar-container" style="height:8px;">
+          <div class="progress-bar-fill" style="width:63%;background:var(--blue);font-size:0;"></div>
+        </div>
+        <div class="kpi-label" style="margin-top:6px;">12/19 — WAVE 3 OPEN</div>
+      </div>
+      <div class="kpi-card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px;">S3.5 STABILIZE</div>
+        <div class="progress-bar-container" style="height:8px;">
+          <div class="progress-bar-fill" style="width:100%;background:var(--green);font-size:0;"></div>
+        </div>
+        <div class="kpi-label" style="margin-top:6px;">9/9 — COMPLETE</div>
+      </div>
+      <div class="kpi-card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px;">S3.6 UI DRIFT</div>
+        <div class="progress-bar-container" style="height:8px;">
+          <div class="progress-bar-fill" style="width:100%;background:var(--green);font-size:0;"></div>
+        </div>
+        <div class="kpi-label" style="margin-top:6px;">5/5 — COMPLETE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GITLAB SYNC -->
+  <div class="section">
+    <div class="section-title"><span class="icon">&#128279;</span> GITLAB SYNC</div>
+    <table class="task-table">
+      <thead><tr><th>Type</th><th>ID</th><th>Title</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Milestone</td><td>7340761</td><td>Sprint 3.6 — UI Drift Fixes</td><td><span class="status-done">CLOSED</span></td></tr>
+        <tr><td>Issue</td><td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/91" target="_blank">#91</a></td><td>S3.6-D01: Full-width breakout</td><td><span class="status-done">CLOSED</span></td></tr>
+        <tr><td>Issue</td><td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/92" target="_blank">#92</a></td><td>S3.6-D02: Prototype font import</td><td><span class="status-done">CLOSED</span></td></tr>
+        <tr><td>Issue</td><td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/93" target="_blank">#93</a></td><td>S3.6-D04: Design token CSS variables</td><td><span class="status-done">CLOSED</span></td></tr>
+        <tr><td>Issue</td><td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/94" target="_blank">#94</a></td><td>S3.6-D05: Per-category accent colors</td><td><span class="status-done">CLOSED</span></td></tr>
+        <tr><td>Issue</td><td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/95" target="_blank">#95</a></td><td>S3.6-D07: Hide WP widgets</td><td><span class="status-done">CLOSED</span></td></tr>
+        <tr><td>Issue</td><td><a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/96" target="_blank">#96</a></td><td>OW-0029: Squarespace MFA</td><td style="color:var(--yellow);font-weight:600;">OPEN</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:8px;font-size:12px;color:var(--text3);">
+      Scope impact notes added to issues: <a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/67" target="_blank">#67</a>,
+      <a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/70" target="_blank">#70</a>,
+      <a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/71" target="_blank">#71</a>,
+      <a class="gitlab-link" href="https://gitlab.com/jk-com-ver02/jk-com-ver02/-/issues/72" target="_blank">#72</a>
+      (Wave 3 SEC tasks — S3.6 design change impact)
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="retro-footer">
+    TASKMASTER — SPRINT 3.6 RETROSPECTIVE — GENERATED 2026-03-12<br>
+    THE MARKDOWN / NON SEQUITUR NEWS AGGREGATOR — GUNTHER DELIVERY SYSTEM
+  </div>
+
+</div>
+</body>
+</html>

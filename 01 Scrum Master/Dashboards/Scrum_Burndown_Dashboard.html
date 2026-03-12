@@ -88,10 +88,35 @@ tr:hover { background: rgba(88, 166, 255, 0.04); }
     <div class="date" id="date"></div>
   </div>
 </div>
-<div class="update-line">Last Updated: 2026-03-10 | Sprint: S2 — 21/22 CLOSED (S2.3 blocked) | Gates: G0-G5 PASSED | Next: S3 — Scale &amp; Polish</div>
+<div class="update-line">Last Updated: 2026-03-12 | Sprint: S3 — 12/19 CLOSED (Wave 3 remaining) | S3.5 Stabilization: 9/9 CLOSED | Gates: G0-G5 PASSED | Next: G6 (Wave 3 cyber)</div>
+
+<!-- SPRINT 3.5 STABILIZATION WIN BANNER -->
+<div class="win-banner">
+  <h3>SPRINT 3.5 STABILIZATION COMPLETE — 9/9 tasks (Bug fixes + Markdown page)</h3>
+  <ul>
+    <li>7 bug fixes from Wave 1/2 QA (Issues #82-#88) — all verified</li>
+    <li>The Markdown editorial page built and deployed (Issue #89)</li>
+    <li>Full QA verification passed (Issue #90)</li>
+    <li>Fixes: About page overflow, RSS feed, archive pagination, mobile nav, H1 headlines, footer, featured images</li>
+  </ul>
+</div>
+
+<!-- SPRINT 3 WAVE 1+2 WIN BANNER -->
+<div class="win-banner">
+  <h3>SPRINT 3 WAVES 1+2 COMPLETE — 12/19 tasks closed</h3>
+  <ul>
+    <li>6 Canva domain templates built (S3.1) + Canva MCP configured (S3.2)</li>
+    <li>Archive page with date/domain filter (S3.3)</li>
+    <li>Feed health monitor with broken feed alerts (S3.5)</li>
+    <li>Subdomain markdown.justin-kuiper.com configured (S3.6)</li>
+    <li>Performance optimization — caching, lazy load, CDN (S3.13)</li>
+    <li>Mobile responsive QA — 3 breakpoints (S3.14) + SEO config (S3.15)</li>
+    <li>3 SEC tasks: GitLab CI/CD security (S3.9), WP plugin audit (S3.10), DB backup automation (S3.11)</li>
+  </ul>
+</div>
 
 <!-- SPRINT 2 GATE 5 WIN BANNER -->
-<div class="win-banner">
+<div class="win-banner" style="opacity: 0.8;">
   <h3>SPRINT 2 GATE 5 COMPLETE — 14/14 tasks, 23 snippets (IDs 63-85)</h3>
   <ul>
     <li>AI Content Reformatter: 1 note → 5 platform versions</li>
@@ -107,7 +132,7 @@ tr:hover { background: rgba(88, 166, 255, 0.04); }
 </div>
 
 <!-- SPRINT 2 GATE 4 WIN BANNER -->
-<div class="win-banner">
+<div class="win-banner" style="opacity: 0.8;">
   <h3>SPRINT 2 GATE 4 COMPLETE — 7/8 tasks (S2.3 Instagram blocked)</h3>
   <ul>
     <li>X/Twitter OAuth 2.0 PKCE tweet + thread</li>
@@ -155,32 +180,33 @@ tr:hover { background: rgba(88, 166, 255, 0.04); }
 <div class="grid">
   <div class="card">
     <h3>Total Progress</h3>
-    <div class="metric" style="color: var(--green);">73%</div>
-    <div class="metric-sub">59 of 81 tasks complete</div>
+    <div class="metric" style="color: var(--green);">85%</div>
+    <div class="metric-sub">86 of 101 tasks complete</div>
     <div class="bar-container">
-      <div class="bar-done" style="width: 73%"></div>
-      <div class="bar-pending" style="width: 27%"></div>
+      <div class="bar-done" style="width: 85%"></div>
+      <div class="bar-blocked" style="width: 1%"></div>
+      <div class="bar-pending" style="width: 14%"></div>
     </div>
-    <div class="metric-sub">Done: 59 | Active: 0 | Pending: 21 | Blocked: 1</div>
+    <div class="metric-sub">Done: 86 | Open: 14 | Blocked: 1 (S2.3)</div>
   </div>
   <div class="card">
     <h3>Hours Burndown</h3>
-    <div class="metric">67h</div>
-    <div class="metric-sub">remaining of 238h total (171h burned)</div>
+    <div class="metric">~30h</div>
+    <div class="metric-sub">remaining of ~250h total (~220h burned)</div>
     <div class="bar-container">
-      <div class="bar-done" style="width: 72%"></div>
+      <div class="bar-done" style="width: 88%"></div>
     </div>
-    <div class="metric-sub">S0: 5h | S1: 70h | S1.5: 10h | S2: 86h ✅ | S3: 0/67h</div>
+    <div class="metric-sub">S0-S2.5: 175h ✅ | S3: ~35/55h ✅ | S3.5: ~10h ✅ | Wave 3: ~30h</div>
   </div>
   <div class="card">
     <h3>Active Blockers</h3>
     <div class="metric" style="color: var(--orange);">1</div>
-    <div class="metric-sub">BLK-001 (Facebook App Review — Instagram API)</div>
+    <div class="metric-sub">BLK-001 (Facebook App Review — Instagram API) — 4 days</div>
   </div>
   <div class="card">
     <h3>Cyber Gates</h3>
     <div class="metric" style="color: var(--green);">6/7</div>
-    <div class="metric-sub">G0-G5 PASSED — Next: G6 (Scale)</div>
+    <div class="metric-sub">G0-G5 PASSED — Next: G6 (Incident Readiness)</div>
   </div>
 </div>
 
@@ -189,7 +215,7 @@ tr:hover { background: rgba(88, 166, 255, 0.04); }
   <div class="card">
     <h3><span class="health-dot health-green"></span>WordPress Site Health</h3>
     <div class="metric" style="color: var(--green); font-size: 24px;">HTTP 200</div>
-    <div class="metric-sub">justin-kuiper.com | 85 active snippets | 0 code errors</div>
+    <div class="metric-sub">justin-kuiper.com | 74 active snippets (85 total) | 0 code errors</div>
   </div>
   <div class="card">
     <h3><span class="health-dot health-green"></span>Diagnostic Logger</h3>
@@ -231,10 +257,17 @@ tr:hover { background: rgba(88, 166, 255, 0.04); }
   </div>
   <div class="sprint-section">
     <div class="sprint-header">
-      <span class="sprint-label">S3 — Polish &amp; Scale</span>
-      <span class="sprint-stats">0/21 tasks | 0/67h | G6-G7 pending</span>
+      <span class="sprint-label">S3 — Scale &amp; Polish</span>
+      <span class="sprint-stats">12/19 tasks | ~35/55h | G6 pending (Wave 3)</span>
     </div>
-    <div class="bar-container"><div class="bar-pending" style="width: 100%"></div></div>
+    <div class="bar-container"><div class="bar-done" style="width: 63%"></div><div class="bar-pending" style="width: 37%"></div></div>
+  </div>
+  <div class="sprint-section">
+    <div class="sprint-header">
+      <span class="sprint-label">S3.5 — Stabilization &amp; Markdown Foundation &#x2705;</span>
+      <span class="sprint-stats">9/9 tasks | ~10h burned | QA PASS</span>
+    </div>
+    <div class="bar-container"><div class="bar-done" style="width: 100%"></div></div>
   </div>
 </div>
 
@@ -263,7 +296,7 @@ tr:hover { background: rgba(88, 166, 255, 0.04); }
       <tr><td>S0</td><td>7</td><td>7</td><td>0</td><td><span class="status status-done">COMPLETE</span></td></tr>
       <tr><td>S1</td><td>8</td><td>8</td><td>0</td><td><span class="status status-done">COMPLETE</span></td></tr>
       <tr><td>S2</td><td>8</td><td>7</td><td>1</td><td><span class="status status-done">7/8 DONE</span></td></tr>
-      <tr><td>S3</td><td>8</td><td>0</td><td>8</td><td><span class="status status-pending">PENDING</span></td></tr>
+      <tr><td>S3</td><td>8</td><td>3</td><td>5</td><td><span class="status status-active">3/8 DONE</span></td></tr>
     </tbody>
   </table>
 </div>
@@ -271,7 +304,7 @@ tr:hover { background: rgba(88, 166, 255, 0.04); }
 <!-- DEPLOYED SNIPPETS -->
 <div class="section-title">WordPress Code Snippets (Production)</div>
 <div class="card" style="margin-bottom: 24px;">
-  <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Gate 3-5 snippets deployed via REST API — 85 active, zero errors</p>
+  <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Gate 3-5 snippets deployed via REST API — 74 active (85 total), zero errors</p>
   <div class="snippet-grid">
     <div class="snippet-card"><span class="snippet-id">ID:38-42</span> S2.1 X OAuth + Token <span class="snippet-scope">| global | pri:10</span></div>
     <div class="snippet-card"><span class="snippet-id">ID:43-47</span> S2.2 LinkedIn OAuth <span class="snippet-scope">| global | pri:10</span></div>
@@ -359,7 +392,7 @@ tr:hover { background: rgba(88, 166, 255, 0.04); }
 <div class="card" style="margin-bottom: 24px;">
   <div class="blocker-item">
     <span class="blocker-id">BLK-001</span> — Facebook App Review not submitted (Instagram API, 2-4 week lead time)
-    <br><span class="blocker-age">Affects: S2.3 Instagram integration | Owner: Yeti | Age: 1 day</span>
+    <br><span class="blocker-age">Affects: S2.3 Instagram integration | Owner: Yeti | Age: 4 days | Deferred to S4</span>
   </div>
   <div class="blocker-item blocker-resolved">
     <span class="blocker-id-resolved">BLK-002 &#x2705;</span> — Sprint 0 complete — all 7 hardening tasks closed

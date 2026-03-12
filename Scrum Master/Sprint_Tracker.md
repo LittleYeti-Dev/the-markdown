@@ -1,8 +1,8 @@
 # The Markdown — Sprint Tracker
 
-**Last Updated:** 2026-03-10 (Synced from GitLab source of truth)
+**Last Updated:** 2026-03-12 (Synced from GitLab source of truth)
 **Source of Truth:** [GitLab Issues](https://gitlab.com/h3ndriks.j/JK.com-ver02/-/issues)
-**Total Tasks:** 91 | **Closed:** 65 | **Open:** 26
+**Total Tasks:** 108 | **Closed:** 91 | **Open:** 17
 **Pipelines:** All passing ✅
 
 ---
@@ -157,42 +157,98 @@
 
 ## Sprint 3 — Scale & Polish
 
-**Status:** 🔵 IN PROGRESS | **Tasks:** 0/20 closed | **Milestone:** Sprint 3 — Scale & Polish
+**Status:** 🔵 IN PROGRESS | **Tasks:** 12/19 closed | **Milestone:** Sprint 3 — Scale & Polish
 **Estimated:** ~55h | **Started:** 2026-03-10
-**Execution:** 3 waves — Wave 1 (10 tasks, independent) → Wave 2 (5 tasks, dependent) → Wave 3 / Gate 7 (5 tasks, cyber)
+**Execution:** 3 waves — Wave 1 ✅ COMPLETE → Wave 2 (QA) ✅ COMPLETE → Wave 3 / Gate 7 (6 tasks, cyber + 1 SEC)
 **Note:** S3.4, S3.7, and S2.3 moved to Sprint 3.5 (pay-to-play decision gate). CF-1 + CF-3 added from S2.5 retro.
 
-### Gate 6 — Visual & Infrastructure
+### Wave 1 + Wave 2 — Visual, Infrastructure, QA ✅ 12/12 CLOSED
+
+| # | ID | Type | Task | Owner | Status | Closed |
+|---|-----|------|------|-------|--------|--------|
+| 52 | S3.1 | FUNC | Build 6 Canva domain templates — branded visual cards | Taskmaster | ✅ CLOSED | 2026-03-12 |
+| 53 | S3.2 | FUNC | Configure Canva MCP — auto-generate cards from templates | DevOps | ✅ CLOSED | 2026-03-12 |
+| 54 | S3.3 | FUNC | Build archive page — historical editions with date/domain filter | DevOps | ✅ CLOSED | 2026-03-12 |
+| 56 | S3.5 | FUNC | Build feed health monitor — detect broken feeds + alerts | DevOps | ✅ CLOSED | 2026-03-11 |
+| 57 | S3.6 | FUNC | Configure subdomain — markdown.justin-kuiper.com | Taskmaster | ✅ CLOSED | 2026-03-12 |
+| 59 | S3.8 | FUNC | Build about page update — baseball card refresh | Taskmaster | ✅ CLOSED | 2026-03-12 |
+| 60 | S3.9 | SEC | GitLab CI/CD pipeline security — protected branches, signed commits | Cyber Ops | ✅ CLOSED | 2026-03-11 |
+| 61 | S3.10 | SEC | WordPress plugin audit — remove unused, update all, allowlist | Cyber Ops | ✅ CLOSED | 2026-03-11 |
+| 62 | S3.11 | SEC | Database backup automation — daily encrypted backups | DevOps | ✅ CLOSED | 2026-03-11 |
+| 64 | S3.13 | FUNC | Performance optimization — caching, lazy load, CDN evaluation | DevOps | ✅ CLOSED | 2026-03-12 |
+| 65 | S3.14 | FUNC | Mobile responsive QA — test all pages on 3 breakpoints | Taskmaster | ✅ CLOSED | 2026-03-12 |
+| 66 | S3.15 | FUNC | SEO configuration — meta tags, OG tags, structured data | DevOps | ✅ CLOSED | 2026-03-12 |
+
+### Wave 3 — Gate 6 Remaining + Gate 7 (Final Cyber Gate) — 0/7 OPEN
+
+**⚠ S3.6 Scope Impact (2026-03-12):** Sprint 3.6 deployed 4 snippets (108↑, 109↑, 119+, 120+) including the first client-side JS injection (snippet 120) and an external resource dependency (Google Fonts in snippet 108). Tasks S3.16, S3.19, S3.20, and S3.21 have updated scope notes below.
 
 | # | ID | Type | Task | Owner | Status |
 |---|-----|------|------|-------|--------|
-| 52 | S3.1 | FUNC | Build 6 Canva domain templates — branded visual cards | Taskmaster | ⬜ OPEN |
-| 53 | S3.2 | FUNC | Configure Canva MCP — auto-generate cards from templates | DevOps | ⬜ OPEN |
-| 54 | S3.3 | FUNC | Build archive page — historical editions with date/domain filter | DevOps | ⬜ OPEN |
-| 56 | S3.5 | FUNC | Build feed health monitor — detect broken feeds + alerts | DevOps | ⬜ OPEN |
-| 57 | S3.6 | FUNC | Configure subdomain — markdown.justin-kuiper.com | Taskmaster | ⬜ OPEN |
-| 59 | S3.8 | FUNC | Build about page update — baseball card refresh | Taskmaster | ⬜ OPEN |
-| 60 | S3.9 | SEC | GitLab CI/CD pipeline security — protected branches, signed commits | Cyber Ops | ⬜ OPEN (Medium) |
-| 61 | S3.10 | SEC | WordPress plugin audit — remove unused, update all, allowlist | Cyber Ops | ⬜ OPEN (Medium) |
-| 62 | S3.11 | SEC | Database backup automation — daily encrypted backups | DevOps | ⬜ OPEN (Medium) |
 | 63 | S3.12 | SEC | File permission hardening — wp-content, uploads, themes | Cyber Ops | ⬜ OPEN (High) |
-| 64 | S3.13 | FUNC | Performance optimization — caching, lazy load, CDN evaluation | DevOps | ⬜ OPEN |
-| 65 | S3.14 | FUNC | Mobile responsive QA — test all pages on 3 breakpoints | Taskmaster | ⬜ OPEN |
-| 66 | S3.15 | FUNC | SEO configuration — meta tags, OG tags, structured data | DevOps | ⬜ OPEN |
-
-### Gate 7 — Final Cyber Gate
-
-| # | ID | Type | Task | Owner | Status |
-|---|-----|------|------|-------|--------|
 | 67 | S3.16 | SEC | Penetration test — OWASP Top 10 scan on all endpoints | Cyber Ops | ⬜ OPEN |
 | 68 | S3.17 | SEC | Incident response plan — document response procedures | Cyber Ops | ⬜ OPEN (Medium) |
 | 69 | S3.18 | SEC | Security monitoring setup — alerts for suspicious activity | Cyber Ops | ⬜ OPEN (Medium) |
 | 70 | S3.19 | SEC | Final cyber gate review — all 7 gates pass | Cyber Ops | ⬜ OPEN |
 | 71 | S3.20 | SEC | OPSEC review — verify no secrets in repos, logs, or public pages | Cyber Ops | ⬜ OPEN (High) |
+| 72 | S3.21 | SEC | Documentation — security architecture doc, runbooks, credential inventory | Overwatch | ⬜ OPEN |
+
+**S3.6 Scope Notes:**
+- **S3.16 (Pen Test):** Must include snippet 120 JS injection pattern — verify `data-domain` attribute setting from `.md-block-domain` text cannot be exploited for DOM XSS. Test that injected attributes don't enable CSS injection or attribute-based attacks. Snippet inventory now 120 total (76 active).
+- **S3.19 (Final Gate Review):** Gate review must cover all 4 S3.6 snippets. Snippet 120 introduces first client-side JS in the snippet stack — new pattern requires explicit sign-off. Verify no regression from S3.6 CSS `!important` overrides on theme security headers.
+- **S3.20 (OPSEC Review):** Google Fonts import (snippet 108) pings `fonts.googleapis.com` and `fonts.gstatic.com` on every page 1077 load — verify referrer policy, confirm no PII leakage via font request headers. Check that no design tokens or CSS variable names leak sensitive architecture info.
+- **S3.21 (Documentation):** Security architecture doc must reflect: updated snippet inventory (120 total), JS injection pattern in snippet 120, external font dependency chain, and the `data-domain` attribute mapping logic.
 
 ---
 
-## Sprint 3.5 — Pay-to-Play Decision Gate
+## Sprint 3.5 — Stabilization & Markdown Foundation
+
+**Status:** ✅ COMPLETE | **Tasks:** 9/9 closed | **Milestone:** Sprint 3.5 — Stabilization & Markdown Foundation (GitLab)
+**Scope:** Bug fixes from Wave 1/2 QA (Issues #82–#88) + The Markdown editorial page build + QA verification
+**Executed:** Between S3 Wave 2 and Wave 3
+
+| # | ID | Type | Task | Owner | Status | Closed |
+|---|-----|------|------|-------|--------|--------|
+| 82 | S3.5-BF01 | BUG-P1 | Fix About page horizontal overflow on mobile | DevOps | ✅ CLOSED | 2026-03-12 |
+| 83 | S3.5-BF02 | BUG-P2 | Fix RSS feed — returns 0 items | DevOps | ✅ CLOSED | 2026-03-12 |
+| 84 | S3.5-BF03 | BUG-P2 | Fix archive pagination — limit visible page buttons | DevOps | ✅ CLOSED | 2026-03-12 |
+| 85 | S3.5-BF04 | BUG-P2 | Fix mobile nav — enforce dark theme background | DevOps | ✅ CLOSED | 2026-03-12 |
+| 86 | S3.5-BF05 | BUG-P2 | Fix feed item pages — add H1 article headline | DevOps | ✅ CLOSED | 2026-03-12 |
+| 87 | S3.5-BF06 | BUG-P3 | Add site footer to all pages | DevOps | ✅ CLOSED | 2026-03-12 |
+| 88 | S3.5-BF07 | BUG-P3 | Fix featured image white background on feed items | DevOps | ✅ CLOSED | 2026-03-12 |
+| 89 | S3.5-MP01 | FUNC | Build The Markdown editorial page — Block layout | DevOps | ✅ CLOSED | 2026-03-12 |
+| 90 | S3.5-QA01 | FUNC | QA Sprint 3.5 — verify bug fixes and Markdown page | Taskmaster | ✅ CLOSED | 2026-03-12 |
+
+---
+
+## Sprint 3.6 — UI Drift Fixes (Prototype → Production Alignment)
+
+**Status:** 🔵 IN PROGRESS | **Tasks:** 4/5 closed | **Milestone:** Sprint 3.6 — UI Drift Fixes
+**Trigger:** Visual audit revealed 8 deltas between GitLab Pages prototype and WordPress production
+**Executed:** 2026-03-12 | **Estimated:** ~3h
+
+| # | ID | Type | Task | Owner | Snippet | Status | Closed |
+|---|-----|------|------|-------|---------|--------|--------|
+| 91 | S3.6-D01 | FUNC | Full-width breakout — override Hever 750px content constraint on page 1077 | DevOps | #108 (updated) | ✅ CLOSED | 2026-03-12 |
+| 92 | S3.6-D02 | FUNC | Prototype font import — Rajdhani, Source Sans Pro, JetBrains Mono via Google Fonts | DevOps | #108 (updated) | ✅ CLOSED | 2026-03-12 |
+| 93 | S3.6-D04 | FUNC | Design token CSS variables — 6 accent colors, 3 font families, backgrounds, borders | DevOps | #108 (updated) | ✅ CLOSED | 2026-03-12 |
+| 94 | S3.6-D05 | FUNC | Per-category accent colors on blocks — AI/Cyber/Innovation/FNW/Space/Digital | DevOps | #109 (updated) + #120 (new) | ✅ CLOSED | 2026-03-12 |
+| 95 | S3.6-D07 | FUNC | Hide WordPress Share/Like widgets on The Markdown page | DevOps | #119 (new) | ✅ CLOSED | 2026-03-12 |
+
+**Snippets Deployed:**
+- **#108** `S3.5-W2-M09a Markdown Styles — Layout` — UPDATED with full-width breakout, Google Fonts, design tokens
+- **#109** `S3.5-W2-M09b Markdown Styles — Cards` — UPDATED with per-category CSS variables and prototype fonts
+- **#119** `S3.6-D07 Markdown — Hide WP Widgets` — NEW, hides Jetpack sharing/likes on page 1077
+- **#120** `S3.6-D05b Markdown — Block Domain Attributes` — NEW, JS injects data-domain attrs for per-category colors
+
+**Remaining Deltas (deferred to Sprint 3.7 or manual):**
+- D-03: Block 00 hero image (placeholder in both — needs real image asset)
+- D-06: Commentary card "JK" avatar styling (minor refinement)
+- D-08: Footer bottom spacing (minor, cascaded from D-01 fix)
+
+---
+
+## Sprint 4 — Pay-to-Play Decision Gate
 
 **Status:** ⬜ NOT STARTED | **Tasks:** 0/7 closed
 **Gate:** GO/NO-GO per feature — cost/benefit decision before execution
@@ -224,11 +280,13 @@
 | S0 — Hardening | 7 | 7 | 0 | ✅ COMPLETE (closed) |
 | S1 — Foundation | 23 | 23 | 0 | ✅ COMPLETE (closed) |
 | S1.5 — Integration Gate | 8 | 8 | 0 | ✅ COMPLETE (closed) |
-| S2 — Social & Publishing | 22 | 21 | 1 | 🔶 21/22 (S2.3 deferred to S3.5) |
+| S2 — Social & Publishing | 22 | 21 | 1 | 🔶 21/22 (S2.3 deferred) |
 | S2.5 — Integration Gate | 6 | 6 | 0 | ✅ COMPLETE |
-| S3 — Scale & Polish | 20 | 0 | 20 | 🔵 IN PROGRESS |
-| S3.5 — Pay-to-Play Gate | 7 | 0 | 7 | ⬜ NOT STARTED |
-| **Total** | **93** | **65** | **28** | **70% complete** |
+| S3 — Scale & Polish | 19 | 12 | 7 | 🔵 Wave 3 remaining |
+| S3.5 — Stabilization | 9 | 9 | 0 | ✅ COMPLETE |
+| S3.6 — UI Drift Fixes | 5 | 5 | 0 | ✅ COMPLETE |
+| S4 — Pay-to-Play Gate | 7 | 0 | 7 | ⬜ NOT STARTED |
+| **Total** | **106** | **91** | **15** | **86% complete** |
 
 ---
 
@@ -236,11 +294,12 @@
 
 | Pipeline | Status | Branch | Date |
 |----------|--------|--------|------|
-| #2371500458 | ✅ success | main | 2026-03-08 |
-| #2370708280 | ✅ success | main | 2026-03-07 |
-| #2370702903 | ✅ success | main | 2026-03-07 |
-| #2370700426 | ✅ success | main | 2026-03-07 |
+| #2376500310 | ✅ success | main | 2026-03-10 |
+| #2376383924 | ✅ success | main | 2026-03-10 |
+| #2376351326 | ✅ success | main | 2026-03-10 |
+| #2376319576 | ✅ success | main | 2026-03-10 |
+| #2374274359 | ✅ success | main | 2026-03-10 |
 
 ---
 
-*Synced from GitLab by Taskmaster. GitLab is the source of truth.*
+*Synced from GitLab by Taskmaster — 2026-03-12. GitLab is the source of truth.*
