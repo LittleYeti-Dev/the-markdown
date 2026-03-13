@@ -1,36 +1,52 @@
 # Robo Stack — Project Status
 **Project:** Hybrid AI Development Stack
-**Current Sprint:** Sprint 0 (Foundational Setup)
+**Current Sprint:** Sprint 1 (Epic 1: Local Development Layer)
 **Last Updated:** 2026-03-13
-**Priority:** LEAD PROJECT (starts Sprint 1 first)
+**Priority:** LEAD PROJECT
+**GitHub Repo:** https://github.com/LittleYeti-Dev/robo-stack
+**Project Board:** https://github.com/users/LittleYeti-Dev/projects/1
 
 ---
 
-## Sprint 0 Progress
+## Sprint 0 — COMPLETE ✅
+Signed off by Yeti on 2026-03-13. All eval gates resolved. EV0.4 Copilot hands-on testing deferred to Sprint 1 (S1.6).
 
-| Gate | Description | Status |
-|------|-------------|--------|
-| EV0.1 | Platform Decision (GitLab vs GitHub) | OPEN — Awaiting Yeti eval |
-| EV0.2 | Wiki Standard | IN PROGRESS |
-| EV0.3 | Repo + Sync Setup | IN PROGRESS — GitLab remote active |
-| EV0.4 | AI Agent Integration | PENDING |
-| EV0.5 | PM Tooling | OPEN — Awaiting Yeti eval |
-| EV0.6 | Taskmaster Awareness | IN PROGRESS |
-| EV0.7 | Persona Boot Infra | IN PROGRESS |
+## Sprint 1 — ACTIVE
 
-## Active Stories
-- S0.1: Build `.taskmaster/` infrastructure — IN PROGRESS
-- S0.2: Initialize wiki directories — PENDING
-- S0.3: Platform decision evaluation — AWAITING YETI
+**Sprint Goal:** Working local development environment with Kubernetes, CI/CD pipeline, and security baseline — all reproducible from repo.
+**Duration:** 2 weeks (2026-03-13 to 2026-03-27)
+**Epic:** E1 — Local Development Layer
 
-## Blockers
-- EV0.1 (platform choice) blocks final repo/wiki/CI setup
-- EV0.5 (PM tooling) blocks backlog import to boards
+### Active Stories
 
-## Sprint 1 Readiness
-- [ ] Sprint 0 complete with Yeti sign-off (TP0)
-- [ ] Personas activated (Platform Architect, AI Specialist, DevSecOps)
-- [ ] Epic 1 process design story ready
+| Issue | Story | Type | Persona | Agent | Status |
+|-------|-------|------|---------|-------|--------|
+| #9 | S1.1: Epic 1 Process Design | Process | Platform Architect | Claude Code | **TODO** |
+| #10 | S1.2: Ubuntu Workstation Base Config | Build | Platform Architect | Copilot | **TODO** (blocked by S1.1) |
+| #11 | S1.3: Local K8s Cluster | Build | Platform Architect | Copilot | **TODO** (blocked by S1.1 + EV1.1) |
+| #12 | S1.4: Git + CI/CD Pipeline | Build | DevSecOps | Copilot | **TODO** (blocked by S1.1) |
+| #13 | S1.5: Security Baseline | Build | DevSecOps | Copilot | **TODO** (blocked by S1.1) |
+| #14 | EV1.1: K3s vs Minikube Eval | Eval | Platform Architect | Claude Code | **TODO** |
+| #15 | S1.6: Copilot Agent Mode Test | Build | AI Specialist | Copilot | **TODO** |
+| #16 | TP1: Sprint 1 Touchpoint | Touchpoint | Taskmaster | Cowork | **TODO** |
 
-## Upcoming
-- Sprint 1 Day 1: Activate Robo Stack personas, begin Epic 1 process design
+### Execution Order
+1. S1.1 (Process Design) + EV1.1 (K3s eval) — can run in parallel
+2. S1.2, S1.4, S1.5 — after S1.1 approved
+3. S1.3 — after S1.1 + EV1.1 approved
+4. S1.6 — alongside any build story
+5. TP1 — after all stories complete
+
+### Blockers
+- None — Sprint 1 is clear to start
+
+### Personas Activated
+- ✅ Platform Architect — activated 2026-03-13
+- ✅ AI Integration Specialist — activated 2026-03-13
+- ✅ DevSecOps Engineer — activated 2026-03-13
+
+### Agent Prompts
+- All 8 prompts written and committed to wiki/Sprint-1/Sprint_1_Agent_Prompts.md
+- Claude Code: S1.1, EV1.1 (architecture + evaluation)
+- Copilot Agent Mode: S1.2, S1.3, S1.4, S1.5, S1.6 (build + testing)
+- Claude Cowork: TP1 (touchpoint prep)

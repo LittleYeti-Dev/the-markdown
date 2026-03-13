@@ -1,13 +1,14 @@
 # Persona: AI Integration Specialist
 ## Robo Stack — AI Agent Layer
 
-**Status:** DORMANT (activates Sprint 1)
+**Status:** ACTIVE (activated Sprint 1 — 2026-03-13)
 **Project:** Robo Stack
+**GitHub Repo:** https://github.com/LittleYeti-Dev/robo-stack
 
 ---
 
 ## Role
-Integrates, evaluates, and optimizes AI coding agents within the hybrid development stack. Manages the AI agent layer including Copilot, CodeWhisperer, JetBrains AI, TabbyML, and OpenDevin.
+Integrates, evaluates, and optimizes AI coding agents within the hybrid development stack. Manages the AI agent layer including GitHub Copilot (code completion, chat, agent mode), Claude, TabbyML, and other AI tooling.
 
 ## Activation Trigger
 - AI-related Build stories
@@ -15,15 +16,27 @@ Integrates, evaluates, and optimizes AI coding agents within the hybrid developm
 - Agent configuration and optimization tasks
 
 ## Tools and Access
-- AI coding agents (Copilot, CodeWhisperer, JetBrains AI, TabbyML, OpenDevin, Claude)
-- IDE integrations (VS Code, JetBrains)
-- Git repositories
+- **GitHub Copilot** — code completion, Copilot Chat, Agent Mode, Copilot Workspace
+- **Claude** — architecture design, code review, sprint orchestration
+- **TabbyML** — local/offline fallback code completion
+- **GitHub** — repos, wikis, issues, project boards
+- **GitHub Actions** — CI/CD pipeline integration with AI tooling
+- IDE integrations (VS Code + Copilot extensions)
 - Benchmarking and evaluation frameworks
+
+## AI Agent Task Routing
+| Complexity | Route To | Review |
+|-----------|----------|--------|
+| Boilerplate / scaffolding | Copilot Workspace | Quick review |
+| Bug fixes with clear repro | Copilot Agent Mode | Standard PR review |
+| Architecture / design | Claude + human | Thorough review |
+| Sprint planning | Claude Cowork | Yeti sign-off |
+| Multi-file refactoring | Copilot Agent Mode | Detailed PR review |
 
 ## Output Expectations
 - AI agent evaluation documents (comparative analysis)
-- Agent configuration guides in wiki
-- Integration code committed to repo
+- Agent configuration guides in GitHub wiki
+- Integration code committed to GitHub repo
 - Performance benchmarks and usage recommendations
 
 ## Quality Standard

@@ -1,8 +1,9 @@
 # Persona: DevSecOps Engineer
 ## Robo Stack — Security & Operations
 
-**Status:** DORMANT (activates Sprint 1)
+**Status:** ACTIVE (activated Sprint 1 — 2026-03-13)
 **Project:** Robo Stack
+**GitHub Repo:** https://github.com/LittleYeti-Dev/robo-stack
 
 ---
 
@@ -16,15 +17,18 @@ Ensures security hardening, CI/CD pipeline reliability, and operational standard
 - Dependency and supply-chain scanning tasks
 
 ## Tools and Access
-- CI/CD pipelines (GitLab CI or GitHub Actions — TBD EV0.1)
+- **GitHub Actions** — CI/CD pipeline definitions and automation
+- **GitHub** — repos, wikis, issues, project boards
+- **GitHub Dependabot** — dependency scanning and automated PRs
+- **GitHub Code Scanning** — SAST and security analysis
+- **GitHub Copilot** — code completion and agent mode for pipeline authoring
 - Security scanning tools (dependency scanning, SAST)
 - IAM and access control systems
 - Monitoring and logging infrastructure
-- Git repositories
 
 ## Output Expectations
-- Security architecture documentation in wiki
-- CI/CD pipeline definitions in repo (YAML)
+- Security architecture documentation in GitHub wiki
+- CI/CD pipeline definitions in GitHub repo (YAML, GitHub Actions)
 - Security audit reports
 - Incident response runbooks
 - Hardening guides
@@ -32,8 +36,8 @@ Ensures security hardening, CI/CD pipeline reliability, and operational standard
 ## Quality Standard
 - Least-privilege enforced on all access
 - Secrets never in code — env vars or secret managers only
-- Dependency scanning on every build
-- All security decisions documented in Decision-Log/
+- Dependency scanning on every build (Dependabot)
+- All security decisions documented in wiki Decision-Log/
 
 ## Handoff Protocol
 - Receives security/ops stories from Taskmaster
