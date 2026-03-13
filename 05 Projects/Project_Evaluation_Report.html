@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Evaluation — Robo Stack vs Content Ops</title>
+<style>
+  :root {
+    --primary: #2E4057;
+    --accent: #4A7C9B;
+    --light-bg: #F4F7FA;
+    --border: #D1D9E0;
+    --success: #2D8A56;
+    --warning: #D4820A;
+    --danger: #C0392B;
+    --text: #2C3E50;
+    --muted: #6B7C8D;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--text); line-height: 1.6; background: #fff; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+
+  /* Cover */
+  .cover { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: #fff; padding: 80px 40px; text-align: center; margin-bottom: 48px; border-radius: 4px; }
+  .cover h1 { font-size: 2.4em; margin-bottom: 8px; font-weight: 700; }
+  .cover .subtitle { font-size: 1.1em; opacity: 0.85; margin-bottom: 24px; }
+  .cover .meta { font-size: 0.9em; opacity: 0.7; }
+
+  /* Sections */
+  .section { margin-bottom: 48px; page-break-inside: avoid; }
+  .section h2 { font-size: 1.5em; color: var(--primary); border-bottom: 3px solid var(--accent); padding-bottom: 8px; margin-bottom: 20px; }
+  .section h3 { font-size: 1.15em; color: var(--accent); margin: 24px 0 12px; }
+  .section p { margin-bottom: 12px; }
+
+  /* Scorecard Table */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.92em; }
+  th { background: var(--primary); color: #fff; padding: 10px 14px; text-align: left; font-weight: 600; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--light-bg); }
+  .cat-row td { background: #E8F0F5 !important; font-weight: 700; color: var(--primary); }
+  .score { text-align: center; font-weight: 700; font-size: 1.1em; }
+  .score-high { color: var(--success); }
+  .score-mid { color: var(--warning); }
+  .score-low { color: var(--danger); }
+  .total-row td { background: #D5E8D4 !important; font-weight: 700; font-size: 1.15em; }
+
+  /* Cards */
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 20px 0; }
+  .card { border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; background: #fff; }
+  .card.robo { border-top: 4px solid var(--accent); }
+  .card.content { border-top: 4px solid var(--success); }
+  .card h4 { font-size: 1.05em; color: var(--primary); margin-bottom: 12px; }
+  .card ul { padding-left: 20px; margin: 0; }
+  .card li { margin-bottom: 6px; font-size: 0.93em; }
+
+  /* Persona Cards */
+  .persona { border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; margin-bottom: 16px; }
+  .persona .role-title { font-weight: 700; color: var(--primary); font-size: 1.05em; margin-bottom: 4px; }
+  .persona .allocation { display: inline-block; background: var(--accent); color: #fff; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; margin-bottom: 10px; }
+  .persona .responsibilities { font-size: 0.92em; color: var(--muted); }
+
+  /* Sprint Timeline */
+  .sprint-bar { display: flex; gap: 4px; margin: 12px 0 24px; }
+  .sprint-block { flex: 1; text-align: center; padding: 10px 6px; border-radius: 4px; font-size: 0.8em; font-weight: 600; color: #fff; }
+  .sb-p0 { background: var(--primary); }
+  .sb-p1 { background: var(--accent); }
+  .sb-p2 { background: #7BA7BC; }
+  .sb-p3 { background: #A8C5D4; }
+
+  /* Deliverables */
+  .deliverable { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .deliverable:last-child { border-bottom: none; }
+  .deliverable .check { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--accent); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 0.7em; color: var(--accent); }
+  .deliverable .dl-text strong { color: var(--primary); }
+  .deliverable .dl-text { font-size: 0.93em; }
+
+  /* Standards */
+  .standard-item { padding: 12px 16px; background: var(--light-bg); border-left: 3px solid var(--accent); margin-bottom: 10px; border-radius: 0 4px 4px 0; font-size: 0.93em; }
+  .standard-item strong { color: var(--primary); }
+
+  /* Decision box */
+  .decision-box { border: 2px solid var(--accent); border-radius: 8px; padding: 28px 32px; background: linear-gradient(135deg, #F4F7FA 0%, #E8F0F5 100%); margin: 32px 0; }
+  .decision-box h3 { color: var(--primary); margin-bottom: 16px; font-size: 1.2em; }
+
+  @media print {
+    .container { padding: 20px; }
+    .cover { padding: 48px 24px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Cover -->
+<div class="cover">
+  <h1>Project Evaluation Report</h1>
+  <div class="subtitle">Dual-RFI Execution Plan &mdash; Robo Stack &amp; Content Ops</div>
+  <div class="meta">Yeti Knowledge Systems &mdash; March 2026<br>Process-first design &bull; Best-of-breed evaluation &bull; Stakeholder-gated delivery</div>
+</div>
+
+<!-- 1. Executive Summary -->
+<div class="section">
+  <h2>1. Executive Summary</h2>
+  <p>Both RFIs are approved for execution. This document serves as the dual-project governance plan for the <strong>Hybrid AI Development Stack</strong> ("Robo Stack") and the <strong>Non Sequitur Content Refinery Platform</strong> ("Content Ops"), running in parallel under Yeti Knowledge Systems.</p>
+  <p>Both projects were scored across feasibility, revenue potential, and strategic value. Content Ops scores higher on near-term feasibility (3.6 vs 2.6) while Robo Stack carries the stronger revenue ceiling. The projects are synergistic — Content Ops showcases and markets the thinking behind Robo Stack, while Robo Stack can eventually power Content Ops automation.</p>
+  <p>A key lesson from the Markdown project informs this plan: <strong>process and workflow design must happen up front, not be discovered in the final sprint.</strong> Accordingly, every epic in both backlogs now begins with a process design and best-of-breed evaluation gate before any build work starts. Yeti is the sole stakeholder and primary touchpoint for all decisions — every sprint ends with a structured review checkpoint.</p>
+</div>
+
+<!-- 1b. Lessons Learned & Design Principles -->
+<div class="section">
+  <h2>2. Lessons Learned &amp; Design Principles</h2>
+
+  <div class="decision-box" style="border-color: var(--warning);">
+    <h3>Lesson from the Markdown Project</h3>
+    <p>The project workflow wasn't fully defined until the final sprint. This caused rework, ambiguity during execution, and a product that was shaped more by discovery than by design. The corrective principle for both RFIs:</p>
+    <p style="margin-top:12px; font-weight:700; color:var(--primary); font-size:1.05em;">Design the process before building the product. Every epic starts with "how will this work?" before "let's build it."</p>
+  </div>
+
+  <h3>Governing Principles for Both RFIs</h3>
+
+  <div class="standard-item"><strong>Process-First Design:</strong> Each epic begins with a workflow/process design story before any implementation stories. The process is documented in Markdown, reviewed by Yeti, and locked before build work begins. No building without a designed process.</div>
+
+  <div class="standard-item"><strong>Best-of-Breed Evaluation Gates:</strong> Every significant tool, platform, or technology choice goes through a formal evaluation gate (marked yellow in backlogs). The evaluation produces a decision document comparing options against criteria relevant to both projects. No tool is adopted on assumption — it earns its place.</div>
+
+  <div class="standard-item"><strong>Requirements Captured from Capabilities:</strong> As each capability is built and tested, requirements are captured and fed back into the plan. The backlog is a living document — stories refine as real-world capability reveals what's needed next. Each touchpoint includes a "requirements harvest" where new learnings shape upcoming sprints.</div>
+
+  <div class="standard-item"><strong>Single Stakeholder Touchpoints:</strong> Yeti is the sole decision-maker and quality gate for both projects. Every sprint ends with a structured touchpoint that includes: demo of work completed, review of evaluation gate decisions, requirements harvest from what was learned, and explicit go/no-go for the next sprint. Nothing advances without Yeti sign-off.</div>
+
+  <div class="standard-item"><strong>Tight Plan → Tight Product:</strong> The RFI waves (Discovery → Design → Convergence) are respected. Each wave produces tighter artifacts than the last. By the end, both projects deliver not just a working product but a documented, repeatable operational process that can be handed to someone else.</div>
+
+  <div class="standard-item"><strong>Future Delegation Path (Content Ops):</strong> While Yeti is the primary touchpoint now, Content Ops is designed to eventually delegate evaluation and editorial roles. The system captures process decisions explicitly so that when blog evaluation, social distribution, or editorial review is handed off, the new person inherits a designed process — not tribal knowledge.</div>
+</div>
+
+<!-- 3. Comparative Scorecard -->
+<div class="section">
+  <h2>3. Comparative Scorecard</h2>
+  <p>Each criterion scored 1 (Low) to 5 (High). Full rationale is in the companion spreadsheet.</p>
+
+  <table>
+    <thead>
+      <tr><th>Criterion</th><th class="score">Robo</th><th class="score">Content</th></tr>
+    </thead>
+    <tbody>
+      <tr class="cat-row"><td colspan="3">Feasibility & Effort</td></tr>
+      <tr><td>Technical complexity</td><td class="score score-mid">4</td><td class="score score-mid">3</td></tr>
+      <tr><td>Time to MVP</td><td class="score score-low">2</td><td class="score score-high">4</td></tr>
+      <tr><td>Resource requirements</td><td class="score score-mid">3</td><td class="score score-high">4</td></tr>
+      <tr><td>Dependency risk</td><td class="score score-low">2</td><td class="score score-mid">3</td></tr>
+      <tr><td>Operational overhead</td><td class="score score-low">2</td><td class="score score-high">4</td></tr>
+      <tr class="cat-row"><td colspan="3">Revenue Potential</td></tr>
+      <tr><td>Time to first dollar</td><td class="score score-low">2</td><td class="score score-high">4</td></tr>
+      <tr><td>Recurring revenue potential</td><td class="score score-high">4</td><td class="score score-mid">3</td></tr>
+      <tr><td>Market demand clarity</td><td class="score score-mid">3</td><td class="score score-mid">3</td></tr>
+      <tr><td>Price point strength</td><td class="score score-high">4</td><td class="score score-low">2</td></tr>
+      <tr><td>Scalability</td><td class="score score-mid">3</td><td class="score score-mid">3</td></tr>
+      <tr class="cat-row"><td colspan="3">Strategic Value</td></tr>
+      <tr><td>Brand positioning</td><td class="score score-high">4</td><td class="score score-high">4</td></tr>
+      <tr><td>Portfolio / IP value</td><td class="score score-high">4</td><td class="score score-mid">3</td></tr>
+      <tr><td>Synergy between projects</td><td class="score score-high">4</td><td class="score score-high">4</td></tr>
+      <tr><td>Long-term moat</td><td class="score score-mid">3</td><td class="score score-mid">3</td></tr>
+      <tr><td>Personal alignment</td><td class="score score-mid">3</td><td class="score score-high">5</td></tr>
+      <tr class="total-row"><td>OVERALL AVERAGE</td><td class="score">3.1</td><td class="score">3.5</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 4. Sprint Roadmaps -->
+<div class="section">
+  <h2>4. Sprint Roadmaps</h2>
+  <p>Both projects now include three story types per sprint: <strong style="background:#E8F0F5;padding:2px 6px;">Build</strong> (implementation), <strong style="background:#FFF3CD;padding:2px 6px;">Eval Gate</strong> (best-of-breed evaluation), and <strong style="background:#D4EDDA;padding:2px 6px;">Touchpoint</strong> (stakeholder review with Yeti). See the companion spreadsheet for the full backlog.</p>
+
+  <h3>Robo Stack — 7 Sprint Plan (~14 weeks)</h3>
+  <div class="sprint-bar">
+    <div class="sprint-block sb-p0">S1<br>Local Dev<br><span style="font-size:0.7em;">+ K8s Eval</span></div>
+    <div class="sprint-block sb-p0">S2<br>AI Agents<br><span style="font-size:0.7em;">+ Agent Eval</span></div>
+    <div class="sprint-block sb-p0">S3<br>CI/CD<br><span style="font-size:0.7em;">+ Platform Eval</span></div>
+    <div class="sprint-block sb-p1">S4<br>AWS Infra<br><span style="font-size:0.7em;">+ Cloud Eval</span></div>
+    <div class="sprint-block sb-p1">S5<br>Security<br><span style="font-size:0.7em;">+ Logging Eval</span></div>
+    <div class="sprint-block sb-p2">S6<br>Demo App</div>
+    <div class="sprint-block sb-p2">S7<br>Launch<br><span style="font-size:0.7em;">+ Pricing Eval</span></div>
+  </div>
+  <p>Total estimated effort: <strong>~100 story points</strong> across 6 epics, 7 evaluation gates, and 6 stakeholder touchpoints. Every sprint ends with a Yeti review. No tool or platform is adopted without a formal evaluation document.</p>
+
+  <h3>Content Ops — 7 Sprint Plan (~14 weeks)</h3>
+  <div class="sprint-bar">
+    <div class="sprint-block sb-p0">S1<br>Capture<br><span style="font-size:0.7em;">+ Platform Eval</span></div>
+    <div class="sprint-block sb-p0">S2<br>Pipeline<br><span style="font-size:0.7em;">+ Blog Eval</span></div>
+    <div class="sprint-block sb-p1">S3<br>Cadence</div>
+    <div class="sprint-block sb-p1">S4<br>Derivs</div>
+    <div class="sprint-block sb-p2">S5<br>Social<br><span style="font-size:0.7em;">+ Sched Eval</span></div>
+    <div class="sprint-block sb-p3">S6<br>Podcast<br><span style="font-size:0.7em;">+ Host Eval</span></div>
+    <div class="sprint-block sb-p3">S7<br>Video<br><span style="font-size:0.7em;">+ Video Eval</span></div>
+  </div>
+  <p>Total estimated effort: <strong>~75 story points</strong> across 5 epics, 6 evaluation gates, and 5 stakeholder touchpoints. Blog POC achievable by end of Sprint 2. The process-first approach means the editorial workflow is designed and locked before content production begins.</p>
+
+  <h3>Touchpoint Cadence — What Happens at Each Review</h3>
+  <table>
+    <thead><tr><th style="width:15%;">Element</th><th>What Happens</th><th style="width:15%;">Output</th></tr></thead>
+    <tbody>
+      <tr><td>Demo</td><td>Working software or configured system demonstrated live to Yeti</td><td>Screen recording</td></tr>
+      <tr><td>Eval Review</td><td>Present best-of-breed evaluation results; Yeti selects the winner</td><td>Decision doc (Markdown)</td></tr>
+      <tr><td>Requirements Harvest</td><td>Capture new requirements discovered during the sprint — what we learned that changes what's ahead</td><td>Updated backlog items</td></tr>
+      <tr><td>Process Validation</td><td>Confirm that the designed workflow actually works in practice; adjust if needed</td><td>Process doc update</td></tr>
+      <tr><td>Go/No-Go</td><td>Yeti approves proceeding to next sprint or redirects</td><td>Sign-off in Markdown</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 5. Team Role Personas -->
+<div class="section">
+  <h2>5. Team Role Personas</h2>
+
+  <h3>Robo Stack Team</h3>
+  <div class="persona">
+    <div class="role-title">Platform Architect / Lead Engineer</div>
+    <div class="allocation">80–100% allocation</div>
+    <div class="responsibilities">Owns Kubernetes configuration, Terraform modules, AWS infrastructure, and CI/CD pipeline design. Makes technology selection decisions across the AI agent layer. Responsible for security architecture and IAM policy. This is the project driver — without this role filled and active, the project stalls.</div>
+  </div>
+  <div class="persona">
+    <div class="role-title">AI Integration Specialist</div>
+    <div class="allocation">40–60% allocation</div>
+    <div class="responsibilities">Evaluates and integrates AI coding agents (Copilot, TabbyML, CodeWhisperer). Builds the orchestration layer that routes between agents. Develops benchmarks comparing agent output quality. Can be the same person as Platform Architect in a lean team, but the work is distinct.</div>
+  </div>
+  <div class="persona">
+    <div class="role-title">DevSecOps Engineer</div>
+    <div class="allocation">30–50% allocation</div>
+    <div class="responsibilities">Implements dependency scanning, SAST/DAST integration, encrypted comms, and centralized logging. Owns the security hardening epic. Reviews all infrastructure-as-code for compliance. In a solo operation, this merges with Platform Architect but the responsibilities remain.</div>
+  </div>
+  <div class="persona">
+    <div class="role-title">Solutions Consultant (Phase 4+)</div>
+    <div class="allocation">As needed post-launch</div>
+    <div class="responsibilities">Translates the platform into client-facing consulting packages. Creates pricing models, SOWs, and demo scripts. Manages client engagements for stack deployment, security audits, and architecture consulting. This role activates only after the demo app is live.</div>
+  </div>
+
+  <h3>Content Ops Team</h3>
+  <div class="persona">
+    <div class="role-title">Content Systems Architect</div>
+    <div class="allocation">60–80% allocation</div>
+    <div class="responsibilities">Designs the capture-to-publish workflow in Notion/Obsidian. Builds automation rules, stage gates, and the AI prompt library. Defines the thematic arc templates and production cadence. This is the operational brain of the platform — the person who decides how the system works so the creator doesn't have to.</div>
+  </div>
+  <div class="persona">
+    <div class="role-title">Creator / Editorial Lead</div>
+    <div class="allocation">50–70% allocation</div>
+    <div class="responsibilities">The primary voice. Captures ideas, works the editorial pipeline, writes long-form content, records podcast/video. Once the system is built, this person operates within it rather than designing it. The whole point of Content Ops is to free this role from process decisions.</div>
+  </div>
+  <div class="persona">
+    <div class="role-title">Distribution & Social Operator</div>
+    <div class="allocation">20–40% allocation</div>
+    <div class="responsibilities">Transforms blog content into social posts, newsletters, and short-form clips. Manages scheduling tools (Buffer, etc.), monitors engagement, and feeds analytics back into the thematic arc planning. Can be AI-assisted in Phase 2+.</div>
+  </div>
+  <div class="persona">
+    <div class="role-title">Multimedia Producer (Phase 3)</div>
+    <div class="allocation">As needed — Phase 3 only</div>
+    <div class="responsibilities">Handles podcast editing, video post-production, thumbnail creation, and publishing to YouTube/podcast platforms. Activates only when the content pipeline is mature enough to support multimedia output consistently.</div>
+  </div>
+</div>
+
+<!-- 6. Operational Standards Alignment -->
+<div class="section">
+  <h2>6. Operational Standards — DevOps Baseline</h2>
+  <p>Both projects should adhere to a unified DevOps operational standard, anchored in the Markdown-first methodology already in use. The following standards apply to both projects and form the governance framework for the YKS DevOps group:</p>
+
+  <div class="standard-item"><strong>Documentation Standard:</strong> All project documentation lives in Markdown. Architecture decisions, sprint retrospectives, runbooks, and status reports are authored in .md and version-controlled in Git. No documentation lives exclusively in Notion/Confluence without a Markdown mirror.</div>
+
+  <div class="standard-item"><strong>Source Control Standard:</strong> Git-based repositories with branch protection on main. Feature branches follow naming convention: <code>feature/{project}-{epic}-{description}</code>. All merges require at minimum a self-review checklist.</div>
+
+  <div class="standard-item"><strong>Infrastructure-as-Code Standard:</strong> All infrastructure provisioned via Terraform (Robo Stack) or declarative configuration files (Content Ops tooling). No manual environment setup. Reproducibility is a hard requirement.</div>
+
+  <div class="standard-item"><strong>CI/CD Standard:</strong> Every project maintains an automated pipeline. For Robo Stack: lint → test → security scan → build → deploy. For Content Ops: validate → stage → schedule → publish. Pipelines are defined in YAML and stored in the repo.</div>
+
+  <div class="standard-item"><strong>Security Standard:</strong> Least-privilege access on all systems. API keys in environment variables or secrets managers — never in code. Dependency scanning on every build. Quarterly manual security review.</div>
+
+  <div class="standard-item"><strong>Sprint & Delivery Standard:</strong> 2-week sprints. Each sprint ends with a demo-able increment. Retrospective notes in Markdown. Backlog maintained in a Kanban tool with labels matching epic IDs from this document.</div>
+
+  <div class="standard-item"><strong>Naming & Taxonomy Standard:</strong> Projects use codenames (Robo Stack, Content Ops). Epics numbered E1–En. Stories numbered S{epic}.{sequence}. All artifacts reference these IDs for traceability.</div>
+
+  <div class="standard-item"><strong>Quality Gate Standard:</strong> No story marked "Done" without acceptance criteria met. No epic closed without a demo artifact. No project advances past a phase gate without stakeholder sign-off documented in Markdown.</div>
+</div>
+
+<!-- 7. Deliverables Checklist -->
+<div class="section">
+  <h2>7. Decision Gate Deliverables</h2>
+  <p>The following deliverables must be produced to support a go/no-go decision on each project. Check off what exists today vs. what needs to be created:</p>
+
+  <h3>Robo Stack Deliverables</h3>
+  <div class="deliverable"><div class="check">&#10003;</div><div class="dl-text"><strong>Master Architecture Whitepaper</strong> — Exists (uploaded PDF). Defines vision, architecture, financials, and roadmap.</div></div>
+  <div class="deliverable"><div class="check">&bull;</div><div class="dl-text"><strong>Evaluation Scorecard</strong> — Created (this report + companion .xlsx). Scores feasibility, revenue, strategic value.</div></div>
+  <div class="deliverable"><div class="check">&bull;</div><div class="dl-text"><strong>Product Backlog</strong> — Created (companion .xlsx, "Robo Stack Backlog" tab). 6 epics, 20 stories, prioritized and estimated.</div></div>
+  <div class="deliverable"><div class="check">&ndash;</div><div class="dl-text"><strong>AI Tool Licensing Review</strong> — Needed. Document license terms for Copilot, TabbyML, CodeWhisperer, OpenDevin for commercial consulting use.</div></div>
+  <div class="deliverable"><div class="check">&ndash;</div><div class="dl-text"><strong>AWS Cost Model (validated)</strong> — Needed. Run actual AWS pricing calculator against the architecture to validate the $80–$310/mo estimate.</div></div>
+  <div class="deliverable"><div class="check">&ndash;</div><div class="dl-text"><strong>Prototype Demo Plan</strong> — Needed. Define what the Sprint 6 reference app will be, its scope, and success criteria.</div></div>
+
+  <h3>Content Ops Deliverables</h3>
+  <div class="deliverable"><div class="check">&#10003;</div><div class="dl-text"><strong>Project Request Document</strong> — Exists (uploaded PDF). Defines workflow, phases, and strategic outcome.</div></div>
+  <div class="deliverable"><div class="check">&bull;</div><div class="dl-text"><strong>Evaluation Scorecard</strong> — Created (this report + companion .xlsx).</div></div>
+  <div class="deliverable"><div class="check">&bull;</div><div class="dl-text"><strong>Product Backlog</strong> — Created (companion .xlsx, "Content Ops Backlog" tab). 5 epics, 17 stories.</div></div>
+  <div class="deliverable"><div class="check">&ndash;</div><div class="dl-text"><strong>Editorial Workflow Specification</strong> — Needed. Detailed stage-gate definitions for the Capture → Publish pipeline.</div></div>
+  <div class="deliverable"><div class="check">&ndash;</div><div class="dl-text"><strong>AI Prompt Library v1</strong> — Needed. Initial set of prompts for each content lifecycle stage.</div></div>
+  <div class="deliverable"><div class="check">&ndash;</div><div class="dl-text"><strong>Tooling Selection Decision</strong> — Needed. Notion vs Obsidian vs hybrid for the content OS backbone.</div></div>
+  <div class="deliverable"><div class="check">&ndash;</div><div class="dl-text"><strong>Blog POC Scope Definition</strong> — Needed. What "Proof of Concept: Blog-based Signal workflow" looks like in concrete terms.</div></div>
+</div>
+
+<!-- 8. Sprint 0: Foundational Decisions -->
+<div class="section">
+  <h2>8. Sprint 0 — Foundational Decisions (Gates Both Projects)</h2>
+  <p>Sprint 0 runs before either RFI enters Sprint 1. These decisions affect both projects and set the infrastructure baseline for all YKS DevOps work. <strong>Wiki documentation begins on Day 1 — not retroactively.</strong></p>
+
+  <div class="decision-box" style="border-color: var(--warning); background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%);">
+    <h3>EV0.1: GitLab vs GitHub — Source Control &amp; DevOps Platform</h3>
+    <p>Current state: GitLab. Under consideration: GitHub, primarily for its AI capabilities (Copilot integration, Copilot Workspace, AI-powered code review, Actions marketplace). This is a high-impact decision that affects CI/CD, project management, documentation hosting, and AI tooling for both projects.</p>
+    <p style="margin-top:12px;"><strong>Evaluation criteria:</strong></p>
+    <table style="margin:12px 0;">
+      <thead><tr><th>Criterion</th><th>GitLab (Current)</th><th>GitHub (Proposed)</th></tr></thead>
+      <tbody>
+        <tr><td>AI capabilities</td><td>GitLab Duo (code suggestions, chat, vulnerability explanation)</td><td>Copilot (code completion, chat, workspace, PR summaries, code review)</td></tr>
+        <tr><td>CI/CD</td><td>Built-in, mature, self-contained</td><td>Actions marketplace — more community options but more configuration</td></tr>
+        <tr><td>Project management</td><td>Issues, boards, milestones — all built in</td><td>Issues, Projects (v2), Discussions — comparable, different UX</td></tr>
+        <tr><td>Migration effort</td><td>Zero (already here)</td><td>Repo migration, CI rewrite, webhook reconfiguration</td></tr>
+        <tr><td>Portfolio visibility</td><td>Less public-facing</td><td>Stronger for public portfolio, open-source presence, client-facing demos</td></tr>
+        <tr><td>Cost</td><td>Free tier or current plan</td><td>Free tier + Copilot subscription ($10-19/mo)</td></tr>
+        <tr><td>Ecosystem lock-in</td><td>Self-hostable, portable</td><td>More vendor-locked but deeper MS/Azure integration</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Decision needed before Sprint 1.</strong> This evaluation should include a hands-on trial of GitHub Copilot Workspace against a real task from the Robo Stack backlog. The migration cost must be weighed against the AI capability gain.</p>
+    <p style="margin-top:12px;"><strong>Output:</strong> Decision document in Markdown. Yeti sign-off required.</p>
+  </div>
+
+  <div class="decision-box" style="border-color: var(--success); background: linear-gradient(135deg, #F0FFF4 0%, #D4EDDA 100%);">
+    <h3>EV0.2: Wiki — Confirmed as Day-One Deliverable (Not a Blocker)</h3>
+    <p><strong>Both platforms support wiki from Day 1.</strong> GitHub and GitLab each provide a per-repo wiki that is itself a separate Git repository — full Markdown support, version-controlled, cloneable locally. Either platform works.</p>
+    <p style="margin-top:12px;"><strong>Key differences:</strong></p>
+    <table style="margin:12px 0;">
+      <thead><tr><th>Feature</th><th>GitLab Wiki</th><th>GitHub Wiki</th></tr></thead>
+      <tbody>
+        <tr><td>Underlying storage</td><td>Separate Git repo per project</td><td>Separate Git repo per project</td></tr>
+        <tr><td>Markdown support</td><td>Full GFM + Mermaid diagrams</td><td>Full GFM + math, diagrams, 3D models</td></tr>
+        <tr><td>Local editing</td><td>Clone wiki repo, edit, push</td><td>Clone wiki repo, edit, push</td></tr>
+        <tr><td>PR enforcement on docs</td><td>Supported natively</td><td>Via secondary repo push workflow</td></tr>
+        <tr><td>Page subscriptions</td><td>Built-in change notifications</td><td>Via GitHub Actions / webhook</td></tr>
+        <tr><td>PDF export</td><td>Native export</td><td>Via Actions or external tools</td></tr>
+        <tr><td>Public visibility</td><td>Less discoverable</td><td>Better for portfolio / client-facing docs</td></tr>
+        <tr><td>Publishing ecosystem</td><td>GitLab Pages</td><td>GitHub Pages + Actions marketplace (Docusaurus, etc.)</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Day-One Wiki Standard:</strong> Whichever platform is selected, each project repo gets its wiki initialized in Sprint 0. The wiki structure follows the DevOps documentation standard (Section 6). Every sprint's decision docs, retrospectives, and process designs are committed to the wiki — not created after the fact.</p>
+    <p style="margin-top:12px;"><strong>Wiki structure (initialized Sprint 0):</strong></p>
+    <p style="font-family:monospace; font-size:0.88em; background:#f8f9fa; padding:12px; border-radius:4px; margin-top:8px;">
+    wiki/<br>
+    &nbsp;&nbsp;Home.md<br>
+    &nbsp;&nbsp;Sprint-0/<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;platform-decision.md<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;wiki-standard.md<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;project-management-decision.md<br>
+    &nbsp;&nbsp;Sprint-1/<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(populated as sprint executes)<br>
+    &nbsp;&nbsp;Decision-Log/<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(all eval gate outputs)<br>
+    &nbsp;&nbsp;Process-Docs/<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(all designed workflows)<br>
+    &nbsp;&nbsp;Retrospectives/<br>
+    </p>
+  </div>
+
+  <div class="standard-item"><strong>EV0.3: Project Management Tooling</strong> — Evaluate whether Kanban boards live in GitLab/GitHub, Notion, or a dedicated tool (Linear, Shortcut). Must support both projects with unified taxonomy. Decision doc required.</div>
+
+  <div class="standard-item"><strong>EV0.4: Documentation &amp; Knowledge Base Standard</strong> — Confirm Markdown-in-Git as primary standard. Define wiki structure, naming conventions, and commit message format for documentation changes. This becomes the DevOps group's documentation standard.</div>
+
+  <div class="standard-item"><strong>TP0: Sprint 0 Touchpoint with Yeti</strong> — Review all foundational decisions. Confirm platform. Confirm wiki structure. Confirm project management approach. Sign-off before either RFI enters Sprint 1.</div>
+</div>
+
+<!-- 9. Dual-RFI Execution Plan -->
+<div class="section">
+  <h2>9. Execution Plan — Robo Stack Leads, Content Ops Follows</h2>
+  <div class="decision-box">
+    <h3>Two Separate Projects, Shared Sprint 0, Staggered Execution</h3>
+    <p>Both RFIs execute as <strong>separate projects</strong> with independent backlogs, repos, and wikis. Sprint 0 is shared — it resolves foundational decisions that gate both. After Sprint 0, <strong>Robo Stack leads</strong> as the primary execution track. Content Ops follows once Robo Stack's infrastructure patterns are established and can inform Content Ops tooling choices.</p>
+    <p style="margin-top:16px;"><strong>Execution sequence:</strong></p>
+    <p><strong>Sprint 0 (Week 0–1) — SHARED:</strong> Resolve GitLab vs GitHub, project management tooling, wiki standard, documentation conventions. Initialize repos and wikis for both projects. Both projects blocked until Sprint 0 complete.</p>
+    <p><strong>Weeks 1–6 (Sprints 1–3) — ROBO STACK PRIMARY:</strong> Robo Stack sprints Local Dev, AI Agents, and CI/CD (Epics 1–3). All best-of-breed evaluations and process designs documented in the wiki as they happen. Content Ops in background planning only — refining its backlog based on patterns emerging from Robo Stack.</p>
+    <p><strong>Weeks 7–10 (Sprints 4–5) — ROBO STACK + CONTENT OPS BEGINS:</strong> Robo Stack pushes into AWS Infra and Security Hardening (Epics 4–5). Content Ops starts Sprint 1 — Capture system and platform evaluation. Two parallel tracks, each with their own Yeti touchpoints.</p>
+    <p><strong>Weeks 11–14 (Sprints 6–7) — BOTH ACTIVE:</strong> Robo Stack builds demo app and consulting packages. Content Ops builds editorial pipeline and cadence system. Both converge at Week 14 for a full portfolio review.</p>
+    <p style="margin-top:16px;"><strong>Why Robo Stack first:</strong> It produces the harder infrastructure decisions, the DevOps patterns, and the CI/CD muscle that Content Ops can inherit. Running Robo Stack first means Content Ops doesn't have to solve platform and process questions that Robo Stack already answered.</p>
+    <p style="margin-top:12px;"><strong>Wiki from Day 1:</strong> Every decision doc, evaluation gate result, process design, and retrospective goes into the project wiki the day it's created — not backfilled later. The wiki is the project's memory.</p>
+  </div>
+</div>
+
+<div style="text-align:center; color:var(--muted); font-size:0.85em; padding:32px 0; border-top:1px solid var(--border); margin-top:48px;">
+  Yeti Knowledge Systems &mdash; Project Evaluation Report &mdash; March 2026<br>
+  Companion files: Project_Evaluation_Scorecard.xlsx
+</div>
+
+</div>
+</body>
+</html>
